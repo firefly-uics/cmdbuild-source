@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "<em>An error has occurred</em>",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "<em>Attribute level mapping table must be correctly filled</em>",
 		"busy_wf_widgets": "Τα οπτικά στοιχεία ελέγχου είναι απασχολημένα, ελέγξτε την κατάσταση του server πριν προσπαθήσετε ξανά.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "<em>Class level mapping table must be correctly filled</em>",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Λεπτομέρειες",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "<em>Create restricted database user</em>",
 	"createSharkSchema": "<em>Create a Shark schema</em>",
 	"credentials": "Διαπιστευτήρια",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "<em>CSV</em>",
 	"csvFile": "αρχείο CSV",
 	"current": "<em>Current</em>",

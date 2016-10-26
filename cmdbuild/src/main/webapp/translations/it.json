@@ -953,6 +953,7 @@
 	"createRestrictedDatabaseUser": "Crea utente database con privilegi limitati",
 	"createSharkSchema": "Crea uno schema Shark",
 	"credentials": "Credenziali",
+	"cronExpression": "Cron expression",
 	"csv": "CSV",
 	"csvFile": "File CSV",
 	"current": "Attuale",

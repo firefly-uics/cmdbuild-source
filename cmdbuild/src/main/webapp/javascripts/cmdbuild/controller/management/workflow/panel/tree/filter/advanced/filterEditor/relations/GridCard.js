@@ -3,6 +3,8 @@
 	/**
 	 * Adapter class to use CMCardGrid
 	 *
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.GridCard
+	 *
 	 * FIXME: refactor to build own grid card
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard', {

@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.Relations
 	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -141,8 +141,6 @@
 		 */
 		panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage: function () {
 			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
-
 				if (
 					!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
 					&& !this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])

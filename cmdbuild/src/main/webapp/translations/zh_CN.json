@@ -953,6 +953,7 @@
 	"createRestrictedDatabaseUser": "创建受限的数据库用户",
 	"createSharkSchema": "创建Shark schema",
 	"credentials": "证书",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV文件　",
 	"current": "<em>Current</em>",

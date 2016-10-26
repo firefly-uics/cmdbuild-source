@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Дошло је до грешке",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Табела мапирања атрибута мора бити коректно попуњена",
 		"busyVisualControls": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Табела мапирања класа мора бити коректно попуњена",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Детаљи",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Креирај корисника са ограниченим правима",
 	"createSharkSchema": "Креирај и шему базе за Shark",
 	"credentials": "Подаци за приступ",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV датотека",
 	"current": "<em>Current</em>",

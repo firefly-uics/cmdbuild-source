@@ -5,7 +5,7 @@
 	 *
 	 * FIXME: refactor to build own grid card
 	 *
-	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.GridCard
 	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridCard', {
 		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridController',

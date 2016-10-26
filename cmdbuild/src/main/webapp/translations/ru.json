@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Неизвестная ошибка",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Таблица соответствия атрибутов должна быть заполнена корректно",
 		"busyVisualControls": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Таблица соответствия классов должна быть заполнена корректно",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Подробно",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Создать пользователя с ограниченными правами в БД",
 	"createSharkSchema": "Создать схему для Shark",
 	"credentials": "Учетные данные",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
 	"current": "<em>Current</em>",

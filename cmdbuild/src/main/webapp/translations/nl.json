@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Er is een fout opgetreden",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribuut niveau verbindings tabel moet correct zijn ingevuld",
 		"busyVisualControls": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Klas niveau verbindings tabel moet correct zijn ingevuld",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Details",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Maak beperkte database gebruiker",
 	"createSharkSchema": "Maak een Shark schema",
 	"credentials": "Rechten",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV bestand",
 	"current": "<em>Current</em>",

@@ -100,7 +100,7 @@
 			};
 
 			this.cmTBar = [
-				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 					text: CMDBuild.Translation.modifyActivity,
 					scope: this,
 

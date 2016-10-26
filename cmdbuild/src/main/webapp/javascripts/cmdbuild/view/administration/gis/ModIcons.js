@@ -139,7 +139,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			handler: this.onAbort
 		});
 
-		this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+		this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onModify

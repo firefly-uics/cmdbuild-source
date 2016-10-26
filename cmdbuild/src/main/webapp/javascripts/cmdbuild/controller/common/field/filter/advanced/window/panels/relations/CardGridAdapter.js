@@ -5,7 +5,7 @@
 	 *
 	 * TODO: refactor CMCardGrid class to avoid usage of this adapter
 	 *
-	 * @deprecated CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard
+	 * @deprecated CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.GridCard
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.CardGridAdapter', {
 		extend: 'CMDBuild.controller.management.common.CMCardGridController',

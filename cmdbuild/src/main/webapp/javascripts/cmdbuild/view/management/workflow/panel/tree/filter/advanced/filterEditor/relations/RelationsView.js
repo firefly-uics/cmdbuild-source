@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.common.field.filter.advanced.configurator.tabs.relations.RelationsView
+	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView', {
 		extend: 'Ext.panel.Panel',
 

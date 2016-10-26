@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Functions
+	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.Functions', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 

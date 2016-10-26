@@ -14,11 +14,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskGenericStep4ValidateSetup = onTaskManagerFormTaskGenericValidateSetup'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.generic.Step4}
+		 * @property {CMDBuild.view.administration.taskManager.task.generic.Step4View}
 		 */
 		view: undefined,
 
@@ -33,31 +33,20 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.generic.Step4', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.generic.Step4View', { delegate: this });
 		},
 
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
-			 */
-			getEmailDelegate: function () {
-				return this.view.emailForm.delegate;
-			},
+		/**
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskGenericStep4ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-		// SETters functions
-			/**
-			 * @param {String} value
-			 */
-			setValueEmailAccount: function(value) {
-				this.getEmailDelegate().setValue('sender', value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueEmailTemplate: function (value) {
-				this.getEmailDelegate().setValue('template', value);
-			}
+			this.view.fieldEmailAccount.allowBlank = !fullValidation;
+			this.view.fieldEmailTemplate.allowBlank = !fullValidation;
+		}
 	});
 
 })();

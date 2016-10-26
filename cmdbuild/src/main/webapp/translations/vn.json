@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Một lỗi đã xảy ra",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "<em>Attribute level mapping table must be correctly filled</em>",
 		"busyVisualControls": "Các bộ điều khiển trực quan đang bận, kiểm tra tình trạng của máy chủ trước khi thử lại lần nữa.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "<em>Class level mapping table must be correctly filled</em>",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Chi tiết",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Thiết lập những hạn chế cơ sở dữ liệu của người dùng",
 	"createSharkSchema": "Tạo ra sơ đồ Shark",
 	"credentials": "Thông tin mật",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
 	"current": "<em>Current</em>",

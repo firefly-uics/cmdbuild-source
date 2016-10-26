@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Une erreur est survenue",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "La table de correspondance des niveaux d'attributs doit être correctement renseignée",
 		"busyVisualControls": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "La table de correspondance des niveaux de classes doit être correctement renseignée",
 		"copyAttachmentFailure": "La copie de la pièce jointe \"{0}\" a échoué",
 		"csvUploadOrDecodeFailure": "Erreur lors du téléchargement ou du décodage du fichier CSV",
 		"detail": "Détails",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Création d'un utilisateur limité à la base de données",
 	"createSharkSchema": "Création du schéma de la base de donnée Shark",
 	"credentials": "Identifiant",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Fichier CSV",
 	"current": "<em>Current</em>",

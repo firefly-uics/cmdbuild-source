@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Se verificó un error",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "La tabla de mapping del atributo tiene que ser correctamente rellenada",
 		"busyVisualControls": "Los controles visuales están ocupados, controle el estado del servidor antes de intentar de nuevo. ",
-		"classLevelMappingTableMustBeCorrectlyFilled": "La tabla de mapping de la clase tiene que ser correctamente rellenada",
 		"copyAttachmentFailure": "Error en la copia del adjunto con nombre \"{0}\"",
 		"csvUploadOrDecodeFailure": "Error en la carga o decodificación del CSV",
 		"detail": "Detalles",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Crea usuario base de datos con privilegios limitados",
 	"createSharkSchema": "Crea un esquema Shark",
 	"credentials": "Credenciales",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Archivo CSV",
 	"current": "<em>Current</em>",

@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Es handelte sich um einen Fehler",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Die Tabelle für das Mapping der Attributsebene muss korrekt gefüllt werden",
 		"busyVisualControls": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Die Tabelle für das Mapping der Klassenebene muss korrekt gefüllt werden",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Details",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Benutzer Datenbank mit begrenzten Privilegien erstellen",
 	"createSharkSchema": "Shark Schema erstellen",
 	"credentials": "Berechtigungsnachweis",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
 	"current": "<em>Current</em>",

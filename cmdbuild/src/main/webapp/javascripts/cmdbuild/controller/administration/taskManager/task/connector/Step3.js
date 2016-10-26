@@ -14,13 +14,15 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onDbFieldsetExpand',
-			'onLdapFieldsetExpand',
-			'onSelectDbType'
+			'onTaskManagerFormTaskConnectorStep3DatabaseTypeSelect',
+			'onTaskManagerFormTaskConnectorStep3FieldsetDatabaseExpand',
+			'onTaskManagerFormTaskConnectorStep3ValidateSetup = onTaskManagerFormTaskConnectorValidateSetup',
+			'onTaskManagerFormTaskConnectorStep3ValueGet',
+			'onTaskManagerFormTaskConnectorStep3ValueSet'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.connector.Step3}
+		 * @property {CMDBuild.view.administration.taskManager.task.connector.step3.Step3View}
 		 */
 		view: undefined,
 
@@ -35,85 +37,65 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.Step3', { delegate: this });
-		},
-
-		// GETters functions
-			/**
-			 * @return {Mixed} dataSourceType or false
-			 */
-			getTypeDataSource: function () {
-				if (this.view.dbFieldset.checkboxCmp.getValue())
-					return CMDBuild.core.constants.Proxy.DB;
-
-				if (this.view.ldapFieldset.checkboxCmp.getValue())
-					return CMDBuild.core.constants.Proxy.LDAP;
-
-				return false;
-			},
-
-		onDbFieldsetExpand: function () {
-			this.view.ldapFieldset.collapse();
-			this.view.ldapFieldset.reset();
-		},
-
-		onLdapFieldsetExpand: function () {
-			this.view.dbFieldset.collapse();
-			this.view.dbFieldset.reset();
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.step3.Step3View', { delegate: this });
 		},
 
 		/**
-		 * To enable/disable dbInstanceNameField
-		 *
-		 * @param {String} selectedValue
+		 * @returns {Void}
 		 */
-		onSelectDbType: function (selectedValue) {
-			this.view.dbInstanceNameField.setDisabled(
-				!(selectedValue == CMDBuild.core.constants.Proxy.MYSQL)
+		onTaskManagerFormTaskConnectorStep3FieldsetDatabaseExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetDatabase });
+
+			this.cmfg('onTaskManagerFormTaskConnectorStep3DatabaseTypeSelect');
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskConnectorStep3DatabaseTypeSelect: function () {
+			var selectedDatabaseType = this.view.fieldsetDatabase.fieldDatabaseType.getValue();
+
+			this.view.fieldsetDatabase.fieldDatabaseInstanceName.setDisabled(
+				!(selectedDatabaseType == CMDBuild.core.constants.Proxy.MYSQL)
 			);
 		},
 
-		// SETters functions
-			/**
-			 * @param {String} dataSourceType
-			 * @param {Object} configurationObject
-			 */
-			setValueDataSourceConfiguration: function (dataSourceType, configurationObject) {
-				if (!Ext.Object.isEmpty(configurationObject))
-					switch (dataSourceType) {
-						case CMDBuild.core.constants.Proxy.DB: {
-							this.view.dbFieldset.expand();
+		/**
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskConnectorStep3ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_TYPE]);
-							this.view.dbAddressField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_ADDRESS]);
-							this.view.dbPortField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_PORT]);
-							this.view.dbNameField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_NAME]);
-							this.view.dbInstanceNameField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_INSATANCE_NAME]);
-							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_USERNAME]);
-							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_DB_PASSWORD]);
-							this.view.dbSourceFilterField.setValue(configurationObject[CMDBuild.core.constants.Proxy.DATASOURCE_TABLE_VIEW_PREFIX]);
-						} break;
+			this.view.fieldsetDatabase.fieldDatabaseAddress.allowBlank = !fullValidation;
+			this.view.fieldsetDatabase.fieldDatabaseName.allowBlank = !fullValidation;
+			this.view.fieldsetDatabase.fieldDatabasePassword.allowBlank = !fullValidation;
 
-						default:
-							_error('CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized');
-					}
-			},
+			this.view.fieldsetDatabase.fieldDatabasePort.allowBlank = !fullValidation;
+			this.view.fieldsetDatabase.fieldDatabasePort.setMinValue(fullValidation ? 1 : 0);
+
+			this.view.fieldsetDatabase.fieldDatabaseType.allowBlank = !fullValidation;
+			this.view.fieldsetDatabase.fieldDatabaseUsername.allowBlank = !fullValidation;
+		},
 
 		/**
-		 * Set dataSource configuration fields as required/unrequired
-		 *
-		 * @param {Boolean} enable
+		 * @returns {Object}
 		 */
-		validate: function (enable) {
-			this.view.dbTypeCombo.allowBlank = !enable;
-			this.view.dbAddressField.allowBlank = !enable;
+		onTaskManagerFormTaskConnectorStep3ValueGet: function () {
+			return this.cmfg('taskManagerFormViewGet').panelFunctionDataGet({
+				includeDisabled: true,
+				target: this.view.fieldsetDatabase
+			});
+		},
 
-			this.view.dbPortField.allowBlank = !enable;
-			this.view.dbPortField.setMinValue(enable ? 1 : 0);
-
-			this.view.dbNameField.allowBlank = !enable;
-			this.view.dbUsernameField.allowBlank = !enable;
-			this.view.dbPasswordField.allowBlank = !enable;
+		/**
+		 * @param {Object} value
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskConnectorStep3ValueSet: function (value) {
+			this.cmfg('taskManagerFormViewGet').getForm().setValues(value);
 		}
 	});
 

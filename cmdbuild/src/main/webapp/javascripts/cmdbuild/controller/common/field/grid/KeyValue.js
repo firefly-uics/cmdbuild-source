@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.field.grid.KeyValue', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -10,8 +10,9 @@
 		 */
 		cmfgCatchedFunctions: [
 			'fieldGridKeyValueColumnsGet',
-			'fieldGridKeyValueDataGet',
-			'fieldGridKeyValueDataSet',
+			'fieldGridKeyValueReset',
+			'fieldGridKeyValueValueGet',
+			'fieldGridKeyValueValueSet',
 			'onFieldGridKeyValueAddButtonClick',
 			'onFieldGridKeyValueDeleteRowButtonClick'
 		],
@@ -22,9 +23,9 @@
 		view: undefined,
 
 		/**
-		 * @return {Array}
+		 * @returns {Array}
 		 */
-		buildActionColumn: function() {
+		buildActionColumn: function () {
 			var actionButtons = [];
 
 			if (this.view.enableRowDelete)
@@ -34,7 +35,7 @@
 						tooltip: CMDBuild.Translation.deleteRow,
 						scope: this,
 
-						handler: function(view, rowIndex, colIndex, item, e, record) {
+						handler: function (view, rowIndex, colIndex, item, e, record) {
 							this.cmfg('onFieldGridKeyValueDeleteRowButtonClick', rowIndex);
 						}
 					})
@@ -57,7 +58,7 @@
 		/**
 		 * @returns {Array} columnDefinitions
 		 */
-		fieldGridKeyValueColumnsGet: function() {
+		fieldGridKeyValueColumnsGet: function () {
 			var columnDefinitions = [
 				{
 					dataIndex: this.view.keyAttributeName,
@@ -85,17 +86,24 @@
 		},
 
 		/**
-		 * If validatedData is true returns all validated row (non empty key and value values) otherwise just keys are required
-		 *
-		 * @param {Boolean} validatedData
-		 *
-		 * @returns {Object}
+		 * @returns {Void}
 		 */
-		fieldGridKeyValueDataGet: function(validatedData) {
+		fieldGridKeyValueReset: function () {
+			this.view.getStore().removeAll();
+		},
+
+		/**
+		 * If enableValidation is true returns all validated row (non empty key and value values) otherwise just keys are required
+		 *
+		 * @param {Boolean} enableValidation
+		 *
+		 * @returns {Object} data
+		 */
+		fieldGridKeyValueValueGet: function (enableValidation) {
 			var data = {};
 
-			Ext.Array.forEach(this.view.getStore().getRange(), function(record, i, allRecords) {
-				if (validatedData) {
+			Ext.Array.forEach(this.view.getStore().getRange(), function (record, i, allRecords) {
+				if (enableValidation) {
 					if (
 						!Ext.isEmpty(record.get(this.view.keyAttributeName))
 						&& !Ext.isEmpty(record.get(this.view.valueAttributeName))
@@ -115,14 +123,16 @@
 		 * Decodes data object, build records models and adds them in store
 		 *
 		 * @param {Object} data
+		 *
+		 * @returns {Void}
 		 */
-		fieldGridKeyValueDataSet: function(data) {
+		fieldGridKeyValueValueSet: function (data) {
 			if (!Ext.Object.isEmpty(data)) {
 				var formattedDataObject = [];
 
 				this.view.getStore().removeAll();
 
-				Ext.Object.each(data, function(key, value, myself) {
+				Ext.Object.each(data, function (key, value, myself) {
 					// Remove already existing rows
 					var storeReportIndex = this.view.getStore().find(this.view.keyAttributeName, key);
 
@@ -141,7 +151,10 @@
 			}
 		},
 
-		onFieldGridKeyValueAddButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldGridKeyValueAddButtonClick: function () {
 			this.view.getStore().insert(0, Ext.create(this.view.modelName));
 
 			if (this.view.enableCellEditing)
@@ -153,8 +166,10 @@
 
 		/**
 		 * @param {Number} rowIndex
+		 *
+		 * @returns {Void}
 		 */
-		onFieldGridKeyValueDeleteRowButtonClick: function(rowIndex) {
+		onFieldGridKeyValueDeleteRowButtonClick: function (rowIndex) {
 			this.view.getStore().removeAt(rowIndex);
 		}
 	});

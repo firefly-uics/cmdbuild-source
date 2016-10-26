@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.Relations
+	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -211,8 +214,6 @@
 		 */
 		workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage: function () {
 			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
-
 				if (
 					!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
 					&& !this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])

@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FormPanel
+	 * @deprecated CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FormPanel
 	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.attributes.FormPanel', {
 		extend: 'Ext.form.Panel',

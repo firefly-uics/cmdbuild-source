@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Um erro ocorreu",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "<em>Attribute level mapping table must be correctly filled</em>",
 		"busyVisualControls": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "<em>Class level mapping table must be correctly filled</em>",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Detalhes",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Criar usuário com direitos restritos na base de dados",
 	"createSharkSchema": "Criar um Esquema para o Shark",
 	"credentials": "Credenciais",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Arquivo CSV",
 	"current": "<em>Current</em>",

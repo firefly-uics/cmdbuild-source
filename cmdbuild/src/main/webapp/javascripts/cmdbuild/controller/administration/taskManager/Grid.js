@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.administration.taskManager.Grid',
 			'CMDBuild.proxy.administration.taskManager.task.Connector',
 			'CMDBuild.proxy.administration.taskManager.task.Email',
@@ -31,6 +32,7 @@
 			'taskManagerGridClearSelection',
 			'taskManagerGridConfigure',
 			'taskManagerGridRecordSelect = taskManagerRecordSelect',
+			'taskManagerGridRendererColumnType',
 			'taskManagerGridStoreLoad = taskManagerStoreLoad'
 		],
 
@@ -86,7 +88,14 @@
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
-					this.view.getStore().load();
+					this.cmfg('taskManagerGridStoreLoad', {
+						callback: function (records, operation, success) {
+							this.cmfg('taskManagerGridRecordSelect', record.get(CMDBuild.core.constants.Proxy.ID));
+
+							if (!this.view.getSelectionModel().hasSelection())
+								this.cmfg('onTaskManagerRowSelected', this.view.getSelectionModel().getSelection()[0]);
+						}
+					});
 				}
 			});
 		},
@@ -106,7 +115,7 @@
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
-					this.view.getStore().load();
+					this.cmfg('taskManagerGridStoreLoad');
 				}
 			});
 		},
@@ -126,7 +135,14 @@
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
-					this.view.getStore().load();
+					this.cmfg('taskManagerGridStoreLoad', {
+						callback: function (records, operation, success) {
+							this.cmfg('taskManagerGridRecordSelect', record.get(CMDBuild.core.constants.Proxy.ID));
+
+							if (!this.view.getSelectionModel().hasSelection())
+								this.cmfg('onTaskManagerRowSelected', this.view.getSelectionModel().getSelection()[0]);
+						}
+					});
 				}
 			});
 		},
@@ -141,20 +157,22 @@
 		 * @returns {Void}
 		 */
 		taskManagerGridApplyStoreEvent: function (parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& Ext.isString(parameters.eventName) && !Ext.isEmpty(parameters.eventName)
-				&& Ext.isFunction(parameters.fn)
-			) {
-				this.view.getStore().on(
-					parameters.eventName,
-					parameters.fn,
-					Ext.isObject(parameters.scope) ? parameters.scope : this,
-					Ext.isObject(parameters.options) ? parameters.options : {}
-				);
-			} else {
-				_error('taskManagerGridApplyStoreEvent(): unmanaged parameters object', this, parameters);
-			}
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			// Error handling
+				if (!Ext.isString(parameters.eventName) || Ext.isEmpty(parameters.eventName))
+					return _error('taskManagerGridApplyStoreEvent(): unmanaged eventName parameter', this, parameters.eventName);
+
+				if (!Ext.isFunction(parameters.fn))
+					return _error('taskManagerGridApplyStoreEvent(): unmanaged fn parameter', this, parameters.fn);
+			// END: Error handling
+
+			this.view.getStore().on(
+				parameters.eventName,
+				parameters.fn,
+				Ext.isObject(parameters.scope) ? parameters.scope : this,
+				Ext.isObject(parameters.options) ? parameters.options : {}
+			);
 		},
 
 		/**
@@ -166,60 +184,60 @@
 
 		/**
 		 * @param {Object} parameters
-		 * @param {Object} parameters.storeLoadParameters
+		 * @param {Object} parameters.loadParams
 		 * @param {Array} parameters.type
 		 *
 		 * @returns {Void}
 		 */
 		taskManagerGridConfigure: function (parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& Ext.isArray(parameters.type) && !Ext.isEmpty(parameters.type)
-			) {
-				switch (parameters.type[0]) {
-					case 'connector': {
-						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Connector.getStore());
-					} break;
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-					case 'email': {
-						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Email.getStore());
-					} break;
+			// Error handling
+				if (!Ext.isArray(parameters.type) || Ext.isEmpty(parameters.type))
+					return _error('taskManagerGridApplyStoreEvent(): unmanaged type parameter', this, parameters.type);
+			// END: Error handling
 
-					case 'event': {
-						switch (parameters.type[1]) {
-							case 'asynchronous': {
-								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.getStore());
-							} break;
+			switch (parameters.type[0]) {
+				case 'connector': {
+					this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Connector.getStore());
+				} break;
 
-							case 'synchronous': {
-								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStore());
-							} break;
+				case 'email': {
+					this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Email.getStore());
+				} break;
 
-							default: {
-								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Event.getStore());
-							}
+				case 'event': {
+					switch (parameters.type[1]) {
+						case 'asynchronous': {
+							this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.getStore());
+						} break;
+
+						case 'synchronous': {
+							this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStore());
+						} break;
+
+						default: {
+							this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Event.getStore());
 						}
-					} break;
-
-					case 'generic': {
-						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Generic.getStore());
-					} break;
-
-					case 'workflow': {
-						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Workflow.getStore());
-					} break;
-
-					case 'all':
-					default: {
-						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.Grid.getStore());
 					}
-				}
+				} break;
 
-				// Stores are manually loaded because it's impossible to get first load of store with autoload true in this implementation context
-				this.cmfg('taskManagerGridStoreLoad', parameters.storeLoadParameters);
-			} else {
-				_error('taskManagerGridConfigure(): wronf parameters object', this, parameters);
+				case 'generic': {
+					this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Generic.getStore());
+				} break;
+
+				case 'workflow': {
+					this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Workflow.getStore());
+				} break;
+
+				case 'all':
+				default: {
+					this.view.reconfigure(CMDBuild.proxy.administration.taskManager.Grid.getStore());
+				}
 			}
+
+			// Stores are manually loaded because it's impossible to get first load of store with autoload true in this implementation context
+			this.cmfg('taskManagerGridStoreLoad', parameters.loadParams);
 		},
 
 		/**
@@ -237,10 +255,29 @@
 
 			this.cmfg('taskManagerGridClearSelection');
 
-			this.view.getSelectionModel().select(
-				rowIndex < 0 ? 0 : rowIndex,
-				true
-			);
+			this.view.getSelectionModel().select(rowIndex < 0 ? 0 : rowIndex);
+		},
+
+		/**
+		 * Convert to camelcase to get and return right translation
+		 *
+		 * @param {Array} value
+		 *
+		 * @returns {String}
+		 */
+		taskManagerGridRendererColumnType: function (value) {
+			if (Ext.isArray(value) && !Ext.isEmpty(value)) {
+				var translationKey = '';
+
+				Ext.Array.each(value, function (typeSection, i, allTypeSections) {
+					if (Ext.isString(typeSection) && !Ext.isEmpty(typeSection))
+						translationKey += i > 0 ? CMDBuild.core.Utils.toTitleCase(typeSection) : typeSection;
+				}, this);
+
+				return CMDBuild.Translation[translationKey];
+			}
+
+			return value;
 		},
 
 		/**

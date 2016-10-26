@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.common.field.filter.advanced.configurator.tabs.functions.FormPanel
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.functions.FormPanel', {
 		extend: 'Ext.form.Panel',
 

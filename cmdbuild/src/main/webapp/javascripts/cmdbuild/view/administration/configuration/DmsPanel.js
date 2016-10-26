@@ -9,7 +9,10 @@
 			'CMDBuild.proxy.administration.configuration.Dms'
 		],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions'],
+		mixins: [
+			'CMDBuild.view.common.PanelFunctions',
+			'CMDBuild.view.common.PanelFunctions2'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Dms}

@@ -9,7 +9,15 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.event.asynchronous.Step4}
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onTaskManagerFormTaskEventAsynchronousStep4FieldsetNotificationExpand',
+			'onTaskManagerFormTaskEventAsynchronousStep4ValidateSetup = onTaskManagerFormTaskEventAsynchronousValidateSetup'
+		],
+
+		/**
+		 * @property {CMDBuild.view.administration.taskManager.task.event.asynchronous.Step4View}
 		 */
 		view: undefined,
 
@@ -24,123 +32,27 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.asynchronous.Step4', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.asynchronous.Step4View', { delegate: this });
 		},
 
 		/**
-		 * @return {String}
+		 * @returns {Void}
 		 */
-		checkWorkflowComboSelected: function () {
-			return this.getValueWorkflowCombo();
+		onTaskManagerFormTaskEventAsynchronousStep4FieldsetNotificationExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetNotification });
 		},
-
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
-			 */
-			getNotificationDelegate: function () {
-				return this.view.notificationForm.delegate;
-			},
-
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
-			 */
-			getWorkflowDelegate: function () {
-				return this.view.workflowForm.delegate;
-			},
-
-			/**
-			 * @return {Boolean}
-			 */
-			getValueNotificationFieldsetCheckbox: function () {
-				return this.view.notificationFieldset.checkboxCmp.getValue();
-			},
-
-			/**
-			 * @return {Object}
-			 */
-			getValueWorkflowAttributeGrid: function () {
-				return this.getWorkflowDelegate().getValueGrid();
-			},
-
-			/**
-			 * @return {String}
-			 */
-			getValueWorkflowCombo: function () {
-				return this.getWorkflowDelegate().getValueCombo();
-			},
-
-			/**
-			 * @return {Boolean}
-			 */
-			getValueWorkflowFieldsetCheckbox: function () {
-				return this.view.workflowFieldset.checkboxCmp.getValue();
-			},
 
 		/**
-		 * To erase workflow form used on addButtonClick
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
 		 */
-		eraseWorkflowForm: function () {
-			this.getWorkflowDelegate().eraseWorkflowForm();
-		},
+		onTaskManagerFormTaskEventAsynchronousStep4ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-		// SETters functions
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledWorkflowAttributesGrid: function (state) {
-				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueNotificationAccount: function (value) {
-				this.getNotificationDelegate().setValue('sender', value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueNotificationFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.notificationFieldset.expand();
-				} else {
-					this.view.notificationFieldset.collapse();
-				}
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueNotificationTemplate: function (value) {
-				this.getNotificationDelegate().setValue('template', value);
-			},
-
-			/**
-			 * @param {Object} value
-			 */
-			setValueWorkflowAttributesGrid: function (value) {
-				this.getWorkflowDelegate().setValueGrid(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueWorkflowCombo: function (value) {
-				this.getWorkflowDelegate().setValueCombo(value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueWorkflowFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.workflowFieldset.expand();
-				} else {
-					this.view.workflowFieldset.collapse();
-				}
-			}
+			this.view.fieldNotificationAccount.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
+			this.view.fieldNotificationTemplate.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
+		}
 	});
 
 })();
