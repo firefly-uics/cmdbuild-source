@@ -85,7 +85,7 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-						this.view.reset();
+						this.view.panelFunctionReset();
 						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.dms.Dms', decodedResponse));
 
 						Ext.create('CMDBuild.core.configurations.builder.Dms'); // Rebuild configuration model

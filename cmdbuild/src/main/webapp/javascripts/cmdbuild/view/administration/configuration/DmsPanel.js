@@ -9,10 +9,7 @@
 			'CMDBuild.proxy.administration.configuration.Dms'
 		],
 
-		mixins: [
-			'CMDBuild.view.common.PanelFunctions',
-			'CMDBuild.view.common.PanelFunctions2'
-		],
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Dms}
@@ -39,6 +36,11 @@
 			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
