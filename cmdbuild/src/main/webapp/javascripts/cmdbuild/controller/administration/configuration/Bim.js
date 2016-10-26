@@ -47,7 +47,7 @@
 			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.Bim', this.view.panelFunctionDataGet({ includeDisabled: true }));
 
 			CMDBuild.proxy.administration.configuration.Bim.update({
-				params: configurationModel.getParamsObject(),
+				params: configurationModel.getSubmitData(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationBimTabShow');

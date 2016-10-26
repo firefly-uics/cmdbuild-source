@@ -9,10 +9,10 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL, type: 'int', defaultValue: 3 }
+			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'int' },
+			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'int' },
+			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL, type: 'int' }
 		],
 
 		/**
@@ -33,7 +33,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		getParamsObject: function () {
+		getSubmitData: function () {
 			var data = this.getData();
 
 			return {
