@@ -178,7 +178,7 @@
 	});
 
 	/**
-	 * Use "CMDBuild.model.domain.Domain" and complete functionalities
+	 * Use "CMDBuild.model.administration.domain.Domain" and complete functionalities
 	 *
 	 * @deprecated
 	 */

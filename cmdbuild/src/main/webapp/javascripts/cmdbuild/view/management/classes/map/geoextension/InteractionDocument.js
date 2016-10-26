@@ -237,7 +237,7 @@
 			}
 		},
 		isGeoServerLayer : function(layer) {
-			return layer.type === "SHAPE";
+			return layer.masterTableName === "_Geoserver";
 		},
 		centerOnLayer : function(card, layers, index, callback, callbackScope) {
 			var map = this.getMap();

@@ -246,7 +246,7 @@
 							}
 							geoLayer.set("cmdbuildLayer", layer);
 							var index = CMDBuild.gis.constants.layers.GIS_MIN_ZINDEX + layer.index;
-							if (layer.geoAttribute.type === "SHAPE") {
+							if (layer.geoAttribute.masterTableName === "_Geoserver") {
 								index = CMDBuild.gis.constants.layers.GEO_MIN_ZINDEX;
 							}
 							geoLayer.setZIndex(index);

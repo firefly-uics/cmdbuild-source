@@ -1,11 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.OpenReport', {
+	Ext.define('CMDBuild.proxy.management.widget.openReport.OpenReport', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -41,21 +40,6 @@
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		download: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, {
-				url: CMDBuild.proxy.index.Json.report.factory.print + '?donotdelete=true'  // Add parameter to avoid report delete
-			});
-
-			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**

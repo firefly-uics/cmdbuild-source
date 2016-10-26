@@ -12,7 +12,6 @@
 			'CMDBuild.core.CookiesManager',
 			'CMDBuild.proxy.core.Administration',
 			'CMDBuild.proxy.dashboard.Dashboard',
-			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.proxy.widget.Widget',
@@ -73,7 +72,7 @@
 			 * Domain
 			 */
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-				CMDBuild.proxy.domain.Domain.readAll({
+				CMDBuild.proxy.core.Administration.readAllDomains({
 					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {

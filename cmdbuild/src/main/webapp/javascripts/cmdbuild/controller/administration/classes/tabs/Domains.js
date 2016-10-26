@@ -19,9 +19,17 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {Array}
+		 *
+		 * @private
+		 */
+		bufferEntryTypes: {},
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'classesTabDomainsBufferEntryTypesGet',
 			'onClassesTabDomainsAddButtonClick',
 			'onClassesTabDomainsAddClassButtonClick',
 			'onClassesTabDomainsClassSelected',
@@ -30,8 +38,7 @@
 			'onClassesTabDomainsModifyButtonClick',
 			'onClassesTabDomainsRemoveButtonClick',
 			'onClassesTabDomainsRowSelect',
-			'onClassesTabDomainsShow',
-			'onClassesTabDomainsStoreLoad'
+			'onClassesTabDomainsShow'
 		],
 
 		/**
@@ -76,31 +83,55 @@
 			this.includeInheritedCheckbox = this.view.includeInheritedCheckbox;
 		},
 
+		// BufferEntryTypes property functions
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.attributeName
+			 * @param {String} parameters.name
+			 *
+			 * @returns {CMDBuild.model.classes.tabs.domains.EntryType or null} selectedEntryType
+			 */
+			classesTabDomainsBufferEntryTypesGet: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				var selectedEntryType = null;
+
+				if (Ext.isString(parameters.name) && !Ext.isEmpty(parameters.name)) {
+					selectedEntryType = this.bufferEntryTypes[parameters.name];
+
+					if (Ext.isString(parameters.attributeName) && !Ext.isEmpty(parameters.attributeName))
+						return selectedEntryType.get(parameters.attributeName);
+				}
+
+				return selectedEntryType;
+			},
+
+			/**
+			 * @param {Array} classes
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			classesTabDomainsBufferEntryTypesSet: function (entryTypes) {
+				if (Ext.isArray(entryTypes) && !Ext.isEmpty(entryTypes))
+					Ext.Array.each(entryTypes, function (entryTypeObject, i, allEntryTypeObjects) {
+						if (Ext.isObject(entryTypeObject) && !Ext.Object.isEmpty(entryTypeObject)) {
+							var model = Ext.create('CMDBuild.model.classes.tabs.domains.EntryType', entryTypeObject);
+
+							this.bufferEntryTypes[model.get(CMDBuild.core.constants.Proxy.NAME)] = model;
+						}
+					}, this);
+			},
+
 		/**
 		 * @returns {Void}
-		 *
-		 * FIXME: refactor with external services standards
 		 */
 		onClassesTabDomainsAddButtonClick: function () {
-			if (
-				this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-				&& this.cmfg('mainViewportModuleControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
-					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+			var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-
-						moduleController.cmfg('onDomainAddButtonClick');
-					}
-				});
-
-				accordionController.cmfg('accordionExpand');
-			}
+			if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+				moduleController.cmfg('domainExternalServicesAddButtonClick');
 		},
 
 		/**
@@ -111,15 +142,28 @@
 		},
 
 		/**
-		 * Enable/Disable tab on class selection
+		 * Enable/Disable tab on class selection and build buffer
 		 *
 		 * @returns {Void}
 		 */
 		onClassesTabDomainsClassSelected: function () {
-			this.view.setDisabled(
-				this.cmfg('classesSelectedClassIsEmpty')
-				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
-			);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+			CMDBuild.proxy.administration.classes.tabs.Domains.readAllEntryTypes({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+					this.classesTabDomainsBufferEntryTypesSet(decodedResponse);
+
+					this.view.setDisabled(
+						this.cmfg('classesSelectedClassIsEmpty')
+						|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+					);
+				}
+			});
 		},
 
 		/**
@@ -136,58 +180,39 @@
 		},
 
 		/**
-		 * @returns {Void}
+		 * @param {CMDBuild.model.classes.tabs.domains.Grid} record
 		 *
-		 * FIXME: refactor with external services standards
+		 * @returns {Void}
 		 */
-		onClassesTabDomainsItemDoubleClick: function () {
-			if (
-				!this.selectedDomainIsEmpty()
-				&& this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+		onClassesTabDomainsItemDoubleClick: function (record) {
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+					return _error('onClassesTabDomainsItemDoubleClick(): unmanaged record parameter', this, record);
+			// END: Error handling
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-						accordionController.cmfg('accordionNodeByIdSelect', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
-					}
-				});
+			var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				accordionController.cmfg('accordionExpand');
-			}
+			if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+				moduleController.cmfg('domainExternalServicesItemDoubleClick', { id: record.get(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
 		},
 
 		/**
 		 * @returns {Void}
-		 *
-		 * FIXME: refactor with external services standards
 		 */
 		onClassesTabDomainsModifyButtonClick: function () {
+			// Error handling
+				if (this.selectedDomainIsEmpty())
+					return _error('onClassesTabDomainsModifyButtonClick(): unmanaged selectedDomain parameter', this, this.selectedDomainGet());
+			// END: Error handling
+
 			if (
-				!this.selectedDomainIsEmpty()
-				&& this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
+				this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
 				&& this.cmfg('mainViewportModuleControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
 			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
-					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-						accordionController.cmfg('accordionNodeByIdSelect', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
-
-						Ext.Function.createDelayed(function () { // FIXME: fix me avoid delay
-							moduleController.cmfg('onDomainModifyButtonClick');
-						}, 100, this)();
-					}
-				});
-
-				accordionController.cmfg('accordionExpand');
+				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+					moduleController.cmfg('domainExternalServicesModifyButtonClick', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
 			}
 		},
 
@@ -234,53 +259,6 @@
 							this.grid.getSelectionModel().select(0, true);
 
 						this.cmfg('onClassesTabDomainsRowSelect');
-					}
-				});
-			}
-		},
-
-		/**
-		 * Translations of grid records domain's class name to description
-		 *
-		 * @returns {Void}
-		 *
-		 * FIXME: waiting for refactor (rename)
-		 */
-		onClassesTabDomainsStoreLoad: function () {
-			var records = this.grid.getStore().getRange();
-
-			if (Ext.isArray(records) && !Ext.isEmpty(records)) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-
-				CMDBuild.proxy.administration.classes.tabs.Domains.readAllEntryTypes({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
-
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
-							Ext.Array.each(records, function (gridRecord, i, allGridRecords) {
-								var foundClassObject = undefined;
-
-								// Translate class1 name to description
-								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-									return gridRecord.get('class1') == record[CMDBuild.core.constants.Proxy.NAME];
-								}, this);
-
-								if (!Ext.isEmpty(foundClassObject))
-									gridRecord.set('class1', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-								// Translate class2 name to description
-								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-									return gridRecord.get('class2') == record[CMDBuild.core.constants.Proxy.NAME];
-								}, this);
-
-								if (!Ext.isEmpty(foundClassObject))
-									gridRecord.set('class2', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-								gridRecord.commit();
-							}, this);
 					}
 				});
 			}

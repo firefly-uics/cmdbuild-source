@@ -3,7 +3,7 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.openReport.Configuration
+	 * @link CMDBuild.model.management.widget.openReport.Configuration
 	 */
 	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition', {
 		extend: 'Ext.data.Model',

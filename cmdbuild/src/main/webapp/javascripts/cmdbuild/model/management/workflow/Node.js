@@ -35,27 +35,6 @@
 		 * @override
 		 */
 		get: function (name) {
-			/**
-			 * Legacy code for retro compatibility
-			 *
-			 * @legacy
-			 *
-			 * TODO: could be deleted????
-			 */
-			switch (name) {
-				case 'Id' : {
-					name = CMDBuild.core.constants.Proxy.ID;
-				} break;
-
-				case 'IdClass' : {
-					name = CMDBuild.core.constants.Proxy.CLASS_ID;
-				} break;
-
-				case 'IdClass_value' : {
-					name = CMDBuild.core.constants.Proxy.CLASS_DESCRIPTION;
-				} break;
-			}
-
 			if (name != CMDBuild.core.constants.Proxy.VALUES) {
 				var values = this.get(CMDBuild.core.constants.Proxy.VALUES);
 

@@ -104,6 +104,24 @@
 		/**
 		 * @returns {Void}
 		 */
+		onWorkflowTabTasksModifyButtonClick: function () {
+			if (this.grid.getSelectionModel().hasSelection()) {
+				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getTaskManager());
+				var selectedRecord = this.grid.getSelectionModel().getSelection()[0];
+
+				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+					moduleController.cmfg('taskManagerExternalServicesModifyButtonClick', {
+						id: selectedRecord.get(CMDBuild.core.constants.Proxy.ID),
+						type: ['workflow']
+					});
+			} else {
+				_error('onWorkflowTabTasksModifyButtonClick(): unmanaged selectedRecord parameter', this, record);
+			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
 		onWorkflowTabTasksRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
@@ -116,24 +134,6 @@
 						this.removeItem();
 				}
 			});
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		onWorkflowTabTasksModifyButtonClick: function () {
-			if (this.grid.getSelectionModel().hasSelection()) {
-				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getTaskManager());
-				var selectedRecord = this.grid.getSelectionModel().getSelection()[0];
-
-				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
-					moduleController.cmfg('taskManagerExternalServicesModifyButtonClick', {
-						id: selectedRecord.get(CMDBuild.core.constants.Proxy.ID),
-						type: ['workflow']
-					});
-			} else {
-				_error('onWorkflowTabTasksModifyButtonClick(): unmanaged record parameter', this, record);
-			}
 		},
 
 		/**
