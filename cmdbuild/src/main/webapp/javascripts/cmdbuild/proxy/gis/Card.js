@@ -1,5 +1,32 @@
 (function () {
 
+	Ext.define("CMMiniCardGridModel", {
+		extend: "Ext.data.Model",
+		fields: [{
+			name: "Id", type: "int"
+		}, {
+			name: "IdClass", type: "int"
+		}, {
+			name: "ClassName", type: "string"
+		}, {
+			name: "Code", type: "string"
+		}, {
+			name: "Description", type: "string"
+		}, {
+			name: "Details", type: "auto"
+		}, {
+			name: "Attributes", tyoe: "auto"
+		}],
+
+		getDetails: function() {
+			return this.get("Details") || [];
+		},
+
+		getAttributes: function() {
+			return this.get("Attributes") || [];
+		}
+	});
+
 	Ext.define('CMDBuild.proxy.gis.Card', {
 
 		requires: [
@@ -30,7 +57,7 @@
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
 				//model: 'CMDBuild.model.gis.Card',
-				model: 'CMDBuild.view.management.CMMiniCardGridModel',
+				model: 'CMMiniCardGridModel',
 				remoteSort: true,
 				pageSize: pageSize,
 				proxy: {

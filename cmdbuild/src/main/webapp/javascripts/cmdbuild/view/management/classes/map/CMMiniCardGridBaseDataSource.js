@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.management.CMMiniCardGridModel", {
+	Ext.define("CMMiniCardGridModel", {
 		extend: "Ext.data.Model",
 		fields: [{
 			name: "Id", type: "int"
@@ -27,14 +27,14 @@
 		}
 	});
 
-	Ext.define("CMDBuild.data.CMMiniCardGridBaseDataSource", {
+	Ext.define("CMDBuild.view.management.classes.map.CMMiniCardGridBaseDataSource", {
 
 		requires: ['CMDBuild.proxy.index.Json'],
 
 		constructor: function() {
 			this.store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
-				model: 'CMDBuild.view.management.CMMiniCardGridModel',
+				model: 'CMMiniCardGridModel',
 				autoLoad: false,
 				remoteSort: true,
 				proxy: {

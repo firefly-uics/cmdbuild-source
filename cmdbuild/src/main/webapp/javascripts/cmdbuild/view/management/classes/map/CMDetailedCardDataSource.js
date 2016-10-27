@@ -2,16 +2,42 @@
 
 	Ext.require(['CMDBuild.proxy.Card']);
 
-	Ext.define("CMDBuild.data.CMDetailedCardDataSource", {
+	Ext.define("CMMiniCardGridModel", {
+		extend: "Ext.data.Model",
+		fields: [{
+			name: "Id", type: "int"
+		}, {
+			name: "IdClass", type: "int"
+		}, {
+			name: "ClassName", type: "string"
+		}, {
+			name: "Code", type: "string"
+		}, {
+			name: "Description", type: "string"
+		}, {
+			name: "Details", type: "auto"
+		}, {
+			name: "Attributes", tyoe: "auto"
+		}],
 
-		extend: "CMDBuild.data.CMMiniCardGridBaseDataSource",
+		getDetails: function() {
+			return this.get("Details") || [];
+		},
+
+		getAttributes: function() {
+			return this.get("Attributes") || [];
+		}
+	});
+
+	Ext.define("CMDBuild.view.management.classes.map.CMDetailedCardDataSource", {
+		extend: "CMDBuild.view.management.classes.map.CMMiniCardGridBaseDataSource",
 
 		constructor: function() {
 			this.callParent(arguments);
 
 			this.store = new Ext.data.Store ({
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
-				model: 'CMDBuild.view.management.CMMiniCardGridModel',
+				model: 'CMMiniCardGridModel',
 				autoLoad: false
 			});
 		},
@@ -36,7 +62,7 @@
 					var raw = response.card;
 					var attributes = response.attributes;
 
-					var r = new CMDBuild.view.management.CMMiniCardGridModel({
+					var r = Ext.create('CMMiniCardGridModel', {
 						Id: raw.Id,
 						IdClass: raw.IdClass,
 						Code: raw.Code,
