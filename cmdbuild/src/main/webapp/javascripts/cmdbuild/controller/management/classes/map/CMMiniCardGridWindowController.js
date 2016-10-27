@@ -8,7 +8,7 @@
 		miniGridWindow: undefined,
 
 		constructor: function() {
-			this.dataSource = new CMDBuild.data.CMDetailedCardDataSource();
+			this.dataSource = Ext.create('CMDBuild.view.management.classes.map.CMDetailedCardDataSource');
 
 			this.callParent(arguments);
 		},
