@@ -12,7 +12,6 @@
 
 		// custom stuff
 		withCheckToHideLayer: false,
-		cmCheckColumnReadOnly: true,
 
 		sm: new Ext.selection.RowModel(),
 		initComponent: function() {
@@ -72,7 +71,7 @@
 			};
 			this.callParent(arguments);
 		},
-		
+
 		/**
 		 * template method for the subclasses
 		 */
@@ -87,11 +86,11 @@
 	});
 
 	function buildCheckColumn() {
-		var column = new Ext.ux.CheckColumn( {
-			header: tr_geo.visibility,
+		var column = Ext.create('Ext.grid.column.CheckColumn', {
+			dataIndex: 'isvisible',
+			text: tr_geo.visibility,
 			sortable: false,
-			dataIndex: "isvisible",
-			cmReadOnly: this.cmCheckColumnReadOnly
+			processEvent: Ext.emptyFn // Makes column readOnly
 		});
 
 		this.mon(column, "checkchange", this.onVisibilityChecked, this);

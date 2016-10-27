@@ -35,7 +35,7 @@
 		},
 
 		/**
-		 * Enabled only if enableCheckboxHide is true 23/06/2016
+		 * Enabled only if enableCheckboxHide is true - 23/06/2016
 		 *
 		 * @property {Object} value
 		 * @property {Object} metaData

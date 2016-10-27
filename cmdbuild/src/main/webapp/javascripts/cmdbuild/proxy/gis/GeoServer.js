@@ -44,15 +44,6 @@
 				]
 			});
 
-			var reload = function(o) {
-				if (o) {
-					this.nameToSelect = o.nameToSelect;
-				}
-				this.reload();
-			};
-
-			_CMEventBus.subscribe('cmdb-modified-geoserverlayers', reload, store);
-
 			return store;
 		},
 

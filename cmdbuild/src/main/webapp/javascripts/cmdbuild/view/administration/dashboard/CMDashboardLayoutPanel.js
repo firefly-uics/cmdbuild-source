@@ -22,6 +22,37 @@
 				this.removeLastThumb();
 				l = this.thumbs.length;
 			}
+		},
+
+
+		onDisable: function() {
+			var me = this, i = 0, thumbs = me.thumbs, len = thumbs.length, thumb, el, xy;
+
+			me.callParent();
+
+			for (; i < len; i++) {
+				thumb = thumbs[i];
+				el = thumb.el;
+
+				thumb.disable();
+
+				if (Ext.isIE && el) { // [Fix] el is not there on IE9!
+					// IE breaks when using overflow visible and opacity other than 1.
+					// Create a place holder for the thumb and display it.
+					xy = el.getXY();
+					el.hide();
+
+					me.innerEl.addCls(me.disabledCls).dom.disabled = true;
+
+					if (!me.thumbHolder) {
+						me.thumbHolder = me.endEl.createChild({
+							cls: Ext.baseCSSPrefix + 'slider-thumb ' + me.disabledCls
+						});
+					}
+
+					me.thumbHolder.show().setXY(xy);
+				}
+			}
 		}
 	});
 
