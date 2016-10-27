@@ -29,14 +29,11 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
-		<!-- 0. ExtJS -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
+		<%@ include file="libsJsFiles.jsp"%>
 
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
-		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/CookiesManager.js"></script>
 
