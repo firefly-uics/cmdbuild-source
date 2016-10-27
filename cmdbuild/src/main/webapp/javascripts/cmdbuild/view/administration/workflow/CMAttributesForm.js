@@ -61,7 +61,8 @@
 		extend: "Ext.form.Panel",
 
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions",
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions2'
 		},
 
 		/**
@@ -141,7 +142,18 @@
 				name : CMDBuild.core.constants.Proxy.NAME,
 				allowBlank : false,
 				vtype : "alphanum",
-				cmImmutable : true
+				cmImmutable : true,
+
+				listeners: {
+					scope: this,
+					change: function (field, newValue, oldValue, eOpts) {
+						this.panelFunctionFieldSynch({
+							slaveField: this.attributeDescription,
+							newValue: newValue,
+							oldValue: oldValue
+						});
+					}
+				}
 			});
 
 			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
@@ -205,7 +217,9 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				displayField: CMDBuild.core.constants.Proxy.NAME,
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
-				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				triggerAction: 'all',
 				editable: false,
 				cmImmutable: true,
@@ -282,7 +296,9 @@
 			});
 
 			this.lookupTypes = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				fieldLabel : tr.lookup,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -301,7 +317,9 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
-				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				allowBlank: false,
 				cmImmutable: true,
@@ -314,7 +332,9 @@
 			});
 
 			this.foreignKeyDest = new CMDBuild.FkCombo( {
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				fieldLabel : tr.destination,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -400,7 +420,6 @@
 				]
 			});
 
-			this.plugins = [new CMDBuild.FormPlugin()];
 			this.callParent(arguments);
 		},
 
@@ -426,9 +445,6 @@
 			this.items = [this.baseProperties, this.specificProperties];
 			this.callParent(arguments);
 			this.comboType.on("select", onSelectComboType, this);
-			this.attributeName.on("change", function(fieldname, newValue, oldValue) {
-				this.autoComplete(this.attributeDescription, newValue, oldValue);
-			}, this);
 		},
 
 		onClassSelected: function(idClass, className) {

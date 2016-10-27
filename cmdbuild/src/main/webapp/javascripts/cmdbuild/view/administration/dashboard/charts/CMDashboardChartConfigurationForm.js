@@ -300,7 +300,7 @@
 				hidden: true
 			}),
 
-			me.fgColorField = new CMDBuild.form.HexColorField( {
+			me.fgColorField = Ext.create('CMDBuild.view.administration.dashboard.field.HexColor', {
 				name: "fgcolor",
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
@@ -309,7 +309,7 @@
 				hidden: true
 			}),
 
-			me.bgColorField = new CMDBuild.form.HexColorField( {
+			me.bgColorField = Ext.create('CMDBuild.view.administration.dashboard.field.HexColor', {
 				name: "bgcolor",
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,

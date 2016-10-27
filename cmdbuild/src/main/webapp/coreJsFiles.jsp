@@ -10,6 +10,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/ComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Date.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Hidden.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldContainer.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldSet.js"></script>
@@ -17,6 +18,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/Editor.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/picker/Date.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/toolbar/Paging.js"></script>
 
@@ -47,14 +49,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
-
-<!-- FORM STUFF -->
-<script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/FormPlugin.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/HexColorField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/RangeSliders.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
 
 <!-- WIDGETS BUILDERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/BaseAttribute.js"></script>

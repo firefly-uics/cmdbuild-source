@@ -3,7 +3,7 @@
 	/**
 	 * @deprecated (CMDBuild.view.common.field.picker.Color)
 	 */
-	Ext.define('CMDBuild.form.HexColorField', {
+	Ext.define('CMDBuild.view.administration.dashboard.field.HexColor', {
 		extend: 'Ext.form.ColorField',
 
 		editable: false,
@@ -12,7 +12,7 @@
 			if (value && value[0] == '#')
 				value = value.slice(1);
 
-			CMDBuild.form.HexColorField.superclass.setValue.call(this, value);
+			this.callParent(arguments);
 		},
 
 		getValue: function () {

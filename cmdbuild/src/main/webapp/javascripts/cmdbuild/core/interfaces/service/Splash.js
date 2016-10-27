@@ -2,7 +2,7 @@
 
 	// Ext.require('CMDBuild.locale'); // FIXME: should be included a class that creates translations object
 
-	Ext.define('CMDBuild.core.Splash', {
+	Ext.define('CMDBuild.core.interfaces.service.Splash', {
 
 		singleton: true,
 
@@ -21,8 +21,8 @@
 		build: function (isAdministration) {
 			isAdministration = Ext.isBoolean(isAdministration) ? isAdministration : false;
 
-			if (Ext.isEmpty(CMDBuild.core.Splash.instance))
-				CMDBuild.core.Splash.instance = Ext.create('Ext.window.Window', {
+			if (Ext.isEmpty(CMDBuild.core.interfaces.service.Splash.instance))
+				CMDBuild.core.interfaces.service.Splash.instance = Ext.create('Ext.window.Window', {
 					closable: false,
 					draggable: false,
 					modal: true,
@@ -40,7 +40,7 @@
 					})
 				});
 
-			return CMDBuild.core.Splash.instance;
+			return CMDBuild.core.interfaces.service.Splash.instance;
 		},
 
 		/**
@@ -52,7 +52,7 @@
 		hide: function (callback, scope) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
-			CMDBuild.core.Splash.build().hide();
+			CMDBuild.core.interfaces.service.Splash.build().hide();
 
 			// Remove class from HTML dom elements
 			Ext.Array.forEach(Ext.DomQuery.select('div[class="display-none"]'), function (div, i, allDivs) {
@@ -66,7 +66,7 @@
 		 * @param {Boolean} isAdministration
 		 */
 		show: function (isAdministration) {
-			CMDBuild.core.Splash.build(isAdministration).show();
+			CMDBuild.core.interfaces.service.Splash.build(isAdministration).show();
 		}
 	});
 

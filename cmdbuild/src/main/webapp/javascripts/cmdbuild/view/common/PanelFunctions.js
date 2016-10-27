@@ -100,7 +100,6 @@
 			return (
 				field instanceof Ext.form.Field
 				|| field instanceof Ext.form.field.Base
-				|| field instanceof Ext.form.field.HtmlEditor
 				|| field instanceof Ext.form.FieldContainer
 			);
 		},

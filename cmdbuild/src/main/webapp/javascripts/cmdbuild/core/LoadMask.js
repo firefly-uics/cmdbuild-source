@@ -7,7 +7,7 @@
 	 */
 	Ext.define('CMDBuild.core.LoadMask', {
 
-		requires: ['CMDBuild.core.Splash'],
+		requires: ['CMDBuild.core.interfaces.service.Splash'],
 
 		singleton: true,
 
@@ -49,9 +49,9 @@
 		 */
 		show: function (message) {
 			if (
-				Ext.isEmpty(CMDBuild.core.Splash)
-				|| !Ext.isFunction(CMDBuild.core.Splash.build)
-				|| CMDBuild.core.Splash.build().isHidden()
+				Ext.isEmpty(CMDBuild.core.interfaces.service.Splash)
+				|| !Ext.isFunction(CMDBuild.core.interfaces.service.Splash.build)
+				|| CMDBuild.core.interfaces.service.Splash.build().isHidden()
 			) {
 				CMDBuild.core.LoadMask.build(message).show();
 			}
