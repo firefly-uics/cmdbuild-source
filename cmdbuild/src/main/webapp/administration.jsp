@@ -48,7 +48,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
-		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/FieldWidths.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>

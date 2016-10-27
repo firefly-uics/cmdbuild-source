@@ -6,7 +6,7 @@
 		paths: {
 			'CMDBuild': './javascripts/cmdbuild',
 			'Ext.ux': './javascripts/ext-' + getExtJsVersion({ release: false }) + '-ux',
-			'Logger': './javascripts/log'
+			'Logger': './javascripts/log4javascript-1.4.13'
 		}
 	});
 

@@ -1,7 +1,5 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 
-<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
-
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/event/Broadcast.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/ColorField.js"></script>
