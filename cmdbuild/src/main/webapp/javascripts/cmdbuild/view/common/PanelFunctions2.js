@@ -29,7 +29,6 @@
 					field instanceof Ext.button.Button
 					|| field instanceof Ext.form.Field
 					|| field instanceof Ext.form.field.Base
-					|| field instanceof Ext.form.field.HtmlEditor
 					|| field instanceof Ext.form.FieldContainer
 					|| field instanceof Ext.form.FieldSet
 					|| (Ext.isBoolean(field.enablePanelFunctions) && field.enablePanelFunctions)
@@ -197,11 +196,11 @@
 					return _error('panelFunctionFieldSynch(): unmanaged slaveField parameter', this, parameters.slaveField);
 			// END: Error handling
 
-			if (this.isPanelFunctionManagedField(slaveField)) {
-				var actualValue = slaveField.getValue();
+			if (this.isPanelFunctionManagedField(parameters.slaveField)) {
+				var actualValue = parameters.slaveField.getValue();
 
-				if (Ext.isEmpty(actualValue) || actualValue == oldValue)
-					slaveField.setValue(newValue);
+				if (Ext.isEmpty(actualValue) || actualValue == parameters.oldValue)
+					parameters.slaveField.setValue(parameters.newValue);
 			}
 		},
 

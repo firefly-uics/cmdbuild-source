@@ -47,10 +47,12 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			allowBlank: false,
 			vtype: 'commentextended'
 		});
-		this.uploadForm = new Ext.form.FormPanel({
+		this.uploadForm = Ext.create('CMDBuild.view.administration.gis.FormBasePanel', {
 			monitorValid: true,
 			fileUpload: true,
-			plugins: [new CMDBuild.CallbackPlugin()],
+			plugins: [
+				Ext.create('CMDBuild.view.administration.gis.CallbackPlugin')
+			],
 			region: 'south',
 			height: "40%",
 			split: true,

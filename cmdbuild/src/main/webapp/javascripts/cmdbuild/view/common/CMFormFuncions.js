@@ -136,7 +136,6 @@
 						&& (
 							(item instanceof Ext.form.Field)
 							|| (item instanceof Ext.form.field.Base)
-							|| (item instanceof Ext.form.field.HtmlEditor)
 						)
 					) {
 						data[item.name] = item.getValue();

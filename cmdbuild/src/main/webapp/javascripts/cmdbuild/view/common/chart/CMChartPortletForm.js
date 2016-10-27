@@ -56,7 +56,9 @@
 				var types = {
 					classes: function(parameterConfiguration) {
 						var f = new CMDBuild.view.common.field.CMErasableCombo({
-							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+							plugins: [
+								Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+							],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -100,7 +102,9 @@
 				var types = {
 					classes: function(parameterConfiguration) {
 						var f = new CMDBuild.view.common.field.CMErasableCombo({
-							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+							plugins: [
+								Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+							],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,

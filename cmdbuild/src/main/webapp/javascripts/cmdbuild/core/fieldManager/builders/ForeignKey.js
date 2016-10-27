@@ -47,7 +47,7 @@
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				displayField: 'Description',
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				plugins: new CMDBuild.SetValueOnLoadPlugin(),
+				plugins: Ext.create('CMDBuild.core.plugin.SetValueOnLoad'),
 				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				valueField: 'Id',
 
@@ -84,7 +84,7 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				plugins: new CMDBuild.SetValueOnLoadPlugin(),
+				plugins: Ext.create('CMDBuild.core.plugin.SetValueOnLoad'),
 				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				valueField: 'Id',
 

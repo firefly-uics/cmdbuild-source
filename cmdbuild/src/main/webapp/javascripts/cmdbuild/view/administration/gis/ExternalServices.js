@@ -1,6 +1,4 @@
-(function() {
-
-	var tr = CMDBuild.Translation.administration.modcartography.external_services;
+(function () {
 
 	Ext.define('CMDBuild.view.administration.gis.ExternalServices', {
 		extend: 'Ext.form.Panel',
@@ -10,9 +8,9 @@
 		buttonAlign: 'center',
 		frame: true,
 		layout: 'border',
-		title: tr.title,
+		title: CMDBuild.Translation.administration.modcartography.external_services.title,
 
-		initComponent: function() {
+		initComponent: function () {
 			var me = this;
 
 			this.services = ['google', 'yahoo', 'osm', 'geoserver'];
@@ -23,14 +21,14 @@
 					disabled: false,
 					scope: this,
 
-					handler: function() {
+					handler: function () {
 						this.delegate.cmOn('onSaveButtonClick');
 					}
 				});
 			// END: Buttons configuration
 
 			this.googleMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description.google,
+				title: CMDBuild.Translation.administration.modcartography.external_services.description.google,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -50,8 +48,8 @@
 						name: 'google_key',
 						fieldLabel: CMDBuild.Translation.key
 					},
-					Ext.create('CMDBuild.form.RangeSliders', {
-						minSliderField: Ext.create('Ext.slider.Single', {
+					Ext.create('CMDBuild.view.common.field.slider.RangeContainer', {
+						fieldMin: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -63,7 +61,7 @@
 							clickToChange: false,
 							animate: false
 						}),
-						maxSliderField: Ext.create('Ext.slider.Single', {
+						fieldMax: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -79,14 +77,14 @@
 				],
 
 				listeners: {
-					beforeexpand: function(fieldset, eOpts) {
+					beforeexpand: function (fieldset, eOpts) {
 						me.delegate.cmOn('onFieldsetExpand', 'google');
 					}
 				}
 			});
 
 			this.yahooMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description.yahoo,
+				title: CMDBuild.Translation.administration.modcartography.external_services.description.yahoo,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -106,8 +104,8 @@
 						name: 'yahoo_key',
 						fieldLabel: CMDBuild.Translation.key
 					},
-					Ext.create('CMDBuild.form.RangeSliders', {
-						minSliderField: Ext.create('Ext.slider.Single', {
+					Ext.create('CMDBuild.view.common.field.slider.RangeContainer', {
+						fieldMin: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -119,7 +117,7 @@
 							clickToChange: false,
 							animate: false
 						}),
-						maxSliderField: Ext.create('Ext.slider.Single', {
+						fieldMax: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -135,14 +133,14 @@
 				],
 
 				listeners: {
-					beforeexpand: function(fieldset, eOpts) {
+					beforeexpand: function (fieldset, eOpts) {
 						me.delegate.cmOn('onFieldsetExpand', 'yahoo');
 					}
 				}
 			});
 
 			this.openStreetMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description.osm,
+				title: CMDBuild.Translation.administration.modcartography.external_services.description.osm,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -158,8 +156,8 @@
 				},
 
 				items: [
-					Ext.create('CMDBuild.form.RangeSliders', {
-						minSliderField: Ext.create('Ext.slider.Single', {
+					Ext.create('CMDBuild.view.common.field.slider.RangeContainer', {
+						fieldMin: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -171,7 +169,7 @@
 							clickToChange: false,
 							animate: false
 						}),
-						maxSliderField: Ext.create('Ext.slider.Single', {
+						fieldMax: Ext.create('Ext.slider.Single', {
 							minValue: 0,
 							maxValue: 18,
 							value: 0,
@@ -187,14 +185,14 @@
 				],
 
 				listeners: {
-					beforeexpand: function(fieldset, eOpts) {
+					beforeexpand: function (fieldset, eOpts) {
 						me.delegate.cmOn('onFieldsetExpand', 'osm');
 					}
 				}
 			});
 
 			this.geoServerFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description.geoserver,
+				title: CMDBuild.Translation.administration.modcartography.external_services.description.geoserver,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -212,19 +210,19 @@
 				items: [
 					{
 						name: 'geoserver_url',
-						fieldLabel: tr.url
+						fieldLabel: CMDBuild.Translation.administration.modcartography.external_services.url
 					},
 					{
 						name: 'geoserver_workspace',
-						fieldLabel: tr.workspace
+						fieldLabel: CMDBuild.Translation.administration.modcartography.external_services.workspace
 					},
 					{
 						name: 'geoserver_admin_user',
-						fieldLabel: tr.admin_user
+						fieldLabel: CMDBuild.Translation.administration.modcartography.external_services.admin_user
 					},
 					{
 						name: 'geoserver_admin_password',
-						fieldLabel: tr.admin_password,
+						fieldLabel: CMDBuild.Translation.administration.modcartography.external_services.admin_password,
 						inputType: 'password'
 					}
 				]

@@ -15,7 +15,7 @@
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.proxy.widget.Widget',
-			'CMDBuild.core.Splash'
+			'CMDBuild.core.interfaces.service.Splash'
 		],
 
 		singleton: true,
@@ -28,7 +28,7 @@
 		 * @public
 		 */
 		init: function () {
-			CMDBuild.core.Splash.show(true);
+			CMDBuild.core.interfaces.service.Splash.show(true);
 
 			CMDBuild.core.Administration.buildConfiguration();
 		},
@@ -259,7 +259,7 @@
 					],
 					scope: this,
 					callback: function () {
-						CMDBuild.core.Splash.hide(function () {
+						CMDBuild.core.interfaces.service.Splash.hide(function () {
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
 						}, this);
