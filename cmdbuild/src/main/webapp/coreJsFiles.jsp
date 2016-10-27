@@ -50,7 +50,6 @@
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormPlugin.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/HexColorField.js"></script>

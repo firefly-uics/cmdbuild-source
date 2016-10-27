@@ -141,7 +141,7 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: true,
-						vtype: 'emailOrBlank'
+						vtype: 'emailorblank'
 					}),
 					this.startingClassCombo = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 						name: CMDBuild.core.constants.Proxy.STARTING_CLASS,

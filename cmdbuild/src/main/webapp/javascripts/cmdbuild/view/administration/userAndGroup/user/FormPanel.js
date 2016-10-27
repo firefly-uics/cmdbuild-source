@@ -166,7 +166,7 @@
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: true,
-								vtype: 'emailOrBlank'
+								vtype: 'emailorblank'
 							}),
 							this.defaultGroupCombo = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 								name: 'defaultgroup',
