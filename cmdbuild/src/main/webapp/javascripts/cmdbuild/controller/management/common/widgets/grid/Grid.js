@@ -266,8 +266,6 @@
 							header.editor = editor;
 
 							this.addRendererToHeader(header, attribute);
-						} else {
-							header.cmReadOnly = false;
 						}
 
 						// Read only attributes header setup

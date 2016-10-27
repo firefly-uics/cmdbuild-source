@@ -172,28 +172,36 @@
 				}
 			});
 
-			this.attributeNotNull = new Ext.ux.form.XCheckbox({
+			this.attributeNotNull = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isnotnull,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isnotnull'
 			});
 
-			this.attributeUnique = new Ext.ux.form.XCheckbox({
+			this.attributeUnique = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isunique,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isunique'
 			});
 
-			this.isBasedsp = new Ext.ux.form.XCheckbox({
+			this.isBasedsp = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isbasedsp,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isbasedsp'
 			});
 
-			this.isActive = new Ext.ux.form.XCheckbox({
+			this.isActive = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isactive,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : CMDBuild.core.constants.Proxy.ACTIVE
+				name : CMDBuild.core.constants.Proxy.ACTIVE,
+				uncheckedValue: false,
+				inputValue: true
 			});
 
 			this.comboType = Ext.create('Ext.form.field.ComboBox', {

@@ -153,7 +153,7 @@
 
 		/**
 		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
-		 * @param {Ext.ux.CheckColumn} column
+		 * @param {Ext.grid.column.CheckColumn} column
 		 * @param {boolean} checked
 		 * @param {CMDBuild.model.CMDomainGridModel} record
 		 */

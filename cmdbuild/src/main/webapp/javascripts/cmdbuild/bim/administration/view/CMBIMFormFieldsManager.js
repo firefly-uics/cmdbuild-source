@@ -26,10 +26,12 @@
 				vtype: 'comment'
 			});
 
-			this.activeCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
+			this.activeCheckBox = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel: CMDBuild.Translation.active,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				uncheckedValue: false,
+				inputValue: true,
 				name: 'active'
 			});
 

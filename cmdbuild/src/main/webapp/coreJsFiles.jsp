@@ -8,6 +8,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/TreeStore.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Checkbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/ComboBox.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Date.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldContainer.js"></script>
@@ -83,7 +84,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMGroupSelectionList.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/HtmlEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
