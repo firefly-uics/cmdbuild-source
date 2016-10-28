@@ -148,7 +148,7 @@
 			});
 
 			var me = this;
-			this.searchField = new CMDBuild.field.LocaleSearchField({
+			this.searchField = Ext.create('CMDBuild.view.common.field.grid.localSearch.LocalSearch', {
 				grid: me,
 				onTrigger1Click: function() {
 					me.filterStore();

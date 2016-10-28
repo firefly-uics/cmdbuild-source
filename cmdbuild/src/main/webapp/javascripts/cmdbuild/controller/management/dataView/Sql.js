@@ -154,18 +154,14 @@
 					}
 
 					this.form.cardPanel.add(
-						Ext.create('CMDBuild.view.common.field.CMDisplayField', {
-							disabled: false,
-							fieldLabel: field.name,
-							labelAlign: 'right',
-							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						Ext.create('CMDBuild.view.common.field.display.Text', {
 							name: field.name,
-							submitValue: false,
-							style: {
-								overflow: 'hidden'
-							},
+							fieldLabel: field.name,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							labelAlign: 'right',
+							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 							value: value,
-							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
+							submitValue: false
 						})
 					);
 				}

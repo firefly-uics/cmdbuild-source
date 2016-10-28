@@ -410,7 +410,7 @@
 		baseCls: "cmfieldset",
 
 		initComponent: function() {
-			this.valueAxesFields = new CMDBuild.view.common.field.CMGroupSelectionList({
+			this.valueAxesFields = Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
 				fieldLabel: tr.fields.valueField,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
