@@ -10,6 +10,8 @@
 		onAttributeFieldsetIsEmpty: Ext.emptyFn
 	});
 
+	Ext.require('CMDBuild.core.Utils');
+
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes', {
 		extend: 'Ext.form.Panel',
 
@@ -165,9 +167,9 @@
 			return;
 
 		var attributeName = data.simple.attribute || '';
-		var attribute = _CMUtils.arraySearchByFunction(me.attributes, function(currentAttribute) {
+		var attribute = Ext.Array.findBy(me.attributes, function(currentAttribute) {
 			return currentAttribute.name == attributeName;
-		});
+		}, this);
 
 		if (attribute)
 			addFilterCondition(me, attribute, data.simple);
@@ -194,7 +196,7 @@
 
 	function buildSubMenues(me) {
 		var submenues = [];
-		var groupedAttr = CMDBuild.Utils.groupAttributes(me.attributes, allowNoteFiled = false);
+		var groupedAttr = CMDBuild.core.Utils.groupAttributesObjects(me.attributes);
 
 		for (var group in groupedAttr) {
 			var items = [];

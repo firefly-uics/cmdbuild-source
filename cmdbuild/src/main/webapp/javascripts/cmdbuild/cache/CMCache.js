@@ -6,6 +6,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.Cache',
 			'CMDBuild.proxy.common.tabs.attribute.Attribute',
 			'CMDBuild.proxy.gis.Layer',
@@ -280,7 +281,7 @@
 	}
 
 	function reloadRelferenceStore(stores, idClass) {
-		var anchestors = _CMUtils.getAncestorsId(idClass);
+		var anchestors = CMDBuild.core.Utils.getAncestorsId(idClass);
 		Ext.Array.each(anchestors, function(id) {
 			var store = stores[id];
 			if (store) {

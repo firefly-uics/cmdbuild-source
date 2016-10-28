@@ -1,6 +1,8 @@
 Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 	extend: "Ext.panel.Panel",
 
+	requires: ['CMDBuild.core.Utils'],
+
 	mixins: {
 		delegable: "CMDBuild.core.CMDelegable"
 	},
@@ -44,8 +46,8 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 
 		this.callParent(arguments);
 
-		_CMUtils.forwardMethods(this, this.form, ["buildFields", "disableModify", "enableModify", "updateEnableDisableButton"]);
-		_CMUtils.forwardMethods(this, this.grid, ["configureGrid"]);
+		CMDBuild.core.Utils.forwardMethods(this, this.form, ["buildFields", "disableModify", "enableModify", "updateEnableDisableButton"]);
+		CMDBuild.core.Utils.forwardMethods(this, this.grid, ["configureGrid"]);
 	},
 
 	buildGrid: function() {

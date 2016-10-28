@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.widget.grid.Grid',
 			'CMDBuild.model.widget.grid.Grid'
 		],
@@ -216,7 +217,7 @@
 			var columns = [];
 			var classId = this.classType.get(CMDBuild.core.constants.Proxy.ID);
 
-			if (_CMUtils.isSuperclass(classId))
+			if (CMDBuild.core.Utils.isSuperclass(classId))
 				columns.push(this.buildClassColumn());
 
 			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
@@ -230,7 +231,7 @@
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
 					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-						var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+						var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, 'system.template.');
 						xaVars['_SystemFieldFilter'] = attribute.filter;
 
 						var templateResolver = new CMDBuild.Management.TemplateResolver({

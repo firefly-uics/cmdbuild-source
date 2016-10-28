@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.widget.customForm.CustomForm}
@@ -99,7 +102,7 @@
 							);
 						} else {
 							if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-								var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+								var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, 'system.template.');
 								xaVars['_SystemFieldFilter'] = attribute.filter;
 
 								var templateResolver = new CMDBuild.Management.TemplateResolver({

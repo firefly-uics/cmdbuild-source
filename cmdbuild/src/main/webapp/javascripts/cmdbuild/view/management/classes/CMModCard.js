@@ -5,6 +5,8 @@
 	Ext.define("CMDBuild.view.management.classes.CMModCard", {
 		extend: "Ext.panel.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		mixins: {
 			uistatedelegate: "CMDBuild.state.UIStateDelegate"
 		},
@@ -73,7 +75,7 @@
 
 			this.callParent(arguments);
 
-			_CMUtils.forwardMethods(this, this.cardTabPanel, [
+			CMDBuild.core.Utils.forwardMethods(this, this.cardTabPanel, [
 				"activateFirstTab",
 				"setActivateTab",
 				"getCardPanel",

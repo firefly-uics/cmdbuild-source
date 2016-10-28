@@ -6,6 +6,8 @@
 	Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		extend: "Ext.panel.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		translation: CMDBuild.Translation.management.modcard,
 
 		withButtons: true, // used in the windows to have specific buttons
@@ -214,7 +216,7 @@
 
 			var idClass = card.raw.IdClass;
 
-			if (CMDBuild.Utils.isSimpleTable(idClass)) {
+			if (CMDBuild.core.Utils.isSimpleTable(idClass)) {
 				this.disable();
 
 				return;

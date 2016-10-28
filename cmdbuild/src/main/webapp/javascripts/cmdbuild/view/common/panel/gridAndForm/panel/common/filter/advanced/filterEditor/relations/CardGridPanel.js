@@ -4,7 +4,10 @@
 	 * FIXME: build own class
 	 */
 
-	Ext.require('CMDBuild.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.core.Utils',
+		'CMDBuild.proxy.index.Json'
+	]);
 
 	/**
 	 * @link CMDBuild.view.management.common.CMCardGridPagingBar
@@ -258,7 +261,7 @@
 			var headers = [];
 			var fields = [];
 
-			if (_CMUtils.isSuperclass(this.currentClassId)) {
+			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
 				headers.push(this.buildClassColumn());
 			}
 
@@ -509,7 +512,7 @@
 
 //		if (me.cmAdvancedFilter) {
 //			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced', { masterGrid: me });
-//			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
+//			CMDBuild.core.Utils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 //				"enableClearFilterButton",
 //				"disableClearFilterButton",
 //				"setFilterButtonLabel"

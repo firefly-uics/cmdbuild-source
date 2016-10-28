@@ -3,6 +3,7 @@
 	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters'
 	]);
 
@@ -392,7 +393,7 @@
 		 * @param {Number} classId
 		 */
 		changeClassUIConfigurationForGroup: function (classId) {
-			var privileges = _CMUtils.getClassPrivileges(classId);
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(classId);
 
 			this.view.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
 
@@ -524,7 +525,7 @@
 			me.mon(me.gridController, me.gridController.CMEVENTS.gridVisible, me.onGridVisible, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.load, me.onGridLoad, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.itemdblclick, function() {
-				var privileges = _CMUtils.getEntryTypePrivilegesByCard(me.cardPanelController.card);
+				var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(me.cardPanelController.card);
 				if (! privileges.crudDisabled.modify) {
 					me.cardPanelController.onModifyCardClick();
 					_CMUIState.onlyFormIfFullScreen();

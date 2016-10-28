@@ -8,6 +8,8 @@
 	Ext.define("CMDBuild.view.management.workflow.panel.form.tabs.activity.FormPanel", {
 		extend: "Ext.form.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
@@ -403,7 +405,7 @@
 		this._lastCard = null;
 
 		var panels = [],
-			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
+			groupedAttr = CMDBuild.core.Utils.groupAttributesObjects(attributes);
 
 		this.suspendLayouts();
 

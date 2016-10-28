@@ -3,6 +3,7 @@
 	Ext.require([
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.index.Json'
 	]);
 
@@ -108,7 +109,7 @@
 	function getIconsToRender(record) {
 		var icons = ["showDetail"];
 		var entryType = _CMCache.getEntryTypeById(record.get('IdClass'));
-		var privileges = _CMUtils.getEntryTypePrivilegesByCard(record);
+		var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(record);
 
 		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
 			icons = ["editDetail", "deleteDetail"];
