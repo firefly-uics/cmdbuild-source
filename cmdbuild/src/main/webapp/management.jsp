@@ -38,6 +38,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/window/notification/css/style.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.1/resources/css/extensible-all.css" />
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
