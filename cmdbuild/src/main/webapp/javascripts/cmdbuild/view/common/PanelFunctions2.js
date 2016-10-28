@@ -31,6 +31,7 @@
 					|| field instanceof Ext.form.field.Base
 					|| field instanceof Ext.form.FieldContainer
 					|| field instanceof Ext.form.FieldSet
+					|| field instanceof Ext.ux.form.MultiSelect
 					|| (Ext.isBoolean(field.enablePanelFunctions) && field.enablePanelFunctions)
 					|| (Ext.isBoolean(field.considerAsFieldToDisable) && field.considerAsFieldToDisable) /** @deprecated */
 				)

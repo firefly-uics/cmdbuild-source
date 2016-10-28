@@ -34,7 +34,7 @@
 								}
 							}),
 							'->',
-							Ext.create('CMDBuild.view.common.field.GridLocalSearch', { grid: this })
+							Ext.create('CMDBuild.view.common.field.grid.localSearch.LocalSearch', { grid: this })
 						]
 					})
 				],

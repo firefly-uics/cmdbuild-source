@@ -47,12 +47,14 @@
 				delegate: Ext.create('CMDBuild.controller.common.field.display.Text', { view: this }),
 				items: [
 					this.detailsButton = Ext.create('CMDBuild.core.buttons.iconized.Expand', {
+						border: false,
+						hidden: true,
+						text: '',
+						scope: this,
+
 						style: {
 							background: 'none'
 						},
-						text: '',
-						border: false,
-						scope: this,
 
 						handler: function (button, e) {
 							this.delegate.cmfg('onFieldDisplayTextDetailsButtonClick');

@@ -190,7 +190,7 @@
 			disabled: true
 		});
 
-		me.groupsSelectionList = new CMDBuild.view.common.field.CMGroupSelectionList({
+		me.groupsSelectionList = Ext.create('CMDBuild.view.common.field.multiselect.Group', {
 			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			dataFields : ['name', 'description'],

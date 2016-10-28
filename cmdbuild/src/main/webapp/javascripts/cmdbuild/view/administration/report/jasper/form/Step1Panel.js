@@ -21,7 +21,7 @@
 		fileField: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.CMGroupSelectionList}
+		 * @property {CMDBuild.view.common.field.multiselect.Group}
 		 */
 		groups: undefined,
 
@@ -76,13 +76,13 @@
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
-					this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+					this.groups = Ext.create('CMDBuild.view.common.field.multiselect.Group', {
 						name: CMDBuild.core.constants.Proxy.GROUPS,
 						fieldLabel: CMDBuild.Translation.enabledGroups,
-						height: 300,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						height: 300
 					}),
 					this.fileField = Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.JRXML,

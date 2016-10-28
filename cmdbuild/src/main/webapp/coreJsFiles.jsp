@@ -75,13 +75,10 @@
 <!-- CUSTOM FIELDS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMBaseCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMGroupSelectionList.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/HtmlEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
