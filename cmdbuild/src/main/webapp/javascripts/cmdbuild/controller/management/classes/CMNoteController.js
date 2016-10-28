@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.require([
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.Card',
 		'CMDBuild.proxy.management.classes.tabs.Note'
 	]);
@@ -48,7 +49,7 @@
 		},
 
 		disableTheTabBeforeCardSelection: function(card) {
-			return !card || CMDBuild.Utils.isSimpleTable(card.get("IdClass"));
+			return !card || CMDBuild.core.Utils.isSimpleTable(card.get("IdClass"));
 		},
 
 		updateView: function(card) {
@@ -58,7 +59,7 @@
 		},
 
 		updateViewPrivilegesForCard: function(card) {
-			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(card);
 			this.view.updateWritePrivileges(privileges.write && ! privileges.crudDisabled.modify);
 		},
 
@@ -157,7 +158,7 @@
 	});
 
 	function isEditable(card) {
-		return _CMUtils.getEntryTypePrivilegesByCard(card).write;
+		return CMDBuild.core.Utils.getEntryTypePrivilegesByCard(card).write;
 	}
 
 })();

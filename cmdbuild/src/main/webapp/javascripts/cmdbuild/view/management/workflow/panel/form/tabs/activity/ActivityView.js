@@ -8,6 +8,8 @@
 	Ext.define("CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView", {
 		extend: "Ext.panel.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		mixins: {
 			widgetManagerDelegate: "CMDBuild.view.management.common.widgets.CMWidgetManagerDelegate"
 		},
@@ -30,7 +32,7 @@
 				items: []
 			});
 
-			_CMUtils.forwardMethods(this, this.form, [
+			CMDBuild.core.Utils.forwardMethods(this, this.form, [
 				"loadCard",
 				"getValues",
 				"reset",
@@ -45,7 +47,7 @@
 				"updateInfo"
 			]);
 
-			_CMUtils.forwardMethods(this, this.widgets, [
+			CMDBuild.core.Utils.forwardMethods(this, this.widgets, [
 				"removeAllButtons",
 				"addWidget"
 			]);

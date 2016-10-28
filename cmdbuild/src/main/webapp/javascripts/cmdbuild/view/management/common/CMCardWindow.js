@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.management.common.CMCardWindow', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 
+		requires: ['CMDBuild.core.Utils'],
+
 		// Configuration
 			cmEditMode: false, // If true, after the attributes load go in edit mode
 			withButtons: false, // True to use the buttons build by the CMCardPanel
@@ -48,7 +50,7 @@
 			this.addEvents(ee.displayModeDidActivate);
 
 			if (this.classId) {
-				var privileges = _CMUtils.getClassPrivileges(this.classId);
+				var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(this.classId);
 				this.cardPanel.writePrivilege = privileges.write;
 			}
 
@@ -65,7 +67,7 @@
 
 			this.callParent(arguments);
 
-			_CMUtils.forwardMethods(
+			CMDBuild.core.Utils.forwardMethods(
 				this,
 				this.cardPanel,
 				[

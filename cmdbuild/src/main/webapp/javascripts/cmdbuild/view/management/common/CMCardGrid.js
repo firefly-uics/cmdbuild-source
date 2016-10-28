@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.index.Json'
 	]);
 
@@ -298,7 +299,7 @@
 			var headers = [];
 			var fields = [];
 
-			if (_CMUtils.isSuperclass(this.currentClassId)) {
+			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
 				headers.push(this.buildClassColumn());
 			}
 
@@ -562,7 +563,7 @@
 
 		if (me.cmAdvancedFilter) {
 			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced', { masterGrid: me });
-			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
+			CMDBuild.core.Utils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 				"enableClearFilterButton",
 				"disableClearFilterButton",
 				"setFilterButtonLabel"

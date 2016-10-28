@@ -21,6 +21,7 @@
 			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.panel.form.tabs.Activity'
 		],
 
@@ -330,7 +331,7 @@
 		},
 
 		isEditable: function(card) {
-			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(card);
 			return (privileges.create);
 		},
 

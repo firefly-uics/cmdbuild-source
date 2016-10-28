@@ -318,7 +318,7 @@
 			var filter = this.filter || Ext.create('CMDBuild.model.CMFilterModel', {
 				entryType: className,
 				local: true,
-				name: CMDBuild.Translation.newSearchFilter + ' ' + _CMUtils.nextId()
+				name: CMDBuild.Translation.newSearchFilter + ' ' + nextId()
 			});
 
 			var entryType = _CMCache.getEntryTypeByName(className);
@@ -448,6 +448,12 @@
 		}).show();
 
 		chooserWindow.addDelegate(this);
+	}
+
+	var idCounter = 0;
+
+	function nextId() {
+		return ++idCounter;
 	}
 
 })();

@@ -144,7 +144,7 @@
 
 		getDirectedDomainForEntryType: function(et, domainName) {
 			var domain = _CMCache.getDomainByName(domainName);
-			var anchestorsId = _CMUtils.getAncestorsId(et);
+			var anchestorsId = CMDBuild.core.Utils.getAncestorsId(et);
 			var cid1 = domain.get(ID_CLASS_1);
 			var cid2 = domain.get(ID_CLASS_2);
 
@@ -179,7 +179,7 @@
 			}
 
 			var out = [],
-				anchestorsId = _CMUtils.getAncestorsId(et);
+				anchestorsId = CMDBuild.core.Utils.getAncestorsId(et);
 
 			for (var domain in domains) {
 				domain = domains[domain];
@@ -287,7 +287,7 @@
 		var cardinality = domain.get("cardinality"),
 			idClass1 = domain.get(ID_CLASS_1),
 			idClass2 = domain.get(ID_CLASS_2),
-			ancestors = _CMUtils.getAncestorsId(id);
+			ancestors = CMDBuild.core.Utils.getAncestorsId(id);
 
 		if (cardinality == "1:N") {
 			return Ext.Array.contains(ancestors, idClass1);

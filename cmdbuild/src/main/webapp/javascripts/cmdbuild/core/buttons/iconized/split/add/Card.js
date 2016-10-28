@@ -3,6 +3,8 @@
 	var ARROW_ELEMENT_SELECTOR = '.x-btn-split';
 	var ARROW_CLASS = 'x-btn-split-right';
 
+	Ext.require('CMDBuild.core.Utils');
+
 	/**
 	 * @link CMDBuild.core.buttons.iconized.split.add.Activity
 	 */
@@ -38,8 +40,8 @@
 			this.classId = entry.get('id');
 			fillMenu.call(this, entry);
 
-			var privileges = _CMUtils.getClassPrivileges(this.classId);
-			if (_CMUtils.isSuperclass(this.classId)) {
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(this.classId);
+			if (CMDBuild.core.Utils.isSuperclass(this.classId)) {
 				this.setDisabled(this.isEmpty() || privileges.crudDisabled.create);
 				this.showDropDownArrow();
 			} else {
@@ -57,8 +59,8 @@
 			if (
 				!Ext.isEmpty(this.classId)
 				&& (
-					!_CMUtils.isSuperclass(this.classId)
-					|| (_CMUtils.isSuperclass(this.classId) && !this.isEmpty())
+					!CMDBuild.core.Utils.isSuperclass(this.classId)
+					|| (CMDBuild.core.Utils.isSuperclass(this.classId) && !this.isEmpty())
 				)
 			) {
 				this.callParent(arguments);
@@ -118,12 +120,12 @@
 
 		if (entry) {
 			var entryId = entry.get('id'),
-				isSuperclass = _CMUtils.isSuperclass(entryId);
+				isSuperclass = CMDBuild.core.Utils.isSuperclass(entryId);
 
 			this.setTextSuffix(entry.data.text);
 
 			if (isSuperclass) {
-				var descendants = _CMUtils.getDescendantsById(entryId);
+				var descendants = getDescendantsById(entryId);
 
 				Ext.Array.sort(descendants, function(et1, et2) {
 						return et1.get(WANNABE_DESCRIPTION) >= et2.get(WANNABE_DESCRIPTION);
@@ -137,8 +139,37 @@
 		}
 	}
 
+	function getDescendantsById(entryTypeId) {
+		var children = getChildrenById(entryTypeId);
+		var et = _CMCache.getEntryTypeById(entryTypeId);
+		var out = [et];
+
+		for (var i = 0; i < children.length; ++i) {
+			var c = children[i];
+			var leaves = getDescendantsById(c.get('id'));
+
+			out = out.concat(leaves);
+		}
+
+		return out;
+	}
+
+	function getChildrenById(entryTypeId) {
+		var ett = _CMCache.getEntryTypes();
+		var out = [];
+
+		for (var et in ett) {
+			et = ett[et];
+
+			if (et.get('parent') == entryTypeId)
+				out.push(et);
+		}
+
+		return out;
+	}
+
 	function addSubclass(entry) {
-		var privileges = _CMUtils.getClassPrivileges(entry.get('id'));
+		var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(entry.get('id'));
 
 		if (privileges.create && ! privileges.crudDisabled.create) {
 			this.menu.add({

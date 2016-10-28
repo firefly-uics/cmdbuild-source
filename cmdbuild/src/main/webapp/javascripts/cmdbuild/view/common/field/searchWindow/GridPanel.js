@@ -1,6 +1,9 @@
 (function () {
 
-	Ext.require('CMDBuild.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.core.Utils',
+		'CMDBuild.proxy.index.Json'
+	]);
 
 	/**
 	 * @link CMDBuild.view.management.common.CMCardGridDelegate
@@ -306,7 +309,7 @@
 			var headers = [];
 			var fields = [];
 
-			if (_CMUtils.isSuperclass(this.currentClassId)) {
+			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
 				headers.push(this.buildClassColumn());
 			}
 
