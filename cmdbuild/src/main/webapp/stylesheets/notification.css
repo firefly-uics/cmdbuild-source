@@ -1,0 +1,7 @@
+.cmdb-show-detail-link {
+	cursor: pointer;
+	font-weight: bold;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	text-decoration: underline;
+}

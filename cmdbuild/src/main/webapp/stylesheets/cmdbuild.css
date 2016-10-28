@@ -4,6 +4,7 @@
 @import url("./footer.css");
 @import url("./grids.css");
 @import url("./icons.css");
+@import url("./notification.css");
 @import url("./panels.css");
 @import url("./splashScreen.css");
 @import url("./trees.css");
@@ -288,14 +289,6 @@ em { font-style: oblique !important; }
 		height: 20px;
 		width: 20px;
 		cursor: pointer;
-	}
-
-	.show_detail_link {
-		cursor: pointer;
-		font-weight: bold;
-		padding-top: 0.5em;
-		padding-bottom: 0.5em;
-		text-decoration: underline;
 	}
 
 /* Custom rule to fix collapsible tab panel tool */
