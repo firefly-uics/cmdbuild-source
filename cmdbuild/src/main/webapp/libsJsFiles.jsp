@@ -1,7 +1,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/ColorField.js"></script>
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Router.js"></script>
 
 <!-- Calendar -->
