@@ -83,7 +83,7 @@
 			return this.inEditing;
 		},
 		isANavigableClass : function(className) {
-			return this.navigable.isANavigableClass(className) || className === "_Geoserver";
+			return this.navigable.isANavigableClass(className) || className === CMDBuild.gis.constants.GEOSERVER_LAYER;
 		},
 		getNavigableNode : function(card) {
 			return this.navigable.getNavigableNode(card);
@@ -237,19 +237,15 @@
 			}
 		},
 		isGeoServerLayer : function(layer) {
-			return layer.masterTableName === "_Geoserver";
+			return layer.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER;
 		},
-		centerOnLayer : function(card, layers, index, callback, callbackScope) {
+		centerOnLayer : function(card, callback, callbackScope) {
 			var map = this.getMap();
-			if (index >= layers.length) {
-				callback.apply(callbackScope, [ undefined ])
-				return;
-			}
 			this.getPosition(card, function(center) {
 				if (center) {
 					callback.apply(callbackScope, [ center ])
 				} else {
-					this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
+					callback.apply(callbackScope, [ undefined ])
 				}
 			}, this);
 		},
@@ -285,17 +281,14 @@
 		centerOnCard : function(card, callback, callbackScope) {
 			var map = this.getMap();
 			var me = this;
-			this.getLayersForCard(card, function(layers) {
 				var mapPanel = me.getMapPanel();
-				me.centerOnLayer(card, layers, 0, function(center) {
+				me.centerOnLayer(card, function(center) {
 					if (center) {
 						me.configurationMap.center = center;
-						// me.changed();
 					}
 					mapPanel.center(me.configurationMap);
 					callback.apply(callbackScope, [ center ]);
 				}, this);
-			}, this);
 		},
 		removeAllGisLayers : function() {
 			var me = this;
