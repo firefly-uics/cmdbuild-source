@@ -23,7 +23,7 @@
 				THEMATIC_MIN_ZINDEX : 100000,
 				GEOSERVER_LAYER : "_Geoserver"
 			},
-			
+
 			navigationTree : {
 				limitSelection : 300
 			},
@@ -96,7 +96,8 @@
 				}) ]
 			});
 			this.geoExtension.setMap(this);
-			this.miniCardGridWindowController = Ext.create('CMDBuild.controller.management.classes.map.CMMiniCardGridWindowFeaturesController');
+			this.miniCardGridWindowController = Ext
+					.create('CMDBuild.controller.management.classes.map.CMMiniCardGridWindowFeaturesController');
 
 			this.callParent(arguments);
 		},
@@ -123,7 +124,7 @@
 				this.map = new ol.Map({
 					target : configuration.mapDivId,
 					renderer : 'canvas',
-					layers : [],// this.geoExtension.getBaseLayer() ],
+					layers : [],
 					view : this.view
 				});
 				me = this;
@@ -264,7 +265,14 @@
 		},
 		resetZoom : function() {
 			var configuration = this.interactionDocument.getConfigurationMap();
-			this.view.setZoom(configuration.zoom);
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var me = this;
+			this.interactionDocument.getLayersForCard(currentCard, function(layers) {
+				if (layers.length > 0 && layers[0].minZoom > 0) {
+					configuration.zoom = layers[0].minZoom
+				}
+				me.view.setZoom(configuration.zoom);
+			}) ;
 		},
 		getZoom : function() {
 			return this.view.getZoom();
@@ -338,7 +346,7 @@
 		 */
 		makeLayer : function(geoValues, withEditWindow) {
 			var layer;
-			if (geoValues.masterTableName === "_Geoserver") {
+			if (geoValues.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER) {
 				layer = Ext.create('CMDBuild.view.management.classes.map.geoextension.Layer', geoValues,
 						withEditWindow, this.interactionDocument);
 			} else {
@@ -347,9 +355,7 @@
 
 			}
 			var geoLayer = layer.getLayer();
-			// if (geoValues.type !== "SHAPE") {
 			this.map.addLayer(geoLayer);
-			// }
 			return geoLayer;
 		},
 
@@ -365,7 +371,7 @@
 			var timeoutId = undefined;
 			var map = this.getMap();
 			var me = this;
-			
+
 			map.on('pointerdown', function(event) {
 				clearTimeout(timeoutId);
 				startPixel = map.getEventPixel(event);
@@ -395,7 +401,6 @@
 			}
 			var map = this.getMap();
 			var me = this;
-			//var pixel = map.getEventPixel(event);
 			var features = [];
 			map.forEachFeatureAtPixel(event.pixel, function(feature) {
 				features.push(feature);
