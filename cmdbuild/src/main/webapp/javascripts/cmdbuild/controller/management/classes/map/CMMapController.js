@@ -152,7 +152,7 @@
 		callBackSetCard : function(card) {
 			this.mapPanel.getMap().changeFeatureOnLayers(card.cardId);
 			this.interactionDocument.setCurrentCard(card);
-			// this.interactionDocument.resetZoom();
+			this.interactionDocument.resetZoom();
 			this.interactionDocument.centerOnCard(card, this.callBackCenter, this);
 
 		},
