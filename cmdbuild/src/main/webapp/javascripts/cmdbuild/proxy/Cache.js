@@ -40,16 +40,7 @@
 				},
 				sorters: [
 					{ property: 'Description', direction: 'ASC' }
-				],
-				listeners: {
-					beforeload: function (store, operation, eOpts) {
-						var encodedExtraParams = Ext.encode(store.getProxy().extraParams);
-
-						return Ext.Array.every(['{client', '{cql', '{group', '{js', '{server', '{user', '{xa'], function (template, i, allTemplates) {
-							return encodedExtraParams.indexOf(template) < 0; // Stops loop at first template found
-						}, this);
-					}
-				}
+				]
 			});
 		},
 
@@ -111,16 +102,7 @@
 				},
 				sorters: [
 					{ property: 'Description', direction: 'ASC' }
-				],
-				listeners: {
-					beforeload: function (store, operation, eOpts) {
-						var encodedExtraParams = Ext.encode(store.getProxy().extraParams);
-
-						return Ext.Array.every(['{client', '{cql', '{group', '{js', '{server', '{user', '{xa'], function (template, i, allTemplates) {
-							return encodedExtraParams.indexOf(template) < 0; // Stops loop at first template found
-						}, this);
-					}
-				}
+				]
 			});
 
 			// Clear store filter property to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
