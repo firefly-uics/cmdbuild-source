@@ -83,7 +83,7 @@
 			return this.inEditing;
 		},
 		isANavigableClass : function(className) {
-			return this.navigable.isANavigableClass(className) || className === CMDBuild.gis.constants.GEOSERVER_LAYER;
+			return this.navigable.isANavigableClass(className) || className === CMDBuild.gis.constants.layers.GEOSERVER_LAYER;
 		},
 		getNavigableNode : function(card) {
 			return this.navigable.getNavigableNode(card);
@@ -238,6 +238,10 @@
 		},
 		isGeoServerLayer : function(layer) {
 			return layer.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER;
+		},
+		isGeoServerEnabled : function(layer) {
+			var configurationGeoserver = CMDBuild.configuration.gis.get("geoServer");
+			return (configurationGeoserver && configurationGeoserver.get("enabled"));
 		},
 		centerOnLayer : function(card, callback, callbackScope) {
 			var map = this.getMap();
