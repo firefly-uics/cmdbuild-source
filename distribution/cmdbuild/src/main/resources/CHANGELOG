@@ -15,7 +15,7 @@ FIXES
 
  * ReferenceFields store load errors while sending not resolved CQL strings
 
- * ActivitySubsetId workflow metadata doesn't typo
+ * ActivitySubsetId workflow metadata typo
 
 
 
