@@ -250,7 +250,7 @@
 			if (first >= arClasses.length) {
 				first = 0;
 			}
-			for (i = first; i < first + rows && i < arClasses.length; i++) {
+			for (i = first; (i < first + rows || rows === -1) && i < arClasses.length; i++) {
 				retCards.push(arClasses[i]);
 			}
 			return {
