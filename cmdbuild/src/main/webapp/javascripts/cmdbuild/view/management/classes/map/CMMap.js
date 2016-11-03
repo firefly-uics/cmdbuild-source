@@ -221,6 +221,10 @@
 										.isVisible(layer, currentClassName, currentCardId);
 								var hide = !this.interactionDocument.getLayerVisibility(layer);
 								var navigable = this.interactionDocument.isANavigableLayer(layer);
+								if (this.interactionDocument.isGeoServerLayer(layer) && ! this.interactionDocument.isGeoServerEnabled()) {
+									this.clearHideLayer(layer.masterTableName, layer.name);
+									continue;
+								}
 								if ((hide || !navigable) && visible) {
 									this.clearHideLayer(layer.masterTableName, layer.name);
 								} else if (visible && navigable) {
