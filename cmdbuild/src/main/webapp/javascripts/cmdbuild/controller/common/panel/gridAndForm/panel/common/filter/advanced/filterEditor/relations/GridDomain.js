@@ -261,7 +261,7 @@
 													})
 												);
 										}, this);
-_debug('records', records);
+
 									if (!Ext.isEmpty(records))
 										this.view.getStore().add(CMDBuild.core.Utils.objectArraySort(records, CMDBuild.core.constants.Proxy.DOMAIN_DESCRIPTION)); // Ascending items sort
 								}
