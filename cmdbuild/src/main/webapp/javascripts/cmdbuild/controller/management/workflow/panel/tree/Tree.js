@@ -589,25 +589,25 @@
 			/**
 			 * Select activity by metadata
 			 *
-			 * @param {String} medataValue
+			 * @param {String} metadataValue
 			 *
 			 * @returns {Void}
 			 *
 			 * @private
 			 */
-			selectByMetadata: function (medataValue) {
+			selectByMetadata: function (metadataValue) {
 				if (
-					Ext.isString(medataValue) && !Ext.isEmpty(medataValue)
+					Ext.isString(metadataValue) && !Ext.isEmpty(metadataValue)
 					&& !this.view.getSelectionModel().hasSelection()
 				) {
 					var nodeToSelect = this.cmfg('workflowTreeStoreGet').getRootNode().findChildBy(function (node) {
-						var nodeMetadata = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA);
-						var activitySubsetIdObject = Ext.Array.findBy(nodeMetadata, function (metadata, i, allMetadata) {
-							return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
-						}, this);
+						var nodeMetadata = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA),
+							activitySubsetIdObject = Ext.Array.findBy(nodeMetadata, function (metadata, i, allMetadata) {
+								return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
+							}, this);
 
 						if (Ext.isObject(activitySubsetIdObject) && !Ext.Object.isEmpty(activitySubsetIdObject))
-							return activitySubsetIdObject[CMDBuild.core.constants.Proxy.VALUE] == parameters.activitySubsetId;
+							return activitySubsetIdObject[CMDBuild.core.constants.Proxy.VALUE] == metadataValue;
 
 						return false;
 					}, this, true);
