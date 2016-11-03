@@ -13,6 +13,8 @@ FIXES
 
  * DataView SQL grid print button doesn't print report
 
+ * ReferenceFields store load errors while sending not resolved CQL strings
+
 
 
 
