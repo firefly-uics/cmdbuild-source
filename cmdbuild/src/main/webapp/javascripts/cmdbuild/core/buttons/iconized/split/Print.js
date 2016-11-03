@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		delegateEventPrefix: 'onButtonPrint',
+		delegateEventPrefix: 'onButton',
 
 		/**
 		 * @cfg {String}

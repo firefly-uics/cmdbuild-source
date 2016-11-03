@@ -11,6 +11,8 @@ FIXES
 
  * OpenReport widget error on RTF or ODT format print
 
+ * DataView SQL grid print button doesn't print report
+
 
 
 
