@@ -21,9 +21,9 @@
 		cmfgCatchedFunctions: [
 			'dataViewSqlBuildColumns',
 			'dataViewSqlBuildStore',
-			'onButtonPrintClick',
 			'onDataViewSqlGridSelect',
 			'onDataViewSqlPanelShow = onDataViewPanelShow',
+			'onDataViewSqlPrintButtonClick',
 			'onDataViewSqlViewSelected = onDataViewViewSelected'
 		],
 
@@ -114,26 +114,6 @@
 			return visibleColumns;
 		},
 
-		/**
-		 * @param {String} format
-		 */
-		onButtonPrintClick: function(format) {
-			if (!Ext.isEmpty(format)) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
-				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
-				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().getSorters());
-				params[CMDBuild.core.constants.Proxy.TYPE] = format;
-
-				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
-				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
-					format: format,
-					mode: 'dataViewSql',
-					params: params
-				});
-			}
-		},
-
 		onDataViewSqlGridSelect: function() {
 			var record = this.grid.getSelectionModel().getSelection()[0];
 
@@ -177,6 +157,26 @@
 				if (!this.grid.getSelectionModel().hasSelection())
 					this.grid.getSelectionModel().select(0, true);
 			}, this);
+		},
+
+		/**
+		 * @param {String} format
+		 */
+		onDataViewSqlPrintButtonClick: function(format) {
+			if (!Ext.isEmpty(format)) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
+
+				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
+					format: format,
+					mode: 'dataViewSql',
+					params: params
+				});
+			}
 		},
 
 		// _CMUIState methods
