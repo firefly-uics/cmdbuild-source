@@ -80,7 +80,7 @@
 				cardId : cardId,
 				className : className
 			});
-			if (!(oldCard && card) || (oldCard.className !== card.className)) {
+			if (card && (!(oldCard && card) || (oldCard.className !== card.className))) {
 				this.interactionDocument.resetZoom();
 			}
 			if (!this.mapPanel.cmVisible) {
