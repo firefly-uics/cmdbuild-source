@@ -6,15 +6,15 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.constants.Proxy.CLOUD_ADMIN, type: 'boolean', defaulValue: false },
+			{ name: CMDBuild.core.constants.Proxy.CLOUD_ADMIN, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS, type: 'auto', defaultValue: [] }, // {CMDBuild.model.core.configuration.builder.userInterface.DisabledCardTabs}
 			{ name: CMDBuild.core.constants.Proxy.DISABLED_MODULES, type: 'auto', defaultValue: [] }, // {CMDBuild.model.core.configuration.builder.userInterface.DisabledModules}
 			{ name: CMDBuild.core.constants.Proxy.DISABLED_PROCESS_TABS, type: 'auto', defaultValue: [] }, // {CMDBuild.model.core.configuration.builder.userInterface.DisabledProcessTabs}
-			{ name: CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE, type: 'boolean', defaulValue: false },
-			{ name: CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL, type: 'boolean', defaulValue: false },
-			{ name: CMDBuild.core.constants.Proxy.PROCESS_WIDGET_ALWAYS_ENABLED, type: 'boolean', defaulValue: false },
-			{ name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD, type: 'boolean', defaulValue: false },
-			{ name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS, type: 'boolean', defaulValue: false }
+			{ name: CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_WIDGET_ALWAYS_ENABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS, type: 'boolean' }
 		],
 
 		/**

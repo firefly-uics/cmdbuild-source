@@ -1,11 +1,6 @@
 CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 
-NEW FEATURES
-
- * Interfaces code improvements
-
-
 FIXES
 
  * Cannot see all cards using a default group between two groups when one has row privileges and the other no one
