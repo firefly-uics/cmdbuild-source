@@ -289,7 +289,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.management.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.classes.tabs.History.readClass({ // FIXME: waiting for refactor (server endpoint)
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
