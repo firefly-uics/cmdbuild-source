@@ -555,7 +555,7 @@
 				callback: function (records, operation, success) {
 					this.view.getSelectionModel().deselectAll();
 
-					this.selectByMetadata(activitySubsetId);
+					this.selectByMetadata(position, activitySubsetId);
 					this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
 				}
 			});
@@ -587,20 +587,22 @@
 
 		// Tree selection methods
 			/**
-			 * Select activity by metadata
+			 * Select position instance's activity by metadata
 			 *
+			 * @param {Number} position
 			 * @param {String} metadataValue
 			 *
 			 * @returns {Void}
 			 *
 			 * @private
 			 */
-			selectByMetadata: function (metadataValue) {
+			selectByMetadata: function (position, metadataValue) {
 				if (
 					Ext.isString(metadataValue) && !Ext.isEmpty(metadataValue)
+					&& Ext.isNumber(position) && !Ext.isEmpty(position)
 					&& !this.view.getSelectionModel().hasSelection()
 				) {
-					var nodeToSelect = this.cmfg('workflowTreeStoreGet').getRootNode().findChildBy(function (node) {
+					var nodeToSelect = this.cmfg('workflowTreeStoreGet').getRootNode().getChildAt(position).findChildBy(function (node) {
 						var nodeMetadata = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA),
 							activitySubsetIdObject = Ext.Array.findBy(nodeMetadata, function (metadata, i, allMetadata) {
 								return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
