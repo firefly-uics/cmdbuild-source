@@ -114,6 +114,7 @@
 					minValue: 1,
 					maxValue: 65535,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+					allowDecimals: false,
 					anchor: '100%'
 				});
 
