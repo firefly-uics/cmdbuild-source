@@ -230,6 +230,43 @@
 		},
 
 		/**
+		 * Evaluates if node is an activity or instance
+		 *
+		 * @param {CMDBuild.model.management.workflow.Node} node
+		 *
+		 * @returns {String}
+		 *
+		 * @private
+		 */
+		nodeTypeOf: function (node) {
+			// Error handling
+				if (!Ext.isObject(node) || Ext.Object.isEmpty(node))
+					return _error('nodeTypeOf(): unmanaged node parameter', this, node);
+			// END: Error handling
+
+			var activityId = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
+				cardId = node.get(CMDBuild.core.constants.Proxy.CARD_ID),
+				classId = node.get(CMDBuild.core.constants.Proxy.CLASS_ID);
+
+			if (
+				Ext.isString(activityId) && !Ext.isEmpty(activityId)
+				&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+			) {
+				return 'activity';
+			}
+
+			if ( // Instance node selected
+				Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+			) {
+				return 'instance';
+			}
+
+			return '';
+		},
+
+		/**
 		 * Manage previous selected activity
 		 *
 		 * @returns {Void}
@@ -258,7 +295,7 @@
 		},
 
 		/**
-		 * Auto-select expanded node
+		 * Auto-select expanded node (only for graphical behaviour)
 		 *
 		 * @param {CMDBuild.model.management.workflow.Node} record
 		 *
@@ -318,41 +355,34 @@
 					return _error('onWorkflowTreeRecordSelect(): unmanaged record parameter', this, record);
 			// END: Error handling
 
-			var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
-				cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
-				classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
-
 			CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manually manage LoadMask (show)
 
-			// Evaluates if is selected an activity or instance
-			if (
-				Ext.isString(activityId) && !Ext.isEmpty(activityId)
-				&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
-				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
-			) { // Activity or instance with only one activity selected
-				return this.cmfg('onWorkflowInstanceSelect', {
-					record: record,
-					loadMask: false,
-					scope: this,
-					callback: function () {
-						this.cmfg('onWorkflowActivitySelect', {
-							record: record,
-							loadMask: false,
-							scope: this,
-							callback: Ext.bind(this.recordSelectionCallback, this, [record])
-						});
-					}
-				});
-			} else if ( // Instance node selected
-				Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
-				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
-			) {
-				return this.cmfg('onWorkflowInstanceSelect', {
-					record: record,
-					loadMask: false,
-					scope: this,
-					callback: Ext.bind(this.recordSelectionCallback, this, [record])
-				});
+			switch (this.nodeTypeOf(record)) {
+				case 'activity':
+					return this.cmfg('onWorkflowInstanceSelect', {
+						record: record,
+						loadMask: false,
+						scope: this,
+						callback: function () {
+							this.cmfg('onWorkflowActivitySelect', {
+								record: record,
+								loadMask: false,
+								scope: this,
+								callback: Ext.bind(this.recordSelectionCallback, this, [record])
+							});
+						}
+					});
+
+				case 'instance':
+					return this.cmfg('onWorkflowInstanceSelect', {
+						record: record,
+						loadMask: false,
+						scope: this,
+						callback: Ext.bind(this.recordSelectionCallback, this, [record])
+					});
+
+				default:
+					return _error('onWorkflowTreeRecordSelect(): unmanaged record type', this, record);
 			}
 
 			return _error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
@@ -574,15 +604,31 @@
 					return _error('recordSelectionCallback(): unmanaged record parameter', this, record);
 			// END: Error handling
 
-			CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manually manage LoadMask (hide)
-
 			var instanceValues = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.VALUES);
 
-			// Complete record and children models with additional values (to correctly manage AdditionalActivityLabel metadata also if relative column is not displayed)
-			record.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
-			record.eachChild(function (childNode) {
-				childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
-			}, this);
+			switch (this.nodeTypeOf(record)) {
+				// Complete brother node models with additional values (to correctly manage AdditionalActivityLabel metadata also if relative column is not displayed)
+				case 'activity': {
+					var parent = record.parentNode;
+
+					parent.eachChild(function (childNode) {
+						childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+					}, this);
+				} break;
+
+				// Complete record and children models with additional values (to correctly manage AdditionalActivityLabel metadata also if relative column is not displayed)
+				case 'instance': {
+					record.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+					record.eachChild(function (childNode) {
+						childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+					}, this);
+				} break;
+
+				default:
+					return _error('recordSelectionCallback(): unmanaged record type', this, record);
+			}
+
+			CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manually manage LoadMask (hide)
 		},
 
 		// Tree selection methods
@@ -651,7 +697,7 @@
 			 */
 			selectFirst: function () {
 				if (!this.view.getSelectionModel().hasSelection())
-					this.view.getSelectionModel().select(0, true);
+					this.view.getSelectionModel().select(0);
 			},
 
 		// Store extra params methods
