@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers.translations.table;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -71,7 +73,8 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 	}
 
 	private Iterable<? extends CMClass> sortedClasses() {
-		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
+		final Iterable<? extends CMClass> classes = from(dataLogic.findClasses(activeOnly)) //
+				.filter(input -> input.getParent() != null);
 		final Iterable<? extends CMClass> sortedClasses = entryTypeOrdering.sortedCopy(classes);
 		return sortedClasses;
 	}
@@ -83,8 +86,8 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 			final ParentEntry jsonClass = new ParentEntry();
 			jsonClass.setName(className);
 			final Collection<EntryField> classFields = readFields(cmclass);
-			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(className, activeOnly,
-					NO_LIMIT_AND_OFFSET);
+			final Iterable<? extends CMAttribute> allAttributes =
+					dataLogic.getAttributes(className, activeOnly, NO_LIMIT_AND_OFFSET);
 			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
 			final Collection<TableEntry> jsonAttributes = serializeAttributes(sortedAttributes);
 			jsonClass.setChildren(jsonAttributes);

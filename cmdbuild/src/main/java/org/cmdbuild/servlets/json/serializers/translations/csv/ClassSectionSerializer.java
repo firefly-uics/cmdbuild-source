@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTES;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.NO_LIMIT_AND_OFFSET;
 
@@ -80,11 +81,11 @@ public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 					.build() //
 					.serialize());
 
-			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(aClass.getName(), activeOnly,
-					NO_LIMIT_AND_OFFSET);
+			final Iterable<? extends CMAttribute> allAttributes =
+					dataLogic.getAttributes(aClass.getName(), activeOnly, NO_LIMIT_AND_OFFSET);
 
-			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(
-					Iterables.filter(allAttributes, REMOVE_NOTES));
+			final Iterable<? extends CMAttribute> sortedAttributes =
+					sortAttributes(Iterables.filter(allAttributes, REMOVE_NOTES));
 			for (final CMAttribute anAttribute : sortedAttributes) {
 
 				records.addAll(AttributeSerializer.newInstance() //
@@ -99,7 +100,8 @@ public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 	}
 
 	private Iterable<? extends CMClass> sortedClasses() {
-		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
+		final Iterable<? extends CMClass> classes = from(dataLogic.findClasses(activeOnly)) //
+				.filter(input -> input.getParent() != null);
 		final Iterable<? extends CMClass> sortedClasses = entryTypeOrdering.sortedCopy(classes);
 		return sortedClasses;
 	}

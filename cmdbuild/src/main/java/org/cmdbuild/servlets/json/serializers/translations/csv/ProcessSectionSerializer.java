@@ -34,7 +34,7 @@ public class ProcessSectionSerializer extends ClassSectionSerializer {
 			@Override
 			public boolean apply(final CMClass input) {
 				final CMClass processBaseClass = dataLogic.findClass(Constants.BASE_PROCESS_CLASS_NAME);
-				return processBaseClass.isAncestorOf(input);
+				return processBaseClass.isAncestorOf(input) && !processBaseClass.equals(input);
 			}
 		});
 		if (activeOnly) {
