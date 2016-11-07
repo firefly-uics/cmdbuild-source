@@ -24,6 +24,9 @@ public class Setup {
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
 
+	@Autowired
+	private Properties properties;
+
 	@Bean
 	public SetupLogic setupLogic() {
 		return new SetupLogic(privilegedModulesHandler());
@@ -32,7 +35,7 @@ public class Setup {
 	@Bean
 	// TODO: check!
 	public SetupFacade setupFacade() {
-		return new DefaultSetupFacade(setupLogic(), languageStore);
+		return new DefaultSetupFacade(properties.cmdbuildProperties(), languageStore);
 	}
 
 	@Bean
