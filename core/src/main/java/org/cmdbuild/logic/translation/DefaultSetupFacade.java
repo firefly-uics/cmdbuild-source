@@ -5,24 +5,21 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.cmdbuild.auth.LanguageStore;
-import org.cmdbuild.logic.setup.SetupLogic;
+import org.cmdbuild.config.CmdbuildConfiguration;
 
 import com.google.common.collect.Lists;
 
 public class DefaultSetupFacade implements SetupFacade {
 
 	private static final String SEPARATOR = ",";
-	private static final String MODULE_NAME = "cmdbuild";
-	private static final Object ENABLED_LANGUAGES = "enabled_languages";
 
-	private final SetupLogic setupLogic;
+	private final CmdbuildConfiguration cmdbuildConfiguration;
 	private final LanguageStore languageStore;
 
-	public DefaultSetupFacade(final SetupLogic setupLogic, final LanguageStore languageStore) {
-		this.setupLogic = setupLogic;
+	public DefaultSetupFacade(final CmdbuildConfiguration cmdbuildConfiguration, final LanguageStore languageStore) {
+		this.cmdbuildConfiguration = cmdbuildConfiguration;
 		this.languageStore = languageStore;
 	}
 
@@ -38,12 +35,10 @@ public class DefaultSetupFacade implements SetupFacade {
 
 	@Override
 	public Iterable<String> getEnabledLanguages() {
-		Map<String, String> config;
 		String[] enabledLanguagesArray = null;
 		String enabledLanguagesConfiguration = EMPTY;
 		try {
-			config = setupLogic.load(MODULE_NAME);
-			enabledLanguagesConfiguration = config.get(ENABLED_LANGUAGES);
+			enabledLanguagesConfiguration = cmdbuildConfiguration.getEnabledLanguages();
 			enabledLanguagesConfiguration = enabledLanguagesConfiguration.replaceAll("\\s", "");
 		} catch (final Exception e) {
 			e.printStackTrace();
