@@ -108,6 +108,7 @@
 								name: CMDBuild.core.constants.Proxy.ROW_LIMIT,
 								fieldLabel: CMDBuild.Translation.rowLimit,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 0
 							},
 							{
@@ -115,6 +116,7 @@
 								name: CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT,
 								fieldLabel: CMDBuild.Translation.referenceComboLimit,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 0
 							},
 							{
@@ -122,6 +124,7 @@
 								name: CMDBuild.core.constants.Proxy.RELATION_LIMIT,
 								fieldLabel: CMDBuild.Translation.relationLimit,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 0
 							},
 							{
@@ -129,6 +132,7 @@
 								name: CMDBuild.core.constants.Proxy.CARD_FORM_RATIO,
 								fieldLabel: CMDBuild.Translation.cardPanelHeight,
 								allowBlank: false,
+								allowDecimals: false,
 								maxValue: 100,
 								minValue: 0
 							},
@@ -154,6 +158,7 @@
 								name: CMDBuild.core.constants.Proxy.SESSION_TIMEOUT,
 								fieldLabel: CMDBuild.Translation.sessionTimeout,
 								allowBlank: true,
+								allowDecimals: false,
 								minValue: 0
 							}
 						]
@@ -171,6 +176,7 @@
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageHeight,
+								allowDecimals: false,
 								maxValue: 100,
 								minValue: 0,
 								allowBlank: false
@@ -179,6 +185,7 @@
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageWidth,
+								allowDecimals: false,
 								maxValue: 100,
 								minValue: 0,
 								allowBlank: false
@@ -212,6 +219,7 @@
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT,
 								fieldLabel: CMDBuild.Translation.lockTimeout,
+								allowDecimals: false,
 								minValue: 0
 							}
 						]
