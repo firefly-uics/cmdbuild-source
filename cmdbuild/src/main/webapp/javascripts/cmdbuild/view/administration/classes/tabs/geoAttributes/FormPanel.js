@@ -143,6 +143,7 @@
 						fieldLabel: CMDBuild.Translation.pointRadius,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+						allowDecimals: false,
 						minValue: 0,
 						maxValue: 100,
 					}),
@@ -179,6 +180,7 @@
 						fieldLabel: CMDBuild.Translation.strokeWidth,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+						allowDecimals: false,
 						minValue: 0,
 						maxValue: 10
 					})

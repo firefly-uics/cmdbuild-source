@@ -137,6 +137,7 @@
 						fieldLabel: CMDBuild.Translation.timeInterval,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
 						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM,
+						allowDecimals: false,
 						minValue: 0
 					})
 				]

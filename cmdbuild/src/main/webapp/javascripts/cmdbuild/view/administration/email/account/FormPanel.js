@@ -196,6 +196,7 @@
 										fieldLabel: CMDBuild.Translation.smtpPort,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+										allowDecimals: false,
 										minValue: 0,
 										maxValue: 65535
 									}),
@@ -239,6 +240,7 @@
 										fieldLabel: CMDBuild.Translation.imapPort,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+										allowDecimals: false,
 										minValue: 0,
 										maxValue: 65535
 									}),

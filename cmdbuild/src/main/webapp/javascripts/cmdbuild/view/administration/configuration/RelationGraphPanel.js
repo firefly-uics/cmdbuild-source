@@ -88,6 +88,7 @@
 								name: CMDBuild.core.constants.Proxy.BASE_LEVEL,
 								fieldLabel: CMDBuild.Translation.baseLevel,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 1,
 								maxValue: 5
 							}),
@@ -95,6 +96,7 @@
 								name: CMDBuild.core.constants.Proxy.CLUSTERING_THRESHOLD,
 								fieldLabel: CMDBuild.Translation.thresholdForClusteringNodes,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 2
 							})
 						]
@@ -173,12 +175,14 @@
 								name: CMDBuild.core.constants.Proxy.STEP_RADIUS,
 								fieldLabel: CMDBuild.Translation.nodeDistance,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 1
 							}),
 							Ext.create('Ext.form.field.Number',{
 								name: CMDBuild.core.constants.Proxy.SPRITE_DIMENSION,
 								fieldLabel: CMDBuild.Translation.spriteDimension,
 								allowBlank: false,
+								allowDecimals: false,
 								minValue: 1,
 								maxValue: 1000
 							})

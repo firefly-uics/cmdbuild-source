@@ -162,6 +162,7 @@
 										labelAlign: 'left',
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION - 20,
 										maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM,
+										allowDecimals: false,
 										minValue: 0,
 										maxValue: 65535
 									}),
@@ -178,6 +179,7 @@
 										labelAlign: 'left',
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION - 20,
 										maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM,
+										allowDecimals: false,
 										minValue: 0
 									})
 								]

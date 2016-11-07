@@ -20,35 +20,8 @@
 		 */
 		autoAbort: false,
 
-		/**
-		 * Parameter to disable all messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableAllMessages: false,
-
-		/**
-		 * Parameter to disable only error messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableErrors: false,
-
-		/**
-		 * Parameter to disable only warning messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableWarnings: false,
-
 		listeners: {
 			beforerequest: function (conn, options, eOpts) {
-				Ext.applyIf(options, {
-					disableAllMessages: CMDBuild.core.interfaces.Ajax.disableAllMessages || CMDBuild.global.interfaces.Configurations.get('disableAllMessages'),
-					disableErrors: CMDBuild.core.interfaces.Ajax.disableErrors || CMDBuild.global.interfaces.Configurations.get('disableErrors'),
-					disableWarnings: CMDBuild.core.interfaces.Ajax.disableWarnings || CMDBuild.global.interfaces.Configurations.get('disableWarnings')
-				});
-
 				return CMDBuild.core.interfaces.Rest.trapCallbacks(conn, options);
 			}
 		},
@@ -71,11 +44,11 @@
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, false);
 
-			if (!options.disableAllMessages) {
-				if (!options.disableWarnings)
+			if (!CMDBuild.global.interfaces.Configurations.get('disableAllMessages')) {
+				if (!CMDBuild.global.interfaces.Configurations.get('disableWarnings'))
 					CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
 
-				if (!options.disableErrors)
+				if (!CMDBuild.global.interfaces.Configurations.get('disableErrors'))
 					CMDBuild.core.interfaces.messages.Error.display(decodedResponse, options);
 			}
 

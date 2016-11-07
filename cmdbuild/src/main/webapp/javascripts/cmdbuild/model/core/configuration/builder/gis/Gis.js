@@ -10,33 +10,15 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CARD_BROWSER_BY_DOMAIN_CONFIGURATION, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'float'},
+			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'float' },
+			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.GEO_SERVER, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Geoserver}
 			{ name: CMDBuild.core.constants.Proxy.GOOGLE, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Google}
 			{ name: CMDBuild.core.constants.Proxy.OSM, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Osm}
 			{ name: CMDBuild.core.constants.Proxy.YAHOO, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Yahoo}
-			{ name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL, type: 'int', defaultValue: 3 }
+			{ name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL, type: 'int' }
 		],
-
-		statics: {
-			/**
-			 * Static function to convert from legacy object to model's one
-			 *
-			 * @param {Object} data
-			 *
-			 * @returns {Object} data
-			 */
-			convertFromLegacy: function (data) {
-				data = data || {};
-				data[CMDBuild.core.constants.Proxy.CENTER_LATITUDE] = data['center.lat'];
-				data[CMDBuild.core.constants.Proxy.CENTER_LONGITUDE] = data['center.lon'];
-				data[CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL] = data['initialZoomLevel'];
-
-				return data;
-			}
-		},
 
 		/**
 		 * @param {Object} data
@@ -46,7 +28,11 @@
 		 * @override
 		 */
 		constructor: function (data) {
-			data = CMDBuild.model.core.configuration.builder.gis.Gis.convertFromLegacy(data);
+			data = Ext.isObject(data) ? data : {};
+			data[CMDBuild.core.constants.Proxy.CENTER_LATITUDE] = data['center.lat'];
+			data[CMDBuild.core.constants.Proxy.CENTER_LONGITUDE] = data['center.lon'];
+			data[CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL] = data['initialZoomLevel'];
+
 			data[CMDBuild.core.constants.Proxy.GEO_SERVER] = Ext.create('CMDBuild.model.core.configuration.builder.gis.Geoserver', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.GOOGLE] = Ext.create('CMDBuild.model.core.configuration.builder.gis.Google', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.OSM] = Ext.create('CMDBuild.model.core.configuration.builder.gis.Osm', Ext.clone(data));

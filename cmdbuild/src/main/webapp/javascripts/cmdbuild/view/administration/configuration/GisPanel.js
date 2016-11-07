@@ -92,6 +92,7 @@
 						xtype: 'numberfield',
 						name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL,
 						fieldLabel: CMDBuild.Translation.initialZoomLevel,
+						allowDecimals: false,
 						minValue: 0,
 						maxValue: 25
 					}

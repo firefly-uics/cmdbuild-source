@@ -5,6 +5,7 @@
 		disableCaching: false,
 		paths: {
 			'CMDBuild': './javascripts/cmdbuild',
+			'CMDBUild': './javascripts/cmdbuild', // FIXME: fix classes names typo
 			'Ext.ux': './javascripts/ext-' + getExtJsVersion({ release: false }) + '-ux',
 			'Logger': './javascripts/log4javascript-1.4.13'
 		}

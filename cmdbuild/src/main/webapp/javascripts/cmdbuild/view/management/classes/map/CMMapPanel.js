@@ -118,7 +118,7 @@
 				geoExtension : this.geoExtension,
 				interactionDocument : this.interactionDocument
 			});
-			_CMMap = this.mapPanel;
+			//_CMMap = this.mapPanel; can be forget?
 
 			var tabs = [];
 

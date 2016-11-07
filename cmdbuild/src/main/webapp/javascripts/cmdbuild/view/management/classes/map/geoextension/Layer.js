@@ -1,7 +1,6 @@
 (function() {
 	var WMS_IMAGE_FORMAT = 'image/png';
 	var GEOSERVER_SERVICE_TYPE = "wms";
-	var GEOSERVER = "_Geoserver";
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
 

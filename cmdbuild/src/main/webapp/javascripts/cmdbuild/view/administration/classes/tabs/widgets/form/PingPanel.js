@@ -47,6 +47,7 @@
 							fieldLabel: CMDBuild.Translation.numberOfPings,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+							allowDecimals: false,
 							maxValue: 10,
 							minValue: 1
 						}),
