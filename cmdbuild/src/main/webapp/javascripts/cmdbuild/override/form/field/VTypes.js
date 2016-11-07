@@ -195,22 +195,19 @@
 		// Numeric (numeric)
 			/**
 			 * @param {String} value
-			 * @param {Mixed} field
+			 * @param {Object} field
 			 *
 			 * @returns {Boolean}
 			 */
 			numeric: function (value, field) {
-				if (
-					Ext.isNumber(field.precision) && field.precision > 0
-					&& Ext.isNumber(field.scale) && field.scale > 0
-				) {
-					var precision = field.precision,
-						scale = field.scale || 0,
-						integerPartMaxlength = precision - scale;
-						splitByDecimalSeparator = value.split(field.decimalSeparator)
-						integerPart = Math.abs(splitByDecimalSeparator[0]),
-						decimalPart = splitByDecimalSeparator[1];
+				var precision = Ext.isNumber(field.precision) ? field.precision : 20,
+					scale = Ext.isNumber(field.scale) ? field.scale : 0,
+					integerPartMaxlength = precision - scale;
+					splitByDecimalSeparator = value.split(field.decimalSeparator)
+					integerPart = Math.abs(splitByDecimalSeparator[0]),
+					decimalPart = splitByDecimalSeparator[1];
 
+				if (scale > 0) {
 					if (!Ext.isEmpty(integerPart) && String(integerPart).length > integerPartMaxlength) {
 						this.numericText = Ext.String.format(CMDBuild.Translation.vtypeNumericMaxIntegerDigitsText, integerPartMaxlength);
 
@@ -228,11 +225,6 @@
 			},
 
 			/**
-			 * @type {String}
-			 */
-			numericText: CMDBuild.Translation.vtypeNumericInvalidCharacterText,
-
-			/**
 			 * @type {RegExp}
 			 */
 			numericMask: /^[0-9.-]/i,
@@ -241,6 +233,11 @@
 			 * @type {RegExp}
 			 */
 			numericRegExp: /^(([+,\-]?[0-9]+)|[0-9]*)(\.[0-9]+)?$/,
+
+			/**
+			 * @type {String}
+			 */
+			numericText: CMDBuild.Translation.vtypeNumericInvalidCharacterText,
 
 		// Password (password)
 			/**

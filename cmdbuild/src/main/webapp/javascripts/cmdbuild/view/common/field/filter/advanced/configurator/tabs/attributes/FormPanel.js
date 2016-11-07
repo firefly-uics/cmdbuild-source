@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes}
+		 * @cfg {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes}
 		 */
 		delegate: undefined,
 

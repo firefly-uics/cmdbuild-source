@@ -33,7 +33,7 @@
 		configuration: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes}
+		 * @property {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes}
 		 */
 		controllerTabAttributes: undefined,
 
@@ -64,7 +64,7 @@
 			this.callParent(arguments);
 
 			// Build sub-controllers
-			this.controllerTabAttributes = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes', { parentDelegate: this });
+			this.controllerTabAttributes = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes', { parentDelegate: this });
 			this.controllerTabFunctons = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Functions', { parentDelegate: this });
 			this.controllerTabRelations = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.Relations', { parentDelegate: this });
 

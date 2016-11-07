@@ -1,6 +1,6 @@
 {
 	"description": "Čeština",
-	"release": "2.4.0 (31.03.2016)",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Administrační modul",
 		"modClass": {
@@ -504,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Odeslání zprávy se nezdařilo. Možné příčiny: 1) Sljužby není nasazena; 2) URL a/nebo číslo portu koncového bodu (endpointu) není správné",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Ověřte správnost jmenného prostoru (namespace), názvu metody a parametrů webové služby "
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Tabulka mapování na úrovni odkazu musí být správně vyplněna",
 		"reportsAnalizeError": "Chyba při analýze sestavy",
 		"reportsImportError": "Chyba při importu sestavy",
 		"requiredFieldMessage": "Toto pole je povinné",
@@ -809,7 +808,6 @@
 	"createRestrictedDatabaseUser": "Vytvořit databázového uživatele s omezenými právy",
 	"createSharkSchema": "Vytvořit DB schéma pro procesní server Shark",
 	"credentials": "Přihlašovací údaje",
-	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV soubor",
 	"current": "Aktuální",
@@ -998,6 +996,7 @@
 	"initialLatitude": "Počáteční zeměpisná šířka",
 	"initialLongitude": "Počáteční zeměpisná délka",
 	"initialZoomLevel": "Počáteční měřítko",
+	"inputParameter": "Vstupní parametr",
 	"instance": "Název instance",
 	"instanceName": "Název instance",
 	"inverseDescription": "Popis cíl -> zdroj",
@@ -1116,6 +1115,7 @@
 	"open_3d_viewer": "Otevřít 3D prohlížeč",
 	"openRelationGraph": "Otevřít graf vazeb",
 	"operativeInstructions": "Nápověda ke kroku",
+	"or": "<em>or</em>",
 	"origin": "Zdrojová třída",
 	"otherOptions": "Další možnosti",
 	"others": "<em>Others</em>",
@@ -1235,7 +1235,6 @@
 	"set": "Nastavit",
 	"setAsDefault": "Nastavit jako implicitní",
 	"setFilter": "Nastavit filtr",
-	"setLater": "Vstupní parametr",
 	"settleTimeMs": "Časový limit pro napojení (ms)",
 	"setup": "Nastavení",
 	"showDetails": "Zobrazit detaily",

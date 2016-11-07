@@ -249,7 +249,7 @@
 			});
 
 			this.selectAtRuntimeCheck = Ext.create('Ext.form.field.Checkbox', {
-				boxLabel: CMDBuild.Translation.setLater,
+				boxLabel: CMDBuild.Translation.inputParameter,
 				handler: function(checkbox, setValueAtRuntime) {
 					// If the user choose to set the value at runtime, disable the valueFilds to say back to the user that the value fields are not considered
 					for (var i = 0; i <  me.valueFields.length; ++i) {

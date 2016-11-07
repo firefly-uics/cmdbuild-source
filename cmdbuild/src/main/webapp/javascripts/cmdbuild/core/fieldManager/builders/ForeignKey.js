@@ -23,6 +23,8 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Column or Object}
+		 *
+		 * @override
 		 */
 		buildColumn: function (parameters) {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
@@ -39,6 +41,8 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildEditor: function () {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
@@ -68,6 +72,8 @@
 
 		/**
 		 * @returns {Ext.form.field.Text}
+		 *
+		 * @override
 		 */
 		buildField: function () {
 			return Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
@@ -105,6 +111,8 @@
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @private
 		 */
 		buildFieldStore: function () {
 			var extraParams = {};
@@ -114,6 +122,50 @@
 				extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ CQL: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.FILTER) });
 
 			return CMDBuild.proxy.common.field.ForeignKey.getStore({ extraParams: extraParams });
+		},
+
+		/**
+		 * @returns {CMDBuild.core.fieldManager.fieldset.FilterConditionView}
+		 *
+		 * @override
+		 */
+		buildFilterCondition: function () {
+			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				fields: [
+					Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
+						attributeModel: this.cmfg('fieldManagerAttributeModelGet'),
+						displayField: 'Description',
+						plugins: Ext.create('CMDBuild.core.plugin.SetValueOnLoad'),
+						valueField: 'Id',
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
+
+						store: this.buildFieldStore(),
+						queryMode: 'local',
+
+						templateResolver: this.cmfg('fieldManagerTemplateResolverBuild', [CMDBuild.core.constants.Proxy.FILTER]),
+						resolveTemplates: this.cmfg('fieldManagerTemplateResolverResolveFunctionGet'),
+
+						listeners: {
+							scope: this,
+							added: function (field, container, pos, eOpts) {
+								field.resolveTemplates();
+							}
+						}
+					})
+				],
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				store: Ext.create('Ext.data.ArrayStore', {
+					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
+					data: [
+						['isnotnull', CMDBuild.Translation.isNotNull],
+						['isnull', CMDBuild.Translation.isNull],
+						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
+					],
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+					]
+				})
+			});
 		}
 	});
 
