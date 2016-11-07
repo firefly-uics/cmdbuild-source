@@ -5,6 +5,9 @@ NEW FEATURES
 
  * Relations Graph: print
 
+ * Better performances when importing CSV data
+
+
 FIXES
 
  * Gis: Fault on Geo Server Layers
