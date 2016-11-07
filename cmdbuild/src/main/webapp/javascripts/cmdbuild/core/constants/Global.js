@@ -10,6 +10,8 @@
 		 * @private
 		 */
 		config: {
+			classNameGroup: 'Role',
+			classNameUser: 'User',
 			errorMsgCss: 'cmdb-error-msg',
 			mandatoryLabelFlag: '* ',
 			rootNameClasses: 'Class',

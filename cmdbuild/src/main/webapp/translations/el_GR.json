@@ -1,6 +1,6 @@
 {
 	"description": "Ελληνικά",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Ενότητα Διαχείρισης",
 		"modClass": {
@@ -504,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "<em>Reference level mapping table must be correctly filled</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
@@ -809,7 +808,6 @@
 	"createRestrictedDatabaseUser": "<em>Create restricted database user</em>",
 	"createSharkSchema": "<em>Create a Shark schema</em>",
 	"credentials": "Διαπιστευτήρια",
-	"cronExpression": "<em>Cron expression</em>",
 	"csv": "<em>CSV</em>",
 	"csvFile": "αρχείο CSV",
 	"current": "<em>Current</em>",
@@ -998,6 +996,7 @@
 	"initialLatitude": "Αρχικό γεωγραφικό πλάτος",
 	"initialLongitude": "Αρχικό γεωγραφικό μήκος",
 	"initialZoomLevel": "Αρχικό επίπεδο zoom",
+	"inputParameter": "Παράμετρος εισαγωγής",
 	"instance": "<em>Instance</em>",
 	"instanceName": "Όνομα στιγμιοτύπου",
 	"inverseDescription": "<em>Inverse description</em>",
@@ -1116,6 +1115,7 @@
 	"open_3d_viewer": "Άνοιγμα 3D viewer",
 	"openRelationGraph": "<em>Open relation graph</em>",
 	"operativeInstructions": "<em>Operative instructions</em>",
+	"or": "<em>or</em>",
 	"origin": "Προέλευση",
 	"otherOptions": "<em>Other options</em>",
 	"others": "<em>Others</em>",
@@ -1235,7 +1235,6 @@
 	"set": "<em>Set</em>",
 	"setAsDefault": "Θέσε ως προεπιλογή",
 	"setFilter": "Θέσε Φίλτρο",
-	"setLater": "Παράμετρος εισαγωγής",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Εγκατάσταση",
 	"showDetails": "<em>Show details</em>",

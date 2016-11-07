@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

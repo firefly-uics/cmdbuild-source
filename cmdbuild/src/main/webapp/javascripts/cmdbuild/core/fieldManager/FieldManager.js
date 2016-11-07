@@ -58,7 +58,7 @@
 		 *
 		 * @private
 		 */
-		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'integer', 'text', 'time', 'timestamp', 'string'],
+		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'inet', 'integer', 'string', 'text', 'time', 'timestamp'],
 
 		// AttributeModel methods
 			/**
@@ -108,8 +108,6 @@
 			 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
 			 *
 			 * @returns {Void}
-			 *
-			 * @public
 			 */
 			attributeModelSet: function (attributeModel) {
 				if (
@@ -138,6 +136,7 @@
 				case 'decimal': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
 				case 'double': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
 				case 'foreignkey': return Ext.create('CMDBuild.core.fieldManager.builders.ForeignKey', { parentDelegate: this });
+				case 'inet': return Ext.create('CMDBuild.core.fieldManager.builders.inet.Inet', { parentDelegate: this });
 				case 'integer': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
 				case 'string': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
 				case 'text': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
@@ -156,8 +155,6 @@
 			 * @param {Boolean} parameters.withEditor
 			 *
 			 * @returns {Object}
-			 *
-			 * @public
 			 */
 			buildColumn: function (parameters) {
 				parameters = Ext.isObject(parameters) ? parameters : {};
@@ -169,11 +166,7 @@
 			/**
 			 * Builds Ext.form.field.* object
 			 *
-			 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
-			 *
 			 * @returns {Object}
-			 *
-			 * @public
 			 */
 			buildEditor: function () {
 				return this.buildAttributeController().buildEditor();
@@ -186,8 +179,6 @@
 			 * @param {Boolean} parameters.readOnly
 			 *
 			 * @returns {Object}
-			 *
-			 * @public
 			 */
 			buildField: function (parameters) {
 				parameters = Ext.isObject(parameters) ? parameters : {};
@@ -204,11 +195,18 @@
 			},
 
 			/**
+			 * Builds filter attribute tab condition Ext.form.FieldContainer
+			 *
+			 * @returns {CMDBuild.core.fieldManager.fieldset.FilterConditionView}
+			 */
+			buildFilterCondition: function () {
+				return this.buildAttributeController().buildFilterCondition();
+			},
+
+			/**
 			 * Builds Ext.data.Store field definition object
 			 *
 			 * @returns {Object}
-			 *
-			 * @public
 			 */
 			buildStoreField: function () {
 				return this.buildAttributeController().buildStoreField();
@@ -220,8 +218,6 @@
 		 * @param {String} attributeType
 		 *
 		 * @returns {Boolean}
-		 *
-		 * @public
 		 */
 		isAttributeManaged: function (attributeType) {
 			attributeType = attributeType.toLowerCase();

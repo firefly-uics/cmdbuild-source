@@ -318,17 +318,18 @@
 				withoutGroup = [];
 
 			Ext.Array.forEach(attributes, function (attribute, i, allAttributes) {
-				if (
-					!Ext.isEmpty(attribute)
-					&& !Ext.Array.contains(attributesNamesToFilter, attribute[CMDBuild.core.constants.Proxy.NAME])
-				) {
-					if (Ext.isEmpty(attribute[CMDBuild.core.constants.Proxy.GROUP])) {
-						withoutGroup.push(attribute);
-					} else {
-						if (Ext.isEmpty(groups[attribute[CMDBuild.core.constants.Proxy.GROUP]]))
-							groups[attribute[CMDBuild.core.constants.Proxy.GROUP]] = [];
+				if (Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)) {
+					var attributeData = Ext.isFunction(attribute.getData) ? attribute.getData() : attribute; // Model and simple object support
 
-						groups[attribute[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+					if (!Ext.Array.contains(attributesNamesToFilter, attributeData[CMDBuild.core.constants.Proxy.NAME])) {
+						if (Ext.isEmpty(attributeData[CMDBuild.core.constants.Proxy.GROUP])) {
+							withoutGroup.push(attribute);
+						} else {
+							if (Ext.isEmpty(groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]]))
+								groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]] = [];
+
+							groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+						}
 					}
 				}
 			}, this);

@@ -1,6 +1,6 @@
 {
 	"description": "Português Portugal",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Módulo de Administração",
 		"modClass": {
@@ -504,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Falha no envio da mensagem. Possíveis causas: 1) O serviço não foi implementado; 2) A URL e/ou o número da porta do endpoint não está correta",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Confira se o nome do serviço, o nome do método e os parâmetros do serviço Web estão corretos"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Tabela de mapeamento de referências deve ser correctamente preenchida",
 		"reportsAnalizeError": "Erro ao analisar relatório",
 		"reportsImportError": "Erro ao importar relatório",
 		"requiredFieldMessage": "Este campo é obrigatório",
@@ -809,7 +808,6 @@
 	"createRestrictedDatabaseUser": "Criar utilizador da base de dados restrito",
 	"createSharkSchema": "Crair schema Shark",
 	"credentials": "Credenciais",
-	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "Ficheiro CSV",
 	"current": "Atual",
@@ -998,6 +996,7 @@
 	"initialLatitude": "Latitude inicial",
 	"initialLongitude": "Longitude inicial",
 	"initialZoomLevel": "Nível de zoom inicial",
+	"inputParameter": "Parâmetro de entrada",
 	"instance": "Instância",
 	"instanceName": "Nome da instância",
 	"inverseDescription": "Descrição inversa",
@@ -1116,6 +1115,7 @@
 	"open_3d_viewer": "Abrir visualizador 3D",
 	"openRelationGraph": "Abrir grafo de relacionamentos",
 	"operativeInstructions": "Instrução operatório",
+	"or": "<em>or</em>",
 	"origin": "Origem",
 	"otherOptions": "Outras opções",
 	"others": "<em>Others</em>",
@@ -1235,7 +1235,6 @@
 	"set": "Configurado",
 	"setAsDefault": "Selecionar como padrão",
 	"setFilter": "Selecionar filtro",
-	"setLater": "Parâmetro de entrada",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Opções gerais",
 	"showDetails": "Mostrar detalhes",

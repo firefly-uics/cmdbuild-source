@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes', {
+	Ext.define('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
@@ -18,22 +18,22 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupRemove',
+			'fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupReset = fieldFilterAdvancedConfiguratorReset',
 			'fieldFilterAdvancedConfiguratorConfigurationAttributesEntryTypeSelect',
 			'fieldFilterAdvancedConfiguratorConfigurationAttributesValueGet',
 			'fieldFilterAdvancedConfiguratorConfigurationAttributesValueSet',
-			'filterConditionsGroupsRemove = fieldFilterAdvancedConfiguratorConfigurationAttributesFieldSetEmptied', // FIXME: waiting implementation of new field manager
-			'filterConditionsGroupsReset = fieldFilterAdvancedConfiguratorReset',
 			'onFieldFilterAdvancedConfiguratorConfigurationAttributesAddButtonSelect'
 		],
 
 		/**
-		 * Filter conditions buffer grouped by attribute name
+		 * Condition groups controllers
 		 *
 		 * @property {Object}
 		 *
 		 * @private
 		 */
-		filterConditions: {},
+		controllersConditionGroup: {},
 
 		/**
 		 * @property {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FormPanel}
@@ -45,10 +45,7 @@
 		 *
 		 * @private
 		 */
-		selectedEntityAttributes: {
-			objectsArray: [],
-			sortedByName: {}
-		},
+		selectedEntityAttributes: {},
 
 		/**
 		 * @property {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.AttributesView}
@@ -87,9 +84,11 @@
 				Ext.Object.each(groupedAttributes, function (group, attributes, myself) {
 					var groupItems = [];
 
+					CMDBuild.core.Utils.objectArraySort(attributes, CMDBuild.core.constants.Proxy.DESCRIPTION); // Sort groups items
+
 					Ext.Array.forEach(attributes, function (attribute, i, allAttributes) {
 						groupItems.push({
-							text: attribute[CMDBuild.core.constants.Proxy.DESCRIPTION],
+							text: attribute.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 							attribute: attribute,
 							scope: this,
 
@@ -104,6 +103,8 @@
 						menu: groupItems
 					});
 				}, this);
+
+				CMDBuild.core.Utils.objectArraySort(buttonGroups, CMDBuild.core.constants.Proxy.TEXT); // Sort groups
 
 				// If no groups display just attributes
 				buttonGroups = (Ext.Object.getKeys(groupedAttributes).length == 1) ? buttonGroups[0].menu : buttonGroups;
@@ -124,6 +125,115 @@
 			},
 
 		/**
+		 * @param {CMDBuild.model.common.field.filter.advanced.configurator.tabs.attributes.Attribute} attribute
+		 * @param {Object} value
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		controllersConditionAdd: function (attribute, value) {
+			if (Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)) {
+				this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupAdd(attribute);
+
+				if (this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists(attribute.get(CMDBuild.core.constants.Proxy.NAME))) {
+					var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+					fieldManager.attributeModelSet(attribute);
+
+					var condition = fieldManager.buildFilterCondition(),
+						conditionGroup = this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupGet(
+							attribute.get(CMDBuild.core.constants.Proxy.NAME)
+						);
+
+					condition.setValue(value);
+
+					conditionGroup.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionAdd', condition);
+				}
+			}
+		},
+
+		// ControllersConditionGroup manage methods
+			/**
+			 * @param {CMDBuild.model.common.field.filter.advanced.configurator.tabs.attributes.Attribute} attribute
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupAdd: function (attribute) {
+				if (
+					Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)
+					&& !this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists(attribute.get(CMDBuild.core.constants.Proxy.NAME))
+				) {
+					this.controllersConditionGroup[attribute.get(CMDBuild.core.constants.Proxy.NAME)] = Ext.create(
+						'CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.FieldsetCondition',
+						{
+							parentDelegate: this,
+							attribute: attribute
+						}
+					);
+
+					this.form.add(this.controllersConditionGroup[attribute.get(CMDBuild.core.constants.Proxy.NAME)].getView());
+				}
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists: function (name) {
+				return !Ext.isEmpty(name) && !Ext.isEmpty(this.controllersConditionGroup[name]);
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns
+			 * 		{CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.FieldsetCondition} if group not empty (single group)
+			 * 		{Object} if name is empty (all groups)
+			 * 		{null} if group is empty
+			 *
+			 * @private
+			 *
+			 * TODO: simpler implementation
+			 */
+			fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupGet: function (name) {
+				if (!Ext.isEmpty(name))
+					if (this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists(name)) {
+						return this.controllersConditionGroup[name];
+					} else {
+						return null;
+					}
+
+				return this.controllersConditionGroup;
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Void}
+			 */
+			fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupRemove: function (name) {
+				if (this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists(name)) {
+					this.form.remove(this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupGet(name).getView());
+
+					delete this.controllersConditionGroup[name];
+				}
+			},
+
+			/**
+			 * @returns {Void}
+			 */
+			fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupReset: function () {
+				this.controllersConditionGroup = {};
+
+				this.form.removeAll();
+			},
+
+		/**
 		 * Recursive method to decode filter object and launch creation of form items
 		 *
 		 * @param {Object} filterConfigurationObject
@@ -141,18 +251,22 @@
 						return this.decodeFilterConfigurationObject(objectProperty);
 					}, this);
 				} else if (
-					Ext.isObject(filterConfigurationAttribute)
+					Ext.isObject(filterConfigurationAttribute) && !Ext.Object.isEmpty(filterConfigurationAttribute)
 					&& !Ext.isEmpty(filterConfigurationAttribute[CMDBuild.core.constants.Proxy.SIMPLE])
 					&& !Ext.isEmpty(filterConfigurationAttribute[CMDBuild.core.constants.Proxy.SIMPLE][CMDBuild.core.constants.Proxy.ATTRIBUTE])
 				) {
-					var attribute = this.selectedEntityAttributesFindByName(
+					var attribute = this.selectedEntityAttributesGetByName(
 						filterConfigurationAttribute[CMDBuild.core.constants.Proxy.SIMPLE][CMDBuild.core.constants.Proxy.ATTRIBUTE]
 					);
 
 					if (!Ext.isEmpty(attribute)) {
-						return this.filterConditionsConditionAdd(attribute, filterConfigurationAttribute[CMDBuild.core.constants.Proxy.SIMPLE]);
+						return this.controllersConditionAdd(attribute, filterConfigurationAttribute);
 					} else {
-						return _error('decodeFilterConfigurationObject(): empty attribute name', this, attribute);
+						return _error(
+							'decodeFilterConfigurationObject(): attribute not found',
+							this,
+							filterConfigurationAttribute[CMDBuild.core.constants.Proxy.SIMPLE][CMDBuild.core.constants.Proxy.ATTRIBUTE]
+						);
 					}
 				}
 			}
@@ -181,7 +295,7 @@
 					return _error('fieldFilterAdvancedConfiguratorConfigurationAttributesEntryTypeSelect(): unmanaged className property', this, className);
 			// END: Error handling
 
-			this.filterConditionsGroupsReset();
+			this.cmfg('fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupReset');
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -215,24 +329,20 @@
 		 * @returns {Object}
 		 */
 		fieldFilterAdvancedConfiguratorConfigurationAttributesValueGet: function () {
-			var out = {};
+			var data = [];
 
-			if (!this.filterConditionsIsEmpty()) {
-				var data = [];
+			Ext.Object.each(this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupGet(), function (name, controller, myself) {
+				if (Ext.isObject(controller) && !Ext.Object.isEmpty(controller))
+					data.push(controller.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet'));
+			}, this);
 
-				Ext.Object.each(this.filterConditionsGroupGet(), function (attributeName, fieldset, myself) {
-					if (!Ext.isEmpty(fieldset) && Ext.isFunction(fieldset.getData))
-						data.push(fieldset.getData());
-				}, this);
+			if (data.length == 1)
+				return data[0];
 
-				if (data.length == 1) {
-					out = data[0];
-				} else if (data.length > 1) {
-					out[CMDBuild.core.constants.Proxy.AND] = data;
-				}
-			}
+			if (data.length > 1)
+				return { and: data };
 
-			return out;
+			return {};
 		},
 
 		/**
@@ -241,7 +351,7 @@
 		 * @returns {Void}
 		 */
 		fieldFilterAdvancedConfiguratorConfigurationAttributesValueSet: function (filter) {
-			this.filterConditionsGroupsReset();
+			this.cmfg('fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupReset');
 
 			if (
 				Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
@@ -251,154 +361,37 @@
 			}
 		},
 
-		// FilterConditions manage methods
-			/**
-			 * @param {Object} attribute
-			 * @param {Object} data
-			 *
-			 * @returns {Void}
-			 *
-			 * @private
-			 */
-			filterConditionsConditionAdd: function (attribute, data) {
-				if (Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)) {
-					this.filterConditionsGroupAdd(attribute);
-
-					if (!this.filterConditionsIsGroupEmpty(attribute[CMDBuild.core.constants.Proxy.NAME])) {
-						var filterCondition = Ext.create('CMDBuild.Management.FieldManager.getFieldSetForFilter', attribute); // FIXME: implementation with new field manager
-
-						this.filterConditionsGroupGet(attribute[CMDBuild.core.constants.Proxy.NAME]).addCondition(filterCondition);
-						filterCondition.setData(data);
-
-						this.view.doLayout(); // Fixes a bug in FieldManager creation methods
-					}
-				}
-			},
-
-			/**
-			 * @param {Object} attribute
-			 *
-			 * @returns {Void}
-			 *
-			 * @private
-			 */
-			filterConditionsGroupAdd: function (attribute) {
-				if (
-					Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)
-					&& this.filterConditionsIsGroupEmpty(attribute[CMDBuild.core.constants.Proxy.NAME])
-				) {
-					this.form.add(
-						this.filterConditions[attribute[CMDBuild.core.constants.Proxy.NAME]] = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FieldSet', {
-							delegate: this,
-							attributeName: attribute[CMDBuild.core.constants.Proxy.NAME],
-							title: attribute[CMDBuild.core.constants.Proxy.DESCRIPTION]
-						})
-					);
-				}
-			},
-
-			/**
-			 * @param {String} attributeName
-			 *
-			 * @returns
-			 * 		{CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FieldSet} if group not empty (single group)
-			 * 		{Object} if attributeName is empty (all groups)
-			 * 		{null} if group is empty
-			 *
-			 * @private
-			 */
-			filterConditionsGroupGet: function (attributeName) {
-				if (!Ext.isEmpty(attributeName))
-					if (this.filterConditionsIsGroupEmpty(attributeName)) {
-						return null;
-					} else {
-						return this.filterConditions[attributeName];
-					}
-
-				return this.filterConditions;
-			},
-
-			/**
-			 * @param {String} attributeName
-			 *
-			 * @returns {Boolean}
-			 *
-			 * @private
-			 */
-			filterConditionsIsEmpty: function (attributeName) {
-				return Ext.Object.isEmpty(this.filterConditions);
-			},
-
-			/**
-			 * @param {String} attributeName
-			 *
-			 * @returns {Boolean}
-			 *
-			 * @private
-			 */
-			filterConditionsIsGroupEmpty: function (attributeName) {
-				return !Ext.isEmpty(attributeName) && Ext.isEmpty(this.filterConditions[attributeName]);
-			},
-
-			/**
-			 * @param {String} attributeName
-			 *
-			 * @returns {Void}
-			 *
-			 * @private
-			 */
-			filterConditionsGroupsRemove: function (attributeName) {
-				if (!this.filterConditionsIsGroupEmpty(attributeName)) {
-					this.form.remove(this.filterConditionsGroupGet(attributeName));
-
-					delete this.filterConditions[attributeName];
-				}
-			},
-
-			/**
-			 * @returns {Void}
-			 *
-			 * @private
-			 */
-			filterConditionsGroupsReset: function () {
-				this.filterConditions = {};
-
-				this.form.removeAll();
-			},
-
 		/**
 		 * @param {Object} attribute
 		 *
 		 * @returns {Void}
 		 */
 		onFieldFilterAdvancedConfiguratorConfigurationAttributesAddButtonSelect: function (attribute) {
-			this.filterConditionsConditionAdd(attribute);
-
-			this.form.doLayout(); // Fixes FieldManager implementation problems
+			this.controllersConditionAdd(attribute);
 		},
 
 		// SelectedEntityAttributes manage methods
-			/**
-			 * @param {String} name
-			 *
-			 * @returns {Object or null}
-			 *
-			 * @private
-			 */
-			selectedEntityAttributesFindByName: function (name) {
-				if (Ext.isString(name) && !Ext.isEmpty(name))
-					return this.selectedEntityAttributes.sortedByName[name];
-
-				return null;
-			},
-
 			/**
 			 * @returns {Array}
 			 *
 			 * @private
 			 */
 			selectedEntityAttributesGet: function () {
-				return this.selectedEntityAttributes.objectsArray;
+				return Ext.Object.getValues(this.selectedEntityAttributes);
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {CMDBuild.model.common.field.filter.advanced.configurator.tabs.attributes.Attribute or null}
+			 *
+			 * @private
+			 */
+			selectedEntityAttributesGetByName: function (name) {
+				if (Ext.isString(name) && !Ext.isEmpty(name))
+					return this.selectedEntityAttributes[name];
+
+				return null;
 			},
 
 			/**
@@ -409,19 +402,16 @@
 			 * @private
 			 */
 			selectedEntityAttributesSet: function (attributes) {
-				this.selectedEntityAttributes = { // Buffer variable init
-					objectsArray: [],
-					sortedByName: {}
-				};
+				this.selectedEntityAttributes = {};
 
-				if (Ext.isArray(attributes) && !Ext.isEmpty(attributes)) {
-					this.selectedEntityAttributes.objectsArray = attributes;
-
+				if (Ext.isArray(attributes) && !Ext.isEmpty(attributes))
 					Ext.Array.forEach(attributes, function (attributeObject, i, allAttributeObjects) {
 						if (Ext.isObject(attributeObject) && !Ext.Object.isEmpty(attributeObject))
-							this.selectedEntityAttributes.sortedByName[attributeObject[CMDBuild.core.constants.Proxy.NAME]] = attributeObject;
+							this.selectedEntityAttributes[attributeObject[CMDBuild.core.constants.Proxy.NAME]] = Ext.create(
+								'CMDBuild.model.common.field.filter.advanced.configurator.tabs.attributes.Attribute',
+								attributeObject
+							);
 					}, this);
-				}
 			}
 	});
 

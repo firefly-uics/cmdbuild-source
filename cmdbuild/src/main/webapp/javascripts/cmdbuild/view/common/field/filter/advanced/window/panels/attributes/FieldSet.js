@@ -3,7 +3,7 @@
 	/**
 	 * Class with adapted functions to be compatible with old FieldManager
 	 *
-	 * @deprecated CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FieldSet
+	 * @deprecated
 	 *
 	 * @adapter
 	 */

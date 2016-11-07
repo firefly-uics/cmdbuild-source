@@ -57,9 +57,7 @@
 		fieldRadioBase: undefined,
 
 		border: false,
-		fieldLabel: CMDBuild.Translation.cronExpression,
 		frame: false,
-		hideLabel: true,
 
 		layout: {
 			type: 'vbox',

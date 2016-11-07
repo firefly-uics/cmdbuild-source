@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes
+	 * @deprecated CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.Attributes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

@@ -2,9 +2,9 @@
 
 	/**
 	 * Specific field attributes:
-	 * 		- {String} editorType: PLAIN or HTML
+	 * 		- {String} ipType: ipv4 or ipv6
 	 */
-	Ext.define('CMDBuild.core.fieldManager.builders.text.Text', {
+	Ext.define('CMDBuild.core.fieldManager.builders.inet.Inet', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -67,13 +67,13 @@
 		 * @private
 		 */
 		buildSubFieldClass: function () {
-			switch (this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {
-				case 'HTML':
-					return Ext.create('CMDBuild.core.fieldManager.builders.text.HtmlEditor', { parentDelegate: this });
+			switch (this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.IP_TYPE)) {
+				case 'ipv6':
+					return Ext.create('CMDBuild.core.fieldManager.builders.inet.V6', { parentDelegate: this });
 
-				case 'PLAIN':
+				case 'ipv4':
 				default:
-					return Ext.create('CMDBuild.core.fieldManager.builders.text.Plain', { parentDelegate: this });
+					return Ext.create('CMDBuild.core.fieldManager.builders.inet.V4', { parentDelegate: this });
 			}
 		}
 	});

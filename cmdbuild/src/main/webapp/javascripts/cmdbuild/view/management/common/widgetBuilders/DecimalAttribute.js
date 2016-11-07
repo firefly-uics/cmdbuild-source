@@ -31,6 +31,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = functio
 		labelAlign: "right",
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description || attribute.name,
+		decimalPrecision: 20,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		width: CMDBuild.core.constants.FieldWidths.LABEL + this.MAXWIDTH,

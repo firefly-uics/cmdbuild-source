@@ -4,7 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes}
+		 * @cfg {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Attributes}
 		 */
 		delegate: undefined,
 

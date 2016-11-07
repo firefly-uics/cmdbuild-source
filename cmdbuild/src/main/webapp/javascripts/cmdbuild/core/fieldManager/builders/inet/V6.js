@@ -1,44 +1,36 @@
 (function () {
 
-	Ext.define('CMDBuild.core.fieldManager.builders.Time', {
+	Ext.define('CMDBuild.core.fieldManager.builders.inet.V6', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
 		requires: [
-			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**
-		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
+		 * @cfg {CMDBuild.core.fieldManager.builders.inet.Inet}
 		 */
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Number}
-		 */
-		headerWidth: 60,
-
-		/**
 		 * @param {Object} parameters
 		 *
-		 * @returns {Ext.grid.column.Date or Object}
+		 * @returns {Ext.grid.column.Column or Object}
 		 *
 		 * @override
 		 */
 		buildColumn: function (parameters) {
-			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Date', {
+			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				editor: parameters.withEditor ? this.buildEditor() : null,
-				format: CMDBuild.core.configurations.DataFormat.getTime(),
 				hidden: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
-				hideTrigger: true, // Hides date picker
 				renderer: this.rendererColumn,
 				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
-				width: this.headerWidth
+				width: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME).length * 9
 			});
 		},
 
@@ -49,38 +41,37 @@
 		 */
 		buildEditor: function () {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : {
-				xtype: 'datefield',
+				xtype: 'textfield',
 				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				format: CMDBuild.core.configurations.DataFormat.getTime(),
+				hideTrigger: true, // Hides selecting arrows
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				vtype: 'time'
+				vtype: 'ipv6'
 			};
 		},
 
 		/**
-		 * @returns {Ext.form.field.Date}
+		 * @returns {Ext.form.field.Text}
 		 *
 		 * @override
 		 */
 		buildField: function () {
-			return Ext.create('Ext.form.field.Date', {
+			return Ext.create('Ext.form.field.Text', {
 				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(
 					this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 					|| this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
-				format: CMDBuild.core.configurations.DataFormat.getTime(),
 				hidden: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
-				hideTrigger: true, // Hides date picker
+				hideTrigger: true, // Hides selecting arrows
 				labelAlign: 'right',
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				vtype: 'time'
+				vtype: 'ipv6'
 			});
 		},
 
@@ -92,17 +83,15 @@
 		buildFilterCondition: function () {
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
 				fields: [
-					Ext.create('Ext.form.field.Date', {
-						format: CMDBuild.core.configurations.DataFormat.getTime(),
-						hideTrigger: true, // Hides date picker
-						width: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
-						vtype: 'time'
+					Ext.create('Ext.form.field.Text', {
+						hideTrigger: true, // Hides selecting arrows
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
+						vtype: 'ipv6'
 					}),
-					Ext.create('Ext.form.field.Date', {
-						format: CMDBuild.core.configurations.DataFormat.getTime(),
-						hideTrigger: true, // Hides date picker
-						width: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
-						vtype: 'time'
+					Ext.create('Ext.form.field.Text', {
+						hideTrigger: true, // Hides selecting arrows
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
+						vtype: 'ipv6'
 					})
 				],
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
@@ -110,12 +99,12 @@
 					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
 					data: [
 						['isnotnull', CMDBuild.Translation.isNotNull],
-						['isnull', CMDBuild.Translation.isNull],
-						['notequal', CMDBuild.Translation.different],
-						[CMDBuild.core.constants.Proxy.BETWEEN, CMDBuild.Translation.between],
-						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals],
-						[CMDBuild.core.constants.Proxy.GREATER, CMDBuild.Translation.greaterThan],
-						[CMDBuild.core.constants.Proxy.LESS, CMDBuild.Translation.lessThan]
+						['net_contained', CMDBuild.Translation.contained],
+						['net_containedorequal', CMDBuild.Translation.containedorequal],
+						['net_contains', CMDBuild.Translation.contains],
+						['net_containsorequal', CMDBuild.Translation.containsorequal],
+						['net_relation', CMDBuild.Translation.relation],
+						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
 					],
 					sorters: [
 						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
@@ -130,31 +119,7 @@
 		 * @override
 		 */
 		buildStoreField: function () {
-			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: CMDBuild.core.configurations.DataFormat.getTime() };
-		},
-
-		/**
-		 * Override to implement date formatter method
-		 *
-		 * @param {Object} value
-		 * @param {Object} metadata
-		 * @param {Ext.data.Model} record
-		 * @param {Number} rowIndex
-		 * @param {Number} colIndex
-		 * @param {Ext.data.Store} store
-		 * @param {Ext.view.View} view
-		 *
-		 * @returns {Void}
-		 *
-		 * @override
-		 */
-		rendererColumn: function (value, metadata, record, rowIndex, colIndex, store, view) {
-			this.callParent(arguments);
-
-			if (Ext.isDate(value))
-				return Ext.util.Format.date(value, CMDBuild.core.configurations.DataFormat.getTime());
-
-			return value;
+			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'string' };
 		}
 	});
 
