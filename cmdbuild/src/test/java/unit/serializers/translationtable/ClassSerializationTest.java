@@ -32,10 +32,21 @@ public class ClassSerializationTest {
 
 	@Before
 	public void setup() {
-		doReturn("a").when(class1).getName();
-		doReturn("b").when(class2).getName();
-		doReturn("B").when(class1).getDescription();
-		doReturn("A").when(class2).getDescription();
+		CMClass parent = mock(CMClass.class);
+
+		doReturn("a") //
+				.when(class1).getName();
+		doReturn("B") //
+				.when(class1).getDescription();
+		doReturn(parent) //
+				.when(class1).getParent();
+
+		doReturn("b") //
+				.when(class2).getName();
+		doReturn("A") //
+				.when(class2).getDescription();
+		doReturn(parent) //
+				.when(class2).getParent();
 	}
 
 	@Test
