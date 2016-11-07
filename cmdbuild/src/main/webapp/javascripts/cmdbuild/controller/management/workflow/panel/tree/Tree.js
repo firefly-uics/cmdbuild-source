@@ -611,9 +611,10 @@
 				case 'activity': {
 					var parent = record.parentNode;
 
-					parent.eachChild(function (childNode) {
-						childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
-					}, this);
+					if (!parent.isRoot())
+						parent.eachChild(function (childNode) {
+							childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+						}, this);
 				} break;
 
 				// Complete record and children models with additional values (to correctly manage AdditionalActivityLabel metadata also if relative column is not displayed)
