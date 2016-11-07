@@ -10,27 +10,6 @@
 		override: 'Ext.data.Store',
 
 		/**
-		 * Parameter to disable all messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableAllMessages: false,
-
-		/**
-		 * Parameter to disable only error messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableErrors: false,
-
-		/**
-		 * Parameter to disable only warning messages display
-		 *
-		 * @property {Boolean}
-		 */
-		disableWarnings: false,
-
-		/**
 		 * Creates callback interceptor to print error message on store load - 02/10/2015
 		 *
 		 * @param {Object} options
@@ -72,11 +51,11 @@
 					decodedResponse = Ext.decode(operation.response.responseText);
 				}
 
-				if (!this.disableAllMessages) {
-					if (!this.disableWarnings)
+				if (!CMDBuild.global.interfaces.Configurations.get('disableAllMessages')) {
+					if (!CMDBuild.global.interfaces.Configurations.get('disableWarnings'))
 						CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
 
-					if (!this.disableErrors)
+					if (!CMDBuild.global.interfaces.Configurations.get('disableErrors'))
 						CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
 				}
 			}

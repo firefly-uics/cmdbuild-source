@@ -17,7 +17,13 @@ FIXES
 CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 
+NEW FEATURES
+
+ * Relations Graph: print
+
 FIXES
+
+ * Gis: Fault on Geo Server Layers
 
  * Cannot see all cards using a default group between two groups when one has row privileges and the other no one
 
@@ -26,6 +32,16 @@ FIXES
  * Origin and destination comboboxes no more searchable in domains UI
 
  * OpenReport widget error on RTF or ODT format print
+
+ * DataView SQL grid print button doesn't print report
+
+ * ReferenceFields store load errors while sending not resolved CQL strings
+
+ * ActivitySubsetId workflow metadata typo
+
+ * Classes UI history tab error
+
+ * Wrong activity selection after going on completed state
 
 
 

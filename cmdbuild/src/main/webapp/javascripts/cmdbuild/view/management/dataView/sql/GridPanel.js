@@ -49,6 +49,7 @@
 							this.controllerAdvancedFilterButtons.getView(),
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
+								delegateEventPrefix: 'onDataViewSql',
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
 									CMDBuild.core.constants.Proxy.CSV

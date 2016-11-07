@@ -1,4 +1,12 @@
 (function($) {
+	var PRINT_NETWORK_CARD = "%PRINT_NETWORK_CARD";
+	var PRINT_NETWORK_IMAGE = "%PRINT_NETWORK_IMAGE";
+	var PRINT_NETWORK_ROWS = "%PRINT_NETWORK_ROWS";
+	var PRINT_NETWORK_TITLE = "%PRINT_NETWORK_TITLE";
+	var PRINT_NETWORK_SUBTITLE = "%PRINT_NETWORK_SUBTITLE";
+	var PRINT_NETWORK_FOOTER = "%PRINT_NETWORK_FOOTER";
+	var PRINT_NETWORK_TABLETITLE = "%PRINT_NETWORK_TABLETITLE";
+
 	var sliderValue = 1;
 	function reopenWithLevels(controlId, value) {
 		setTimeout(function() {
@@ -35,16 +43,72 @@
 				classDescription : (classDescription) ? classDescription : "-1"
 			});
 		},
+		getPrintingRows : function() {
+			var data = $.Cmdbuild.customvariables.model.getCards(0, -1, {});
+			var classHeader = $.Cmdbuild.translations.getTranslation("PRINT_NETWORK_CLASSHEADER", "Class"); 
+			var cardHeader = $.Cmdbuild.translations.getTranslation("PRINT_NETWORK_CARDHEADER", "Card description"); 
+			var str = "<tr>";
+			str += "<th>" + classHeader + "</th>";
+			str += "<th>" + cardHeader + "</th>";
+			str += "</tr>";
+			
+			for (var i = 0; i < data.rows.length; i++) {
+				var row = data.rows[i];
+				str += "<tr>";
+				str += "<td>" + (row.classDescription || "") + "</td>"
+				str += "<td>" + (row.label || "") + "</td>"
+				str += "</tr>";
+			}
+			return str;
+		},
+		getPrintingCard : function(callback, callbackScope) {
+			var data = $.Cmdbuild.customvariables.selected.getCards(0, 1);
+			if (data.rows.length === 0) {
+				callback.apply(callbackScope, []);
+				return;
+			}
+			var str = "<table class='card'>";
+			var className = data.rows[0].classId;
+			var cardId = data.rows[0].id;
+			$.Cmdbuild.g3d.proxy.getClassAttributes(className, function(attributes) {
+				$.Cmdbuild.g3d.proxy.getCardData(className, cardId, {}, function(data) {
+					for (var i = 0; i < attributes.length; i++) {
+						var attribute = attributes[i];
+						if (attribute.displayableInList && data[attribute._id]) {
+							str += "<tr>";
+							str += "<th>" + (attribute.description || "") + "</th>";
+							str += "<td>" + data[attribute._id] + "</td>";
+							str += "</tr>";
+						}
+					}
+					str += "</table>";
+					callback.apply(callbackScope, [ str ]);
+				}, this);
+			}, this);
+		},
 		print : function(param) {
 			var file = $.Cmdbuild.global.getAppConfigUrl() + $.Cmdbuild.g3d.constants.TEMPLATES_PATH
 					+ $.Cmdbuild.g3d.constants.PRINT_TEMPLATE;
 
 			var mywindow = window.open('', 'my div', 'height=600,width=900');
+			var me = this;
 			$.Cmdbuild.g3d.Options.getFileFromServer(file, function(template) {
 				var renderer = $.Cmdbuild.customvariables.viewer.getRenderer();
-				var strImg = "<img src='" + renderer.domElement.toDataURL("image/png") + "'";
-				var res = template.replace("%PRINT_NETWORK_IMAGE", strImg);
-				Popup(res);
+				me.getPrintingCard(function(strCard) {
+					var strTitle = $.Cmdbuild.translations.getTranslation("PRINT_NETWORK_TITLE", "Relation Graph");
+					var strSubTitle = $.Cmdbuild.translations.getTranslation("PRINT_NETWORK_SUBTITLE", "Card");
+					var res = template.replace(PRINT_NETWORK_TITLE, strTitle);
+					res = res.replace(PRINT_NETWORK_SUBTITLE, strSubTitle);
+					res = res.replace(PRINT_NETWORK_CARD, strCard);
+					var strImg = "<img src='" + renderer.domElement.toDataURL("image/png") + "'</img>";
+					res = res.replace(PRINT_NETWORK_IMAGE, strImg);
+					var strTableTitle = $.Cmdbuild.translations.getTranslation("PRINT_NETWORK_TABLETITLE", "Relationed entities");
+					res = res.replace(PRINT_NETWORK_TABLETITLE, strTableTitle);
+					var strRows = me.getPrintingRows();
+					res = res.replace(PRINT_NETWORK_ROWS, strRows);
+					res = res.replace(PRINT_NETWORK_FOOTER, "");
+					Popup(res);
+				}, this);
 
 				function Popup(data) {
 					mywindow.document.write(data);

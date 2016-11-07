@@ -80,7 +80,7 @@
 				cardId : cardId,
 				className : className
 			});
-			if (!(oldCard && card) || (oldCard.className !== card.className)) {
+			if (card && (!(oldCard && card) || (oldCard.className !== card.className))) {
 				this.interactionDocument.resetZoom();
 			}
 			if (!this.mapPanel.cmVisible) {
@@ -152,7 +152,7 @@
 		callBackSetCard : function(card) {
 			this.mapPanel.getMap().changeFeatureOnLayers(card.cardId);
 			this.interactionDocument.setCurrentCard(card);
-			// this.interactionDocument.resetZoom();
+			this.interactionDocument.resetZoom();
 			this.interactionDocument.centerOnCard(card, this.callBackCenter, this);
 
 		},

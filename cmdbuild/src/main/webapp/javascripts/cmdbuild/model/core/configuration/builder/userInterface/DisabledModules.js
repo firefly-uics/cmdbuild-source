@@ -21,31 +21,6 @@
 			{ name: CMDBuild.core.constants.Proxy.REPORT, type: 'boolean' }
 		],
 
-		statics: {
-			/**
-			 * 15/10/2015
-			 * Static function to convert from legacy object to model's one (retrocompatibility to delete)
-			 *
-			 * @param {Object} data
-			 *
-			 * @returns {Object} data
-			 */
-			convertFromLegacy: function (data) {
-				data = data || {};
-
-				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.BULK_UPDATE]))
-					data[CMDBuild.core.constants.Proxy.BULK_UPDATE] = data['bulkupdate'];
-
-				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.EXPORT_CSV]))
-					data[CMDBuild.core.constants.Proxy.EXPORT_CSV] = data['exportcsv'];
-
-				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.IMPORT_CSV]))
-					data[CMDBuild.core.constants.Proxy.IMPORT_CSV] = data['importcsv'];
-
-				return data;
-			}
-		},
-
 		/**
 		 * @param {Object} data
 		 *
@@ -54,11 +29,19 @@
 		 * @override
 		 */
 		constructor: function (data) {
-			data = this.statics().convertFromLegacy(data);
+			data = Ext.isObject(data) ? data : {};
+
+			if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.BULK_UPDATE]))
+				data[CMDBuild.core.constants.Proxy.BULK_UPDATE] = data['bulkupdate'];
+
+			if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.EXPORT_CSV]))
+				data[CMDBuild.core.constants.Proxy.EXPORT_CSV] = data['exportcsv'];
+
+			if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.IMPORT_CSV]))
+				data[CMDBuild.core.constants.Proxy.IMPORT_CSV] = data['importcsv'];
 
 			this.callParent(arguments);
 		}
 	});
 
 })();
-

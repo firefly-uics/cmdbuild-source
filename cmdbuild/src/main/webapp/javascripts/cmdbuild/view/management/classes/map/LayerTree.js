@@ -47,9 +47,6 @@
 							if (!layer) {
 								layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
 							}
-							var map = this.interactionDocument.getMap();
-							var configurationMap = this.interactionDocument.getConfigurationMap();
-							configurationMap.center = map.getView().getCenter();
 							this.delegate.cmfg('onVisibilityChange', {
 								checked : checked,
 								layer : layer
@@ -182,7 +179,7 @@
 		if ("_Thematism" === onLayerClassName) {
 			return "";
 		}
-		if ("_Geoserver" === onLayerClassName) {
+		if (CMDBuild.gis.constants.layers.GEOSERVER_LAYER === onLayerClassName) {
 			return "";
 		}
 		if (currentClassName === onLayerClassName) {
@@ -208,7 +205,7 @@
 
 		if (layer.isBaseLayer) {
 			targetFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
-		} else if (layer.masterTableName === "_Geoserver") {
+		} else if (layer.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER) {
 			targetFolder = retrieveGeoserverFolder(root);
 		} else if (layer.masterTableName === "_Thematism") {
 			targetFolder = retrieveThematismFolder(root);
@@ -225,8 +222,6 @@
 		if (!thematismFolder) {
 			thematismFolder = root.appendChild({
 				text : CMDBuild.Translation.thematismTitle,
-//				leaf : false,
-//				expanded : false,
 				layerName : THEMATISM_LAYERS_FOLDER_NAME,
 				checked : true
 			});
@@ -241,8 +236,6 @@
 		if (!geoserverFolder) {
 			geoserverFolder = externalServicesFolder.appendChild({
 				text : CMDBuild.Translation.administration.modcartography.geoserver.title,
-//				leaf : false,
-//				expanded : false,
 				layerName : GEOSERVER_LAYERS_FOLDER_NAME,
 				checked : true
 			});
