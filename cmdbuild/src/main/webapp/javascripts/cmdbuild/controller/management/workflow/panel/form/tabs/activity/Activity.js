@@ -589,10 +589,6 @@
 						this.superController.cmfg('onWorkflowSaveFailure'); // Reload store also on failure
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
-						var activityMetadata = this.superController.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.METADATA) || [];
-						var activitySubsetIdObject = Ext.Array.findBy(activityMetadata, function (metadata, i, allMetadata) {
-							return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
-						}, this);
 						var savedCardId = decodedResponse.response.Id;
 
 						this.view.displayMode();
@@ -604,8 +600,11 @@
 							_CMUIState.onlyGridIfFullScreen();
 						}
 
-						// Metadata manage (ActivitySubsetId)
-						decodedResponse.response[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = Ext.isObject(activitySubsetIdObject) ? activitySubsetIdObject[CMDBuild.core.constants.Proxy.VALUE] : '';
+						// Metadata manage
+						decodedResponse.response[CMDBuild.core.constants.Proxy.METADATA] = this.superController.cmfg(
+							'workflowSelectedActivityGet',
+							CMDBuild.core.constants.Proxy.METADATA
+						);
 
 						this.superController.cmfg(
 							'onWorkflowActivityUpdateCallback',

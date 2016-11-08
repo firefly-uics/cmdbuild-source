@@ -437,11 +437,11 @@
 				// FIXME: future implementation on tab controllers refactor
 
 				// Tree setup
-				var activityData = {};
-				activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
-				activityData[CMDBuild.core.constants.Proxy.INSTANCE_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.METADATA] = responseModel.get(CMDBuild.core.constants.Proxy.METADATA);
 
-				this.cmfg('workflowTreeActivitySelect', activityData);
+				this.cmfg('workflowTreeActivitySelect', params);
 			}
 		},
 
@@ -469,8 +469,6 @@
 
 						this.workflowIsStartActivitySet();
 						this.workflowSelectedActivitySet({ value: decodedResponse });
-
-						this.isStartActivity = true;
 
 						this.setViewTitle();
 
@@ -695,15 +693,14 @@
 					this.propertyManageSet(parameters);
 
 					// Manage previous selected activity
-					var selectedPreviousActivityObject = {};
-					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = this.cmfg('workflowSelectedActivityGet', [
-						CMDBuild.core.constants.Proxy.METADATA,
-						CMDBuild.core.constants.Metadata.getActivitySubsetId()
-					]);
-					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.INSTANCE_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
-					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.WORKFLOW_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+					if (!this.cmfg('workflowIsStartActivityGet')) {
+						var selectedPreviousActivityObject = {};
+						selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.INSTANCE_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
+						selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.METADATA] = this.cmfg('workflowSelectedActivityGet',  CMDBuild.core.constants.Proxy.METADATA);
+						selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.WORKFLOW_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-					this.workflowSelectedPreviousActivitySet({ value: selectedPreviousActivityObject });
+						this.workflowSelectedPreviousActivitySet({ value: selectedPreviousActivityObject });
+					}
 				}
 			},
 
