@@ -34,6 +34,7 @@
 			'onWorkflowTreeAbortButtonClick',
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeBeforeItemClick',
+			'onWorkflowTreeBeforeItemExpand',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeRecordSelect',
@@ -304,6 +305,28 @@
 			// END: Error handling
 
 			this.view.getSelectionModel().select(record);
+		},
+
+		/**
+		 * Sort by ActivityDescription alphabetically (ASC)
+		 *
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
+		 * @returns {Boolean}
+		 */
+		onWorkflowTreeBeforeItemExpand: function (record) {
+			record.sort(function (n1, n2) {
+				var attribute1 = n1.get(CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION),
+					attribute2 = n2.get(CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION);
+
+				if (attribute1 < attribute2)
+					return -1;
+
+				if (attribute1 > attribute2)
+					return 1;
+
+				return 0;
+			});
 		},
 
 		/**

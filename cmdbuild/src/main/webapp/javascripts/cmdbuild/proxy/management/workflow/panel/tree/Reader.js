@@ -1,12 +1,24 @@
 (function () {
 
+	/**
+	 * Applied attributes translations:
+	 * 	- Instance data
+	 * 		- id -> cardId
+	 * 	- ActivityInstanceInfoList item data
+	 * 		- description -> activityDescription
+	 * 		- id -> activityId
+	 * 		- metadata -> activityMetadata
+	 * 		- performerName -> activityPerformerName
+	 * 		- writable -> activityWritable
+	 */
 	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.Reader', {
 		extend: 'Ext.data.reader.Json',
 		alias: 'reader.workflowstore',
 
 		requires: [
 			'CMDBuild.core.constants.Metadata',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -63,9 +75,10 @@
 				}, this);
 
 				rowObject[CMDBuild.core.constants.Proxy.CARD_ID] = rowObject[CMDBuild.core.constants.Proxy.ID];
-				rowObject[CMDBuild.core.constants.Proxy.CHILDREN] = children; // Alias of activityInstanceInfoList
 				rowObject[CMDBuild.core.constants.Proxy.LEAF] = activityInfoList.length < 2;
 				rowObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
+
+				rowObject[CMDBuild.core.constants.Proxy.CHILDREN] = children; // Alias of activityInstanceInfoList
 
 				return rowObject;
 			}
