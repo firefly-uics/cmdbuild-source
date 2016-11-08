@@ -9,6 +9,8 @@ NEW FEATURES
 
  * NextActivitySubsetId workflow metadata implementation
 
+ * Widget NavigationTree: destination class description added to tree nodes
+
 
 FIXES
 

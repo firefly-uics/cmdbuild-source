@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.abstract.Widget',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.service.LoadMask',
 			'CMDBuild.core.Message',
@@ -148,7 +147,7 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 						this.widgetNavigationTreeBufferClassesSet(decodedResponse);
@@ -350,18 +349,25 @@
 					Ext.isObject(navigationTreeNode) && !Ext.Object.isEmpty(navigationTreeNode)
 					&& Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel)
 				) {
-					var classAnchestorsNames = this.widgetNavigationTreeBufferClassesAnchestorsNamesGet(cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME]);
+					var classAnchestorsNames = this.widgetNavigationTreeBufferClassesAnchestorsNamesGet(cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME]),
+						destinationClassModel = this.widgetNavigationTreeBufferClassesGet({ name: domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME) });
 
+					// Domain's oriented description
 					if (Ext.Array.contains(classAnchestorsNames, domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME))) {
 						nodeDescriptionComponents.push(domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION));
 					} else {
 						nodeDescriptionComponents.push(domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION));
 					}
+
+					// Domain's destination class name
+					nodeDescriptionComponents.push(destinationClassModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 				}
 
+				// Card's code
 				if (!Ext.isEmpty(cardObject['Code']))
 					nodeDescriptionComponents.push('[' + cardObject['Code'] + ']');
 
+				// Card's description
 				if (!Ext.isEmpty(cardObject['Description']))
 					nodeDescriptionComponents.push(cardObject['Description']);
 
@@ -688,10 +694,7 @@
 			widgetNavigationTreeBufferClassesSet: function (classes) {
 				if (Ext.isArray(classes) && !Ext.isEmpty(classes))
 					Ext.Array.each(classes, function (classObject, i, allClassObjects) {
-						if (
-							Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)
-							&& classObject[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeClass() // Get only classes
-						) {
+						if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
 							var model = Ext.create('CMDBuild.model.management.widget.navigationTree.Class', classObject);
 
 							this.bufferClasses.byId[model.get(CMDBuild.core.constants.Proxy.ID)] = model;
