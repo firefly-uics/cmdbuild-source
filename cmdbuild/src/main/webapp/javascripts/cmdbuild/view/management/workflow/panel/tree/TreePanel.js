@@ -30,9 +30,6 @@
 		},
 
 		listeners: {
-			beforeitemexpand: function (record, eOpts) {
-				this.delegate.cmfg('onWorkflowTreeBeforeItemExpand', record);
-			},
 			beforeitemclick: function (view, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTreeBeforeItemClick', record);
 			},
