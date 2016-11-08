@@ -7,6 +7,8 @@ NEW FEATURES
 
  * "Class" and "Activity" must not be visible within translations table and CSV export
 
+ * NextActivitySubsetId workflow metadata implementation
+
 
 FIXES
 
