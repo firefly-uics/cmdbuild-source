@@ -78,7 +78,8 @@
 				rowObject[CMDBuild.core.constants.Proxy.LEAF] = activityInfoList.length < 2;
 				rowObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
-				rowObject[CMDBuild.core.constants.Proxy.CHILDREN] = children; // Alias of activityInstanceInfoList
+				// Sort by ActivityDescription alphabetically (ASC)
+				rowObject[CMDBuild.core.constants.Proxy.CHILDREN] = CMDBuild.core.Utils.objectArraySort(children, CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION);
 
 				return rowObject;
 			}
