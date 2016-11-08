@@ -16,8 +16,6 @@ FIXES
 
  * Gis: Fault on Geo Server Layers
 
- * Cannot see all cards using a default group between two groups when one has row privileges and the other no one
-
  * AdditionalActivityLabel metadata not correctly managed if relative attribute is not displayed in grid
 
  * Origin and destination comboboxes no more searchable in domains UI
