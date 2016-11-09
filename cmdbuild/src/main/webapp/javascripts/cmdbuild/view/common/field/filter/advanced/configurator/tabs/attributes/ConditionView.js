@@ -133,7 +133,7 @@
 									listeners: {
 										scope: this,
 										change: function (field, newValue, oldValue, eOpts) {
-											this.delegate.cmfg('onFieldFieldsetFilterConditionContainerInputParameterSelectChange', newValue);
+											this.delegate.cmfg('onFieldFieldsetFilterConditionContainerInputParameterChange', newValue);
 										}
 									}
 								})
