@@ -162,6 +162,7 @@
 					data: [
 						['isnotnull', CMDBuild.Translation.isNotNull],
 						['isnull', CMDBuild.Translation.isNull],
+						['notequal', CMDBuild.Translation.different],
 						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
 					],
 					sorters: [

@@ -159,11 +159,12 @@
 					})
 				],
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				store: Ext.create('Ext.data.ArrayStore', { // TODO: check
+				store: Ext.create('Ext.data.ArrayStore', {
 					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
 					data: [
 						['isnotnull', CMDBuild.Translation.isNotNull],
 						['isnull', CMDBuild.Translation.isNull],
+						['notequal', CMDBuild.Translation.different],
 						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
 					],
 					sorters: [
