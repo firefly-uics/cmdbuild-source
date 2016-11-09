@@ -21,7 +21,7 @@
 			'fieldFieldsetFilterConditionContainerLabelOrVisibleSet',
 			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet',
 			'fieldFieldsetFilterConditionContainerValueSet',
-			'onFieldFieldsetFilterConditionContainerInputParameterSelectChange',
+			'onFieldFieldsetFilterConditionContainerInputParameterChange',
 			'onFieldFieldsetFilterConditionContainerOperatorSelect'
 		],
 
@@ -147,8 +147,15 @@
 		 *
 		 * @returns {Void}
 		 */
-		onFieldFieldsetFilterConditionContainerInputParameterSelectChange: function (checked) {
+		onFieldFieldsetFilterConditionContainerInputParameterChange: function (checked) {
 			this.setDisabledFields(checked);
+
+			// Reset values on check
+			if (checked)
+				Ext.Array.forEach(this.view.fields, function (field, i, allFields) {
+					if (Ext.isObject(field) && !Ext.Object.isEmpty(field) && Ext.isFunction(field.reset))
+						field.reset();
+				}, this);
 		},
 
 		/**
