@@ -23,6 +23,7 @@
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.METADATA, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true, defaultValue: 20 }, // Max JavaScript number precision
 			{ name: CMDBuild.core.constants.Proxy.SCALE, type: 'int', defaultValue: 0 },

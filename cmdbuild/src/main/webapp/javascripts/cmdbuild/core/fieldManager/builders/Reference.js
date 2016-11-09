@@ -5,19 +5,21 @@
 	 * 		- {String} filter: filter to apply
 	 * 		- {String} targetClass: target class name
 	 */
-	Ext.define('CMDBuild.core.fieldManager.builders.ForeignKey', {
+	Ext.define('CMDBuild.core.fieldManager.builders.Reference', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.field.comboBox.Searchable'
+			'CMDBuild.proxy.common.field.comboBox.Reference'
 		],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
 		 */
 		parentDelegate: undefined,
+
+		// TODO: implementation of buildReferencePanel of old reference field and FieldManager
 
 		/**
 		 * @param {Object} parameters
@@ -45,7 +47,7 @@
 		 * @override
 		 */
 		buildEditor: function () {
-			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
+			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.comboBox.Reference', {
 				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				attributeModel: this.cmfg('fieldManagerAttributeModelGet'),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
@@ -64,19 +66,19 @@
 				listeners: {
 					scope: this,
 					added: function (field, container, pos, eOpts) {
-						field.resolveTemplates();
+						field.resolveTemplates(); // Resolve templates and load store
 					}
 				}
 			});
 		},
 
 		/**
-		 * @returns {CMDBuild.view.common.field.comboBox.Searchable}
+		 * @returns {CMDBuild.view.common.field.comboBox.Reference}
 		 *
 		 * @override
 		 */
 		buildField: function () {
-			return Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
+			return Ext.create('CMDBuild.view.common.field.comboBox.Reference', {
 				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				attributeModel: this.cmfg('fieldManagerAttributeModelGet'),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
@@ -121,7 +123,7 @@
 			if (!this.cmfg('fieldManagerAttributeModelIsEmpty', CMDBuild.core.constants.Proxy.FILTER))
 				extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ CQL: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.FILTER) });
 
-			return CMDBuild.proxy.common.field.comboBox.Searchable.getStore({
+			return CMDBuild.proxy.common.field.comboBox.Reference.getStore({
 				scope: this,
 				extraParams: extraParams
 			});
@@ -135,7 +137,7 @@
 		buildFilterCondition: function () {
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
 				fields: [
-					Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
+					Ext.create('CMDBuild.view.common.field.comboBox.Reference', {
 						attributeModel: this.cmfg('fieldManagerAttributeModelGet'),
 						displayField: 'Description',
 						plugins: Ext.create('CMDBuild.core.plugin.SetValueOnLoad'),
@@ -151,13 +153,13 @@
 						listeners: {
 							scope: this,
 							added: function (field, container, pos, eOpts) {
-								field.resolveTemplates(); // Resolve templates and load store
+								field.resolveTemplates();
 							}
 						}
 					})
 				],
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				store: Ext.create('Ext.data.ArrayStore', {
+				store: Ext.create('Ext.data.ArrayStore', { // TODO: check
 					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
 					data: [
 						['isnotnull', CMDBuild.Translation.isNotNull],

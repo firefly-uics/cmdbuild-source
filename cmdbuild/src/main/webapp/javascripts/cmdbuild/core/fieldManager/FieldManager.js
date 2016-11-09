@@ -49,6 +49,7 @@
 		cmfgCatchedFunctions: [
 			'fieldManagerAttributeModelGet',
 			'fieldManagerAttributeModelIsEmpty',
+			'fieldManagerObjectHasTemplates',
 			'fieldManagerTemplateResolverBuild',
 			'fieldManagerTemplateResolverResolveFunctionGet'
 		],
@@ -57,8 +58,10 @@
 		 * @property {Array}
 		 *
 		 * @private
+		 *
+		 * FIXME: should be a global implementation also for 'reference' and 'inet'
 		 */
-		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'inet', 'integer', 'string', 'text', 'time', 'timestamp'],
+		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'integer', 'string', 'text', 'time', 'timestamp'],
 
 		// AttributeModel methods
 			/**
@@ -138,6 +141,7 @@
 				case 'foreignkey': return Ext.create('CMDBuild.core.fieldManager.builders.ForeignKey', { parentDelegate: this });
 				case 'inet': return Ext.create('CMDBuild.core.fieldManager.builders.inet.Inet', { parentDelegate: this });
 				case 'integer': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
+				case 'reference': return Ext.create('CMDBuild.core.fieldManager.builders.Reference', { parentDelegate: this });
 				case 'string': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
 				case 'text': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
 				case 'time': return Ext.create('CMDBuild.core.fieldManager.builders.Time', { parentDelegate: this });
@@ -197,7 +201,7 @@
 			/**
 			 * Builds filter attribute tab condition Ext.form.FieldContainer
 			 *
-			 * @returns {CMDBuild.core.fieldManager.fieldset.FilterConditionView}
+			 * @returns {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView}
 			 */
 			buildFilterCondition: function () {
 				return this.buildAttributeController().buildFilterCondition();
@@ -223,6 +227,19 @@
 			attributeType = attributeType.toLowerCase();
 
 			return Ext.Array.contains(this.managedAttributesTypes, attributeType);
+		},
+
+		/**
+		 * @param {Object} object
+		 *
+		 * @returns {Boolean}
+		 */
+		fieldManagerObjectHasTemplates: function (object) {
+			var encodedAttributesModel = Ext.encode(object);
+
+			return !Ext.Array.every(this.templateList, function (template, i, allTemplates) {
+				return encodedAttributesModel.indexOf(template) < 0; // Stops loop at first template found
+			}, this);
 		},
 
 		// TemplateResolver property methods
@@ -251,19 +268,6 @@
 			},
 
 			/**
-			 * @returns {Boolean}
-			 *
-			 * @private
-			 */
-			templateResolverAttributesHasTemplates: function () {
-				var encodedAttributesModel = Ext.encode(this.cmfg('fieldManagerAttributeModelGet').getData());
-
-				return !Ext.Array.every(this.templateList, function (template, i, allTemplates) {
-					return encodedAttributesModel.indexOf(template) < 0; // Stops loop at first template found
-				}, this);
-			},
-
-			/**
 			 * @param {Array} attributes
 			 *
 			 * @returns {Void}
@@ -280,27 +284,25 @@
 			/**
 			 * @param {Array} attributes
 			 *
-			 * @returns {CMDBuild.Management.TemplateResolver} templateResolver
+			 * @returns {CMDBuild.Management.TemplateResolver or null}
 			 *
 			 * @private
 			 */
 			fieldManagerTemplateResolverBuild: function (attributes) {
-				var templateResolver = undefined;
-
 				if (
 					!Ext.isEmpty(this.targetForm)
 					&& this.targetForm instanceof Ext.form.Panel
-					&& this.templateResolverAttributesHasTemplates()
+					&& this.cmfg('fieldManagerObjectHasTemplates', this.cmfg('fieldManagerAttributeModelGet').getData())
 				) {
 					this.templateResolverAttributesSet(attributes);
 
-					templateResolver = new CMDBuild.Management.TemplateResolver({
+					return new CMDBuild.Management.TemplateResolver({
 						clientForm: this.targetForm.getForm(),
 						xaVars: this.templateResolverAttributesDataGet()
 					});
 				}
 
-				return templateResolver;
+				return null;
 			},
 
 			/**
@@ -337,6 +339,9 @@
 								}, this);
 							}
 						});
+					} else {
+						if (!this.getStore().isLoading())
+							this.getStore().load();
 					}
 				};
 			}
