@@ -81,7 +81,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.core.fieldManager.fieldset.FilterConditionView}
+		 * @returns {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView}
 		 *
 		 * @override
 		 */

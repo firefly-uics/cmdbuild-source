@@ -137,7 +137,11 @@
 				this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupAdd(attribute);
 
 				if (this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupExists(attribute.get(CMDBuild.core.constants.Proxy.NAME))) {
-					var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+					var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
+						parentDelegate: this,
+						// FIXME: local implementation of 'reference' and 'inet' managed types
+						managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'inet', 'integer', 'reference', 'string', 'text', 'time', 'timestamp']
+					});
 					fieldManager.attributeModelSet(attribute);
 
 					var condition = fieldManager.buildFilterCondition(),

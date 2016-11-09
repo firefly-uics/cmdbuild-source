@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.model.common.attributes.ForeignKeyStore', {
+	Ext.define('CMDBuild.model.common.field.comboBox.searchable.StoreRecord', {
 		extend: 'Ext.data.Model',
 
 		fields: [

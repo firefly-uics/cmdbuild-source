@@ -1,12 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.field.comboBox.Searchable', {
+	Ext.define('CMDBuild.view.common.field.comboBox.Reference', {
 		extend: 'Ext.form.field.ComboBox',
 
-		requires: ['CMDBuild.proxy.common.field.comboBox.Searchable'],
-
 		/**
-		 * @cfg {CMDBuild.controller.common.field.comboBox.Searchable}
+		 * @cfg {CMDBuild.controller.common.field.comboBox.Reference}
 		 */
 		delegate: undefined,
 
@@ -37,7 +35,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
-				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this })
+				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Reference', { view: this })
 			});
 
 			this.callParent(arguments);
@@ -88,8 +86,8 @@
 		 * @override
 		 */
 		onKeyUp: function () {
-			if (this.delegate.cmfg('fieldComboBoxSearchableStoreExceedsLimit')) {
-				this.delegate.cmfg('onFieldComboBoxSearchableKeyUp');
+			if (this.delegate.cmfg('fieldComboBoxReferenceStoreExceedsLimit')) {
+				this.delegate.cmfg('onFieldComboBoxReferenceKeyUp');
 			} else {
 				this.callParent(arguments);
 			}
@@ -99,21 +97,21 @@
 		 * @returns {Void}
 		 */
 		onTrigger1Click: function () {
-			this.delegate.cmfg('onFieldComboBoxSearchableTrigger1Click');
+			this.delegate.cmfg('onFieldComboBoxReferenceTrigger1Click');
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onTrigger2Click: function () {
-			this.delegate.cmfg('onFieldComboBoxSearchableTrigger2Click');
+			this.delegate.cmfg('onFieldComboBoxReferenceTrigger2Click');
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onTrigger3Click: function (value) {
-			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
+			this.delegate.cmfg('onFieldComboBoxReferenceTrigger3Click');
 		},
 
 		/**
@@ -121,12 +119,12 @@
 		 *
 		 * @param {Mixed} value
 		 *
-		 * @returns {CMDBuild.view.common.field.comboBox.Searchable}
+		 * @returns {CMDBuild.view.common.field.comboBox.Reference}
 		 *
 		 * @override
 		 */
 		setValue: function (value) {
-			return this.callParent(this.delegate.cmfg('fieldComboBoxSearchableValueSet', value));
+			return this.callParent(this.delegate.cmfg('fieldComboBoxReferenceValueSet', value));
 		}
 	});
 

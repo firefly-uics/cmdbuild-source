@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.common.field.comboBox.searchable.Configuration', {
+	Ext.define('CMDBuild.model.common.field.comboBox.reference.Configuration', {
 		extend: 'Ext.data.Model',
 
 		fields: [
