@@ -12,7 +12,7 @@
 			field.valueNotFoundText = '';
 
 			if (Ext.isFunction(field.getStore) && !Ext.isEmpty(field.getStore()))
-				field.getStore().on('load', function() {
+				field.getStore().on('load', function (store, records, successful, eOpts) {
 					this.valueNotFoundText = this.initialConfig.valueNotFoundText;
 
 					if (this.getStore()) // Store is null if the field is not rendered

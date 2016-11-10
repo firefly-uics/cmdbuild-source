@@ -58,8 +58,6 @@
 		 * @property {Array}
 		 *
 		 * @private
-		 *
-		 * FIXME: should be a global implementation also for 'reference' and 'inet'
 		 */
 		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'integer', 'string', 'text', 'time', 'timestamp'],
 
@@ -139,16 +137,17 @@
 				case 'decimal': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
 				case 'double': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
 				case 'foreignkey': return Ext.create('CMDBuild.core.fieldManager.builders.ForeignKey', { parentDelegate: this });
-				case 'inet': return Ext.create('CMDBuild.core.fieldManager.builders.inet.Inet', { parentDelegate: this });
+				case 'inet': return Ext.create('CMDBuild.core.fieldManager.builders.inet.Inet', { parentDelegate: this }); // TODO: partial implementation
 				case 'integer': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
-				case 'reference': return Ext.create('CMDBuild.core.fieldManager.builders.Reference', { parentDelegate: this });
+				case 'lookup': return Ext.create('CMDBuild.core.fieldManager.builders.Lookup', { parentDelegate: this }); // TODO: partial implementation
+				case 'reference': return Ext.create('CMDBuild.core.fieldManager.builders.Reference', { parentDelegate: this }); // TODO: partial implementation
 				case 'string': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
 				case 'text': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
 				case 'time': return Ext.create('CMDBuild.core.fieldManager.builders.Time', { parentDelegate: this });
 				case 'timestamp': return Ext.create('CMDBuild.core.fieldManager.builders.TimeStamp', { parentDelegate: this });
-			}
 
-			_error('buildAttributeController(): invalid attributeType property', this, attributeType);
+				default: return _error('buildAttributeController(): unmanaged attribute type property', this, attributeType);
+			}
 		},
 
 		// Builder methods

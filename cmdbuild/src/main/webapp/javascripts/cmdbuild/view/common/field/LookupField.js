@@ -1,4 +1,9 @@
 (function() {
+
+/**
+ * @deprecated CMDBuild.view.common.field.comboBox.lookup.Lookup
+ */
+
 Ext.define("CMDBuild.view.common.field.LookupField", {
 	extend: "CMDBuild.view.common.field.CMErasableCombo",
 	plugins: Ext.create('CMDBuild.core.plugin.SetValueOnLoad'),
