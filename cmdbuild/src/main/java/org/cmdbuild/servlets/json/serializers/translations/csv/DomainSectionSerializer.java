@@ -5,10 +5,10 @@ import java.util.Collection;
 import org.bouncycastle.util.Strings;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
@@ -24,7 +24,7 @@ public class DomainSectionSerializer extends EntryTypeTranslationSerializer {
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
-	public DomainSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	public DomainSectionSerializer(final DataAccessLogicHelper dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final Iterable<String> languages) {
 		super(dataLogic, activeOnly, translationLogic, separator, languages);

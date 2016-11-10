@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.ClassTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
@@ -53,7 +53,7 @@ public class ClassSerializationTest {
 	public void typeClassCreatesClassSerializer() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
@@ -78,9 +78,9 @@ public class ClassSerializationTest {
 	public void nullSortersSetSortersToDefault() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(classes).when(dataLogic).findLocalizableClasses(true);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -107,9 +107,9 @@ public class ClassSerializationTest {
 	public void serializationHasOnlyDescriptionField() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(classes).when(dataLogic).findLocalizableClasses(true);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -137,9 +137,9 @@ public class ClassSerializationTest {
 	public void ifTheClassHasNoAttributesThenSerializationHasEmptyAttributesNode() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(classes).when(dataLogic).findLocalizableClasses(true);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -164,9 +164,9 @@ public class ClassSerializationTest {
 	@Test
 	public void orderClassesByName() throws Exception {
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(classes).when(dataLogic).findLocalizableClasses(true);
 
 		final JSONArray sorters = new JSONArray();
 		final JSONObject classSorter = new JSONObject();
@@ -199,9 +199,9 @@ public class ClassSerializationTest {
 	@Test
 	public void wrongSortersSyntaxGetIgnored() throws Exception {
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(classes).when(dataLogic).findLocalizableClasses(true);
 
 		final JSONArray sorters = new JSONArray();
 		final JSONObject classSorter = new JSONObject();

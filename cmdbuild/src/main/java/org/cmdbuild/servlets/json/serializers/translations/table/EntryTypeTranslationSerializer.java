@@ -12,12 +12,12 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
@@ -29,14 +29,14 @@ import com.google.common.collect.Ordering;
 
 public abstract class EntryTypeTranslationSerializer implements TranslationSectionSerializer {
 
-	final DataAccessLogic dataLogic;
+	final DataAccessLogicHelper dataLogic;
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
 
 	Ordering<CMEntryType> entryTypeOrdering = EntryTypeSorter.DEFAULT.getOrientedOrdering();
 	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
 
-	EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	EntryTypeTranslationSerializer(final DataAccessLogicHelper dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic) {
 		this.dataLogic = dataLogic;
 		this.activeOnly = activeOnly;
