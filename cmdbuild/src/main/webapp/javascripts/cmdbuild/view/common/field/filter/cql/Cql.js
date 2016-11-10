@@ -49,6 +49,7 @@
 				items: [
 					this.textAreaField = Ext.create('Ext.form.field.TextArea', {
 						name: this.fieldName,
+						resizable: true,
 						vtype: 'comment'
 					}),
 					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {

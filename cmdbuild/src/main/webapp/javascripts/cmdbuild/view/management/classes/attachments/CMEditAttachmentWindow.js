@@ -64,7 +64,8 @@
 						labelAlign: 'right',
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
-						allowBlank: false
+						allowBlank: false,
+						resizable: true
 					}),
 					this.metadataContainer
 				]

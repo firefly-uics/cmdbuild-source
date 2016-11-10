@@ -66,7 +66,8 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE)
+				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				resizable: true
 			});
 		},
 
@@ -99,7 +100,10 @@
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
 				defaultValueCondition: CMDBuild.core.constants.Proxy.CONTAIN,
 				fields: [
-					Ext.create('Ext.form.field.TextArea', { width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG })
+					Ext.create('Ext.form.field.TextArea', {
+						resizable: true,
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
+					})
 				],
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				store: Ext.create('Ext.data.ArrayStore', {
