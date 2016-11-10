@@ -1,7 +1,6 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.management.common.filter.CMSaveFilterWindow
 	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.FormPanel
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel', {

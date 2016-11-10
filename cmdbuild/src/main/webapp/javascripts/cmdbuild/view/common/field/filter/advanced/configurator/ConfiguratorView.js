@@ -16,6 +16,11 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		isAdministration: false,
+
+		/**
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,

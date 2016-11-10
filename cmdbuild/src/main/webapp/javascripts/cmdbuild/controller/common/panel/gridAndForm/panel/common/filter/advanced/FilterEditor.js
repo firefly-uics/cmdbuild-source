@@ -2,9 +2,9 @@
 
 	/**
 	 * @link CMDBuild.controller.common.field.filter.advanced.window.Window
-	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor
 	 */
-	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor', {
+	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditor', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -26,17 +26,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes}
-		 */
-		controllerAttributes: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations}
-		 */
-		controllerRelations: undefined,
-
-		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditorWindow}
 		 */
 		view: undefined,
 
@@ -51,35 +41,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow', { delegate: this });
-
-			// Build sub controllers
-			this.controllerAttributes = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes', { parentDelegate: this });
-			this.controllerRelations = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations', { parentDelegate: this });
-
-			this.view.wrapper.removeAll();
-			this.view.wrapper.add([
-				this.controllerAttributes.getView(),
-				this.controllerRelations.getView()
-			]);
-
-			this.manageActiveTabSet(true);
-		},
-
-		/**
-		 * @param {Boolean} disableFireEvent
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		manageActiveTabSet: function (disableFireEvent) {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION]))
-				return this.view.wrapper.setActiveTab(1);
-
-			this.view.wrapper.setActiveTab(0);
-
-			return disableFireEvent ? null : this.view.wrapper.getActiveTab().fireEvent('show'); // Manual show event fire
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditorWindow', { delegate: this });
 		},
 
 		/**
@@ -94,10 +56,7 @@
 		 */
 		onPanelGridAndFormFilterAdvancedFilterEditorApplyButtonClick: function () {
 			var filterModelObject = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet').getData();
-			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.Object.merge(
-				this.controllerAttributes.cmfg('panelGridAndFormFilterAdvancedFilterEditorAttributesDataGet'),
-				this.controllerRelations.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsDataGet')
-			);
+			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = this.view.fieldFilter.getValue();
 
 			// If new filter model
 			if (Ext.isEmpty(filterModelObject[CMDBuild.core.constants.Proxy.ID])) {
@@ -121,10 +80,7 @@
 		 */
 		onPanelGridAndFormFilterAdvancedFilterEditorSaveAndApplyButtonClick: function () {
 			var filterModelObject = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet').getData();
-			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.Object.merge(
-				this.controllerAttributes.cmfg('panelGridAndFormFilterAdvancedFilterEditorAttributesDataGet'),
-				this.controllerRelations.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsDataGet')
-			);
+			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = this.view.fieldFilter.getValue();
 
 			this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', { value: filterModelObject });
 			this.cmfg('panelGridAndFormFilterAdvancedManagerSave', { enableApply: true });
@@ -146,28 +102,19 @@
 		 * @returns {Void}
 		 */
 		onPanelGridAndFormFilterAdvancedFilterEditorViewShow: function () {
-			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
-				id: 'panelGridAndFormFilterAdvancedFilterEditorBarrier',
+			this.setViewTitle([
+				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
+				this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+			]);
+
+			this.view.fieldFilter.entryTypeSelect({
+				className: this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME),
+				disabledPanels: ['functions'],
 				scope: this,
 				callback: function () {
-					this.setViewTitle([
-						this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
-						this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
-					]);
-
-					this.manageActiveTabSet();
+					this.view.fieldFilter.setValue(this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
 				}
 			});
-
-			this.controllerAttributes.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit', {
-				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
-			});
-
-			this.controllerRelations.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit', {
-				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
-			});
-
-			requestBarrier.finalize('panelGridAndFormFilterAdvancedFilterEditorBarrier', true);
 		}
 	});
 

@@ -20,6 +20,7 @@
 			'fieldFilterAdvancedConfiguratorConfigurationGet',
 			'fieldFilterAdvancedConfiguratorConfigurationIsEmpty',
 			'fieldFilterAdvancedConfiguratorEntryTypeSelect',
+			'fieldFilterAdvancedConfiguratorIsAdministration',
 			'fieldFilterAdvancedConfiguratorReset -> controllerTabAttributes, controllerTabFunctons, controllerTabRelations',
 			'fieldFilterAdvancedConfiguratorValueGet',
 			'fieldFilterAdvancedConfiguratorValueSet'
@@ -176,6 +177,13 @@
 			});
 
 			requestBarrier.finalize('fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier', true);
+		},
+
+		/**
+		 * @returns {Boolean}
+		 */
+		fieldFilterAdvancedConfiguratorIsAdministration: function () {
+			return this.view.isAdministration;
 		},
 
 		/**

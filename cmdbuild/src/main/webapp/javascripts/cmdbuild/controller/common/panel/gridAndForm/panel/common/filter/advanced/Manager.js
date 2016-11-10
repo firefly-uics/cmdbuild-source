@@ -36,7 +36,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditor}
 		 */
 		controllerFilterEditor: undefined,
 
@@ -76,7 +76,7 @@
 			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow', { delegate: this });
 
 			// Build sub controllers
-			this.controllerFilterEditor = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor', { parentDelegate: this });
+			this.controllerFilterEditor = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditor', { parentDelegate: this });
 			this.controllerSaveDialog = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.SaveDialog', { parentDelegate: this});
 
 			// Shorthands

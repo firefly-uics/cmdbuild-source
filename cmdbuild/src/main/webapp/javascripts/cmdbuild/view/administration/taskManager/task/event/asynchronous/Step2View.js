@@ -31,6 +31,7 @@
 				items: [
 					this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView', {
 						border: true,
+						isAdministration: true,
 						name: CMDBuild.core.constants.Proxy.FILTER
 					})
 				]

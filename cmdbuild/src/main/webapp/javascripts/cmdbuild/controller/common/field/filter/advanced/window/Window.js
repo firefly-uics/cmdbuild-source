@@ -3,7 +3,7 @@
 	/**
 	 * To get the result of filter window you need to implement "onFieldFilterAdvancedWindowgetEndpoint" in cmfg structure
 	 *
-	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor
+	 * @deprecated CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.Window', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
