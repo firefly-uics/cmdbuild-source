@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.proxy.administration.taskManager.task.event.Synchronous', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.administration.taskManager.Grid',
 			'CMDBuild.model.administration.taskManager.task.event.synchronous.Account',
@@ -101,6 +102,14 @@
 						startParam: undefined
 					}
 				},
+				filters: [
+					function (record) { // Filters processes and root of all classes
+						return (
+							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
+							&& !record.get(CMDBuild.core.constants.Proxy.SYSTEM)
+						);
+					}
+				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
 				]

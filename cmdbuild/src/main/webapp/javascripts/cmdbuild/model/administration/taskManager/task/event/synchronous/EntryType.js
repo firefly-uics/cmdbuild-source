@@ -11,6 +11,7 @@
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.SYSTEM, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TEXT, type: 'string' }
 		]
 	});
