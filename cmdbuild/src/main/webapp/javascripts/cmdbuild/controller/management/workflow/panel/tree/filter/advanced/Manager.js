@@ -33,7 +33,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor}
+		 * @property {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor}
 		 */
 		controllerFilterEditor: undefined,
 
@@ -73,7 +73,7 @@
 			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow', { delegate: this });
 
 			// Build sub controllers
-			this.controllerFilterEditor = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor', { parentDelegate: this });
+			this.controllerFilterEditor = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor', { parentDelegate: this });
 			this.controllerSaveDialog = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.SaveDialog', { parentDelegate: this});
 
 			// Shorthands

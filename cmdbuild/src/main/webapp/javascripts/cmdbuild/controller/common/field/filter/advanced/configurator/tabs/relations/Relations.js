@@ -44,7 +44,7 @@
 		selectedDomain: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView}
+		 * @property {CMDBuild.view.common.field.filter.advanced.configurator.tabs.relations.RelationsView}
 		 */
 		view: undefined,
 
@@ -59,7 +59,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.relations.RelationsView', { delegate: this });
 
 			// Build sub-controllers
 			this.controllerGridCard = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.GridCard', { parentDelegate: this });

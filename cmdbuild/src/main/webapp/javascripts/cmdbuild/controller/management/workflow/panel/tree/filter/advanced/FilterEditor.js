@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor', {
+	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -22,17 +22,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes}
-		 */
-		controllerAttributes: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations}
-		 */
-		controllerRelations: undefined,
-
-		/**
-		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.FilterEditorWindow}
 		 */
 		view: undefined,
 
@@ -47,35 +37,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow', { delegate: this });
-
-			// Build sub controllers
-			this.controllerAttributes = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes', { parentDelegate: this });
-			this.controllerRelations = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations', { parentDelegate: this });
-
-			this.view.wrapper.removeAll();
-			this.view.wrapper.add([
-				this.controllerAttributes.getView(),
-				this.controllerRelations.getView()
-			]);
-
-			this.manageActiveTabSet(true);
-		},
-
-		/**
-		 * @param {Boolean} disableFireEvent
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		manageActiveTabSet: function (disableFireEvent) {
-			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION]))
-				return this.view.wrapper.setActiveTab(1);
-
-			this.view.wrapper.setActiveTab(0);
-
-			return disableFireEvent ? null : this.view.wrapper.getActiveTab().fireEvent('show'); // Manual show event fire
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.FilterEditorWindow', { delegate: this });
 		},
 
 		/**
@@ -90,10 +52,7 @@
 		 */
 		onWorkflowTreeFilterAdvancedFilterEditorApplyButtonClick: function () {
 			var filterModelObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet').getData();
-			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.Object.merge(
-				this.controllerAttributes.cmfg('workflowTreeFilterAdvancedFilterEditorAttributesDataGet'),
-				this.controllerRelations.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsDataGet')
-			);
+			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = this.view.fieldFilter.getValue();
 
 			// If new filter model
 			if (Ext.isEmpty(filterModelObject[CMDBuild.core.constants.Proxy.ID])) {
@@ -119,10 +78,7 @@
 		 */
 		onWorkflowTreeFilterAdvancedFilterEditorSaveAndApplyButtonClick: function () {
 			var filterModelObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet').getData();
-			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.Object.merge(
-				this.controllerAttributes.cmfg('workflowTreeFilterAdvancedFilterEditorAttributesDataGet'),
-				this.controllerRelations.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsDataGet')
-			);
+			filterModelObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = this.view.fieldFilter.getValue();
 
 			this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', { value: filterModelObject });
 			this.cmfg('workflowTreeFilterAdvancedManagerSave', { enableApply: true });
@@ -144,28 +100,19 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeFilterAdvancedFilterEditorViewShow: function () {
-			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
-				id: 'workflowTreeFilterAdvancedFilterEditorBarrier',
+			this.setViewTitle([
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
+				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+			]);
+
+			this.view.fieldFilter.entryTypeSelect({
+				className: this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME),
+				disabledPanels: ['functions'],
 				scope: this,
 				callback: function () {
-					this.setViewTitle([
-						this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
-						this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
-					]);
-
-					this.manageActiveTabSet();
+					this.view.fieldFilter.setValue(this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
 				}
 			});
-
-			this.controllerAttributes.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAttributesInit', {
-				callback: requestBarrier.getCallback('workflowTreeFilterAdvancedFilterEditorBarrier')
-			});
-
-			this.controllerRelations.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsInit', {
-				callback: requestBarrier.getCallback('workflowTreeFilterAdvancedFilterEditorBarrier')
-			});
-
-			requestBarrier.finalize('workflowTreeFilterAdvancedFilterEditorBarrier', true);
 		}
 	});
 

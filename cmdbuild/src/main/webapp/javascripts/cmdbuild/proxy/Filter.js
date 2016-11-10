@@ -2,7 +2,6 @@
 
 	/**
 	 * Used from:
-	 * 		- CMDBuild.view.common.filter.CMFilterChooser
 	 * 		- CMDBuild.view.management.common.filter.CMFilterMenuButton
 	 * 		- CMDBuild.controller.management.common.CMCardGridController
 	 *

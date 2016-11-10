@@ -2,14 +2,13 @@
 
 	/**
 	 * @link CMDBuild.view.common.field.filter.advanced.window.Window
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor
-	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.FilterEditorWindow
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditorWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.FilterEditor}
 		 */
 		delegate: undefined,
 
@@ -24,9 +23,9 @@
 		dimensionsMode: 'percentage',
 
 		/**
-		 * @property {Ext.tab.Panel}
+		 * @property {CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView}
 		 */
-		wrapper: undefined,
+		fieldFilter: undefined,
 
 		border: true,
 		closeAction: 'hide',
@@ -78,10 +77,7 @@
 					})
 				],
 				items: [
-					this.wrapper = Ext.create('Ext.tab.Panel', {
-						border: false,
-						frame: false
-					})
+					this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView', { isAdministration: false })
 				]
 			});
 

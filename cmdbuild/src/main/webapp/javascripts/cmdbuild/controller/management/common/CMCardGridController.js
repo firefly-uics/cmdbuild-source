@@ -14,8 +14,6 @@
 
 		mixins: {
 			observable: "Ext.util.Observable",
-			filterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
-			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate",
 			runtimeFilterParamsWindow: "CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate"
 		},
 
@@ -441,16 +439,6 @@
 		me.view.setFilterButtonLabel();
 		me.view.applyFilterToStore({});
 		me.view.disableClearFilterButton();
-	}
-
-	function showSaveFilterDialog(me, filter, referredFilterWindow) {
-		var saveFilterWindow = new CMDBuild.view.management.common.filter.CMSaveFilterWindow({
-			filter: filter,
-			referredFilterWindow: referredFilterWindow
-		});
-
-		saveFilterWindow.addDelegate(me);
-		saveFilterWindow.show();
 	}
 
 	function updateStoreAndSelectGivenPosition(me, idClass, position) {

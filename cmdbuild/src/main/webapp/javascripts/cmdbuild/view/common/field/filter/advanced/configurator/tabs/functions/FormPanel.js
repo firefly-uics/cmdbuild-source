@@ -19,7 +19,6 @@
 		 */
 		fieldFunction: undefined,
 
-		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 		overflowY: 'auto',
@@ -36,6 +35,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
+				bodyCls: this.delegate.cmfg('fieldFilterAdvancedConfiguratorIsAdministration') ? 'cmdb-gray-panel' : 'cmdb-blue-panel',
 				items: [
 					this.fieldFunction = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 						name: CMDBuild.core.constants.Proxy.FUNCTION,
