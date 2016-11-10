@@ -83,6 +83,12 @@
 		 */
 		onTaskManagerFormTaskEventSynchronousRowSelected: function () {
 			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
+				this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({
+					forceToolbarBottomState: true,
+					forceToolbarTopState: true,
+					state: false
+				});
+
 				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 
 				var params = {};
