@@ -21,7 +21,7 @@
 			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.IP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY, type: 'auto', defaultValue: [] },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.METADATA, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
@@ -48,7 +48,6 @@
 		setAdaptedData: function (data) {
 			if (Ext.isObject(data) && !Ext.Object.isEmpty(data)) {
 				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
-				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
 				this.set(CMDBuild.core.constants.Proxy.MANDATORY, data['isnotnull']);
 				this.set(CMDBuild.core.constants.Proxy.SHOW_COLUMN, data['isbasedsp']);
 				this.set(CMDBuild.core.constants.Proxy.UNIQUE, data['isunique']);
@@ -90,6 +89,10 @@
 
 				if (!Ext.isEmpty(data['referencedClassName']))
 					this.set(CMDBuild.core.constants.Proxy.TARGET_CLASS, data['referencedClassName']);
+
+				// Lookup specific
+				if (!Ext.isEmpty(data['lookupchain']))
+					this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY, data['lookupchain']);
 			}
 		},
 

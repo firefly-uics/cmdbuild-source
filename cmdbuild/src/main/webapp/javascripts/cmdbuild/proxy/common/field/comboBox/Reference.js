@@ -5,8 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.common.field.comboBox.reference.StoreRecord',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.core.fieldManager.FieldManager'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,

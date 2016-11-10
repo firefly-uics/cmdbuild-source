@@ -24,7 +24,7 @@
 			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.IP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY, type: 'auto', defaultValue: [] },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.METADATA, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
@@ -52,13 +52,15 @@
 				data = Ext.isObject(data) ? data : {};
 				data[CMDBuild.core.constants.Proxy.SOURCE_OBJECT] = Ext.clone(data); // FIXME: clone clean source object legacy mode with old field manager
 				data[CMDBuild.core.constants.Proxy.LENGTH] = data['len'] || data[CMDBuild.core.constants.Proxy.LENGTH];
-				data[CMDBuild.core.constants.Proxy.LOOKUP_TYPE] = data[CMDBuild.core.constants.Proxy.LOOKUP] || data[CMDBuild.core.constants.Proxy.LOOKUP_TYPE];
 				data[CMDBuild.core.constants.Proxy.MANDATORY] = Ext.isBoolean(data['isnotnull']) ? data['isnotnull'] : data[CMDBuild.core.constants.Proxy.MANDATORY];
 				data[CMDBuild.core.constants.Proxy.SHOW_COLUMN] = Ext.isBoolean(data['isbasedsp']) ? data['isbasedsp'] : data[CMDBuild.core.constants.Proxy.SHOW_COLUMN];
 				data[CMDBuild.core.constants.Proxy.UNIQUE] = Ext.isBoolean(data['isunique']) ? data['isunique'] : data[CMDBuild.core.constants.Proxy.UNIQUE];
 
 				// ForeignKey or reference specific
 				data[CMDBuild.core.constants.Proxy.TARGET_CLASS] = data['fkDestination'] || data['referencedClassName'] || data[CMDBuild.core.constants.Proxy.TARGET_CLASS];
+
+				// Lookup specific
+				data[CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY] = data['lookupchain'];
 
 				/*
 				 * Sort decode
