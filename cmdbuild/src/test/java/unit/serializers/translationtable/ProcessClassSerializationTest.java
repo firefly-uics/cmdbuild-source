@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.ProcessTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
@@ -30,7 +30,7 @@ public class ProcessClassSerializationTest {
 	CMClass class3 = mock(CMClass.class);
 	CMClass activity = mock(CMClass.class);
 	Collection<CMClass> classes = Lists.newArrayList(class1, class2, class3);
-	DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+	DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 	TranslationLogic translationLogic = mock(TranslationLogic.class);
 
 	@Before
@@ -67,7 +67,7 @@ public class ProcessClassSerializationTest {
 	public void nullSortersSetSortersToDefault() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
@@ -100,7 +100,7 @@ public class ProcessClassSerializationTest {
 	public void serializationHasOnlyDescriptionField() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
 		doReturn(classes).when(dataLogic).findClasses(true);
 
@@ -137,7 +137,7 @@ public class ProcessClassSerializationTest {
 	public void ifTheProcessHasNoAttributesThenSerializationHasEmptyAttributesNode() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final DataAccessLogicHelper dataLogic = mock(DataAccessLogicHelper.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
 		doReturn(classes).when(dataLogic).findClasses(true);
 

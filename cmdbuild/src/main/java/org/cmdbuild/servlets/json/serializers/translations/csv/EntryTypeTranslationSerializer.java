@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
@@ -18,7 +18,7 @@ import com.google.common.collect.Ordering;
 
 public abstract class EntryTypeTranslationSerializer implements TranslationSectionSerializer {
 
-	final DataAccessLogic dataLogic;
+	final DataAccessLogicHelper dataLogic;
 	Iterable<String> selectedLanguages;
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
@@ -31,7 +31,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSecti
 	Ordering<CMEntryType> entryTypeOrdering = EntryTypeSorter.DEFAULT.getOrientedOrdering();
 	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
 
-	EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	EntryTypeTranslationSerializer(final DataAccessLogicHelper dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final String separator, final Iterable<String> selectedLanguages) {
 		this.dataLogic = dataLogic;
 		this.activeOnly = activeOnly;

@@ -7,10 +7,10 @@ import java.util.Collection;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
@@ -38,7 +38,7 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	};
 
-	ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	ClassTranslationSerializer(final DataAccessLogicHelper dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters) {
 		super(dataLogic, activeOnly, translationLogic);
 		setOrderings(sorters);
@@ -73,8 +73,7 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 	}
 
 	private Iterable<? extends CMClass> sortedClasses() {
-		final Iterable<? extends CMClass> classes = from(dataLogic.findClasses(activeOnly)) //
-				.filter(input -> input.getParent() != null);
+		final Iterable<? extends CMClass> classes = from(dataLogic.findLocalizableClasses(activeOnly));
 		final Iterable<? extends CMClass> sortedClasses = entryTypeOrdering.sortedCopy(classes);
 		return sortedClasses;
 	}
