@@ -10,6 +10,8 @@ FIXES
 
  * Client libraries update
 
+ * Resizable Textarea fields have some problems when inside wrappers
+
 
 
 
