@@ -216,6 +216,7 @@
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				resizable: true,
 				disabled: true
 			}),
 

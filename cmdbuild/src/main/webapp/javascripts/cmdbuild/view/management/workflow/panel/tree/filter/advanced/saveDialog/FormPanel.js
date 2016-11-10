@@ -76,7 +76,8 @@
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.descriptionLabel),
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
-						allowBlank: false
+						allowBlank: false,
+						resizable: true
 					})
 				]
 			});

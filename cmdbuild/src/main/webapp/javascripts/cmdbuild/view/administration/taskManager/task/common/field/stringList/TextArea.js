@@ -8,6 +8,8 @@
 		 */
 		delegate: undefined,
 
+		resizable: true,
+
 		/**
 		 * @param {Array or String} value
 		 *

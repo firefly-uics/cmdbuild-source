@@ -136,7 +136,8 @@
 						name: CMDBuild.core.constants.Proxy.NOTES,
 						fieldLabel: CMDBuild.Translation.notes,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						resizable: true
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,

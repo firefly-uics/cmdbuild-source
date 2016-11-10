@@ -55,7 +55,8 @@
 						border: false,
 						frame: false,
 						overflowY: 'auto',
-						readOnly: true
+						readOnly: true,
+						resizable: true
 					})
 				]
 			});

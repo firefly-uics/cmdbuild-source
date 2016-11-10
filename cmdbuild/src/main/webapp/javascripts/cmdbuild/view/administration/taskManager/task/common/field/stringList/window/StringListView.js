@@ -34,7 +34,8 @@
 						disablePanelFunctions: true,
 						flex: 1,
 						readOnly: true,
-						submitValue: false
+						submitValue: false,
+						resizable: true
 					}),
 					Ext.create('CMDBuild.core.buttons.iconized.modify.Table', {
 						tooltip: CMDBuild.Translation.modify + ' ' + this.fieldLabel.toLowerCase(),
