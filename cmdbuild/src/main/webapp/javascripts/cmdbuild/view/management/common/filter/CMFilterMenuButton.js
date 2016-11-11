@@ -407,7 +407,22 @@
 			this.cls = "filterMenuButtonGrid";
 
 			var me = this;
-			var store = CMDBuild.proxy.Filter.newUserStore();
+			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				autoLoad: false,
+				model: 'CMDBuild.model.CMFilterModel',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.filter.user.readAll,
+					reader: {
+						type: 'json',
+						idProperty: CMDBuild.core.constants.Proxy.ID,
+						root: CMDBuild.core.constants.Proxy.FILTERS
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 
 			this.grid = new Ext.grid.Panel({
 				width: 300,
