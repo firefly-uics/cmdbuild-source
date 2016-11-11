@@ -19,7 +19,7 @@
 		cmfgCatchedFunctions: [
 			'fieldFilterAdvancedConfiguratorConfigurationGet',
 			'fieldFilterAdvancedConfiguratorConfigurationIsEmpty',
-			'fieldFilterAdvancedConfiguratorEntryTypeSelect',
+			'fieldFilterAdvancedConfiguratorConfigure',
 			'fieldFilterAdvancedConfiguratorIsAdministration',
 			'fieldFilterAdvancedConfiguratorReset -> controllerTabAttributes, controllerTabFunctons, controllerTabRelations',
 			'fieldFilterAdvancedConfiguratorValueGet',
@@ -133,13 +133,13 @@
 		 *
 		 * @private
 		 */
-		fieldFilterAdvancedConfiguratorEntryTypeSelect: function (configuration) {
+		fieldFilterAdvancedConfiguratorConfigure: function (configuration) {
 			configuration = Ext.isObject(configuration) ? configuration : {};
 			configuration.scope = Ext.isObject(configuration.scope) ? configuration.scope : this;
 
 			// Error handling
 				if (!Ext.isString(configuration.className) || Ext.isEmpty(configuration.className))
-					return _error('fieldFilterAdvancedConfiguratorEntryTypeSelect(): unmanaged className parameter', this, configuration.className);
+					return _error('fieldFilterAdvancedConfiguratorConfigure(): unmanaged className parameter', this, configuration.className);
 			// END: Error handling
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manually manage LoadMask (show)
@@ -148,7 +148,7 @@
 
 			var configurationDisabledPanels = this.cmfg('fieldFilterAdvancedConfiguratorConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_PANELS),
 				requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
-					id: 'fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier',
+					id: 'fieldFilterAdvancedConfiguratorConfigureBarrier',
 					scope: this,
 					callback: function () {
 						this.manageActiveTabSet();
@@ -162,21 +162,21 @@
 				tabs = [];
 
 			this.controllerTabAttributes.cmfg('fieldFilterAdvancedConfiguratorConfigurationAttributesEntryTypeSelect', {
-				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier'),
+				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorConfigureBarrier'),
 				visible: !Ext.Array.contains(configurationDisabledPanels, 'attributes')
 			});
 
 			this.controllerTabFunctons.cmfg('fieldFilterAdvancedConfiguratorConfigurationFunctionsEntryTypeSelect', {
-				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier'),
+				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorConfigureBarrier'),
 				visible: !Ext.Array.contains(configurationDisabledPanels, 'functions')
 			});
 
 			this.controllerTabRelations.cmfg('fieldFilterAdvancedConfiguratorConfigurationRelationsEntryTypeSelect', {
-				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier'),
+				callback: requestBarrier.getCallback('fieldFilterAdvancedConfiguratorConfigureBarrier'),
 				visible: !Ext.Array.contains(configurationDisabledPanels, 'relations')
 			});
 
-			requestBarrier.finalize('fieldFilterAdvancedConfiguratorEntryTypeSelectBarrier', true);
+			requestBarrier.finalize('fieldFilterAdvancedConfiguratorConfigureBarrier', true);
 		},
 
 		/**
@@ -190,7 +190,7 @@
 		 * @returns {Object} value
 		 */
 		fieldFilterAdvancedConfiguratorValueGet: function () {
-			var configurationDisabledPanels = this.cmfg('fieldFilterAdvancedConfiguratorConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_PANELS) || [],
+			var configurationDisabledPanels = this.cmfg('fieldFilterAdvancedConfiguratorConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_PANELS),
 				value = {};
 
 			if (!Ext.Array.contains(configurationDisabledPanels, 'attributes')) {

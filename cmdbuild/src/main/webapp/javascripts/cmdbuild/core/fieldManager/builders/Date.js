@@ -87,6 +87,7 @@
 		 */
 		buildFilterCondition: function () {
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
 				fields: [
 					Ext.create('Ext.form.field.Date', {
 						format: CMDBuild.core.configurations.DataFormat.getDate(),

@@ -219,6 +219,7 @@
 		DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES: 'disableSynchronizationOfMissingVariables',
 		DISABLED: 'disabled',
 		DISABLED_CARD_TABS: 'disabledCardTabs',
+		DISABLED_FEATURES: 'disabledFeatures',
 		DISABLED_MODULES: 'disabledModules',
 		DISABLED_PANELS: 'disabledPanels',
 		DISABLED_PROCESS_TABS: 'disabledProcessTabs',

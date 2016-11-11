@@ -7,8 +7,8 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CLASS_NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.DISABLED_PANELS, type: 'auto', defaultValue: [] },
-			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto', defaultValue: {} }
+			{ name: CMDBuild.core.constants.Proxy.DISABLED_FEATURES, type: 'auto', defaultValue: [] }, // Managed values: 'inputParameter'
+			{ name: CMDBuild.core.constants.Proxy.DISABLED_PANELS, type: 'auto', defaultValue: [] } // Managed values: 'attributes', 'functions', 'relations'
 		]
 	});
 

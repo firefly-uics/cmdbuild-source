@@ -107,7 +107,7 @@
 				this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 			]);
 
-			this.view.fieldFilter.entryTypeSelect({
+			this.view.fieldFilter.configure({
 				className: this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME),
 				disabledPanels: ['functions'],
 				scope: this,

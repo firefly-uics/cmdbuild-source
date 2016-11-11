@@ -52,6 +52,20 @@
 		},
 
 		/**
+		 * @param {Object} configuration
+		 * @param {Function} configuration.callback
+		 * @param {String} configuration.className
+		 * @param {Array} configuration.disabledPanels - ex. ['attributes', 'functions', 'relations']
+		 * @param {Object} configuration.filter
+		 * @param {Object} configuration.scope
+		 *
+		 * @returns {Void}
+		 */
+		configure: function (configuration) {
+			this.delegate.cmfg('fieldFilterAdvancedConfiguratorConfigure', configuration);
+		},
+
+		/**
 		 * @returns {Void}
 		 *
 		 * @override
@@ -64,20 +78,6 @@
 		 * @override
 		 */
 		enable: Ext.emptyFn,
-
-		/**
-		 * @param {Object} configuration
-		 * @param {Function} configuration.callback
-		 * @param {String} configuration.className
-		 * @param {Array} configuration.disabledPanels - ex. ['attributes', 'functions', 'relations']
-		 * @param {Object} configuration.filter
-		 * @param {Object} configuration.scope
-		 *
-		 * @returns {Void}
-		 */
-		entryTypeSelect: function (configuration) {
-			this.delegate.cmfg('fieldFilterAdvancedConfiguratorEntryTypeSelect', configuration);
-		},
 
 		/**
 		 * @param {Object} value

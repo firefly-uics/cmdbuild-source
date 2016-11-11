@@ -81,6 +81,7 @@
 		 */
 		buildFilterCondition: function () {
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
 				defaultValueCondition: CMDBuild.core.constants.Proxy.CONTAIN,
 				fields: [
 					Ext.create('Ext.form.field.Text', {
