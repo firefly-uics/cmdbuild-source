@@ -229,6 +229,10 @@
 							cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
 							cmName: 'gis-external-services'
 						}),
+						Ext.create('CMDBuild.view.administration.gis.CMUnconfiguredModPanel', {
+							cmControllerType: 'CMDBuild.controller.administration.gis.CMUnconfiguredModPanelController',
+							cmName: 'notconfiguredpanel'
+						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
 							cmName: 'bim-project'
@@ -236,10 +240,6 @@
 						new CMDBuild.bim.administration.view.CMBimLayers({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
 							cmName: 'bim-layers'
-						}),
-						new CMDBuild.view.common.CMUnconfiguredModPanel({
-							cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
-							cmName: 'notconfiguredpanel'
 						}),
 						new CMDBuild.Administration.ModIcons({
 							cmName: 'gis-icons'

@@ -90,7 +90,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/common/filter/CMFilterMenuButtonDelegate.js"></script>
 
 <!--  VIEWS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 
 <!-- TODO: remove from management -->
@@ -108,7 +107,6 @@
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/StaticsController.js"></script>
 
 	<!-- DASHBOARD -->
