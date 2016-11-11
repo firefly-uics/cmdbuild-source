@@ -76,8 +76,6 @@
 
 		if (exists('Ext.util.Format'))
 			Ext.apply(Ext.util.Format, {
-				thousandSeparator: ',',
-				decimalSeparator: '.',
 				currencySign: '$',
 				dateFormat: 'm/d/Y'
 			});
@@ -180,8 +178,6 @@
 	Ext.define('Ext.locale.ar.form.field.Number', {
 		override: 'Ext.form.field.Number',
 
-		decimalSeparator: '.',
-		decimalPrecision: 2,
 		minText: '{أدنى قيمة لهذا الحقل {0',
 		maxText: '{أقصى قيمة لهذا الحقل {0',
 		nanText: '{0} ليس برقم'

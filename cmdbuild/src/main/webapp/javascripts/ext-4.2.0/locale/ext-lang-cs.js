@@ -81,8 +81,6 @@
 
 		if (exists('Ext.util.Format'))
 			Ext.apply(Ext.util.Format, {
-				thousandSeparator: ',',
-				decimalSeparator: '.',
 				currencySign: '$',
 				dateFormat: 'm/d/Y'
 			});
@@ -179,8 +177,6 @@
 	Ext.define('Ext.locale.en.form.field.Number', {
 		override: 'Ext.form.field.Number',
 
-		decimalSeparator: '.',
-		decimalPrecision: 2,
 		minText: 'Hodnota v tomto poli nesmí být menší než {0}',
 		maxText: 'Hodnota v tomto poli nesmí být větší než {0}',
 		nanText: '{0} není platné číslo'

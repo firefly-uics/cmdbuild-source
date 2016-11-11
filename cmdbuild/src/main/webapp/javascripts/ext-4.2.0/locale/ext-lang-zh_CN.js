@@ -75,8 +75,6 @@
 
 		if (exists('Ext.util.Format'))
 			Ext.apply(Ext.util.Format, {
-				thousandSeparator: ',',
-				decimalSeparator: '.',
 				currencySign: '$',
 				dateFormat: 'm/d/Y'
 			});
@@ -174,8 +172,6 @@
 	Ext.define('Ext.locale.zh_CN.form.field.Number', {
 		override: 'Ext.form.field.Number',
 
-		decimalSeparator: '.',
-		decimalPrecision: 2,
 		minText: '此字段最小长度是 {0}',
 		maxText: '此字段最大长度是 {0}',
 		nanText: '{0} 不是一个有效值'

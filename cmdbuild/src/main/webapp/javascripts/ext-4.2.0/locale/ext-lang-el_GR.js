@@ -79,8 +79,6 @@
 
 		if (exists('Ext.util.Format'))
 			Ext.apply(Ext.util.Format, {
-				thousandSeparator: '.',
-				decimalSeparator: ',',
 				currencySign: '\u20ac',
 				dateFormat: 'd/m/Y' // Greek Euro
 			});
