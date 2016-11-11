@@ -100,11 +100,7 @@
 
 <!-- FILTER -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterRelation.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterFunction.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>
