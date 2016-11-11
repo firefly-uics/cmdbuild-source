@@ -84,11 +84,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
 
-<!-- DELEGATES -->
-	<!-- COMMON -->
-		<!-- FILTER -->
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/common/filter/CMFilterMenuButtonDelegate.js"></script>
-
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 

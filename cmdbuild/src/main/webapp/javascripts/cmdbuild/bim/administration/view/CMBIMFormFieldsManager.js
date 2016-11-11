@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager', {
-		extend: 'CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager',
 
 		/**
 		 * @return (Array) an array of Ext.component to use as form items
@@ -57,9 +56,6 @@
 		/**
 		 * @param (Ext.data.Model) record - record used to fill the field values
 		 */
-		// override
-		// here because the normal behavior of administration pages is use the description_default for languages
-		// translations
 		loadRecord: function(record) {
 			this.reset();
 			this.name.setValue(record.get(CMDBuild.core.constants.Proxy.NAME));
@@ -71,9 +67,10 @@
 		/**
 		 * @return (Object) values - a key/value map with the values of the fields
 		 */
-		// override
 		getValues: function() {
-			var values = this.callParent(arguments);
+			var values = {};
+			values[CMDBuild.core.constants.Proxy.NAME] = this.name.getValue();
+			values[CMDBuild.core.constants.Proxy.DESCRIPTION] = this.description.getValue();
 			values['active'] = this.activeCheckBox.getValue();
 			var ret = '';
 			if (this.cardBinding) {
@@ -86,10 +83,9 @@
 		/**
 		 * Clear the values of his fields
 		 */
-		// override
 		reset: function() {
-			this.callParent(arguments);
-
+			this.name.reset();
+			this.description.reset();
 			this.activeCheckBox.reset();
 			this.fileField.reset();
 			this.cardBinding.setValue('');

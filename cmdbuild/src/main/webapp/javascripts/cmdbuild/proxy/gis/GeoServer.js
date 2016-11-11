@@ -7,6 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.model.gis.geoServer.BindClass',
+			'CMDBuild.model.gis.GISLayerModel',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -30,7 +31,7 @@
 		 */
 		getStore: function () {
 			var store =  CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GIS, {
-				model: 'GISLayerModel',
+				model: 'CMDBuild.model.gis.GISLayerModel',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.gis.geoServer.layer.readAll,

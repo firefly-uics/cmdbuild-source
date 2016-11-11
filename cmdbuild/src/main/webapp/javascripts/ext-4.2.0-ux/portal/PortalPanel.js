@@ -58,7 +58,7 @@ Ext.define('Ext.app.PortalPanel', {
             // item.columnWidth = 1 / len;
             // my code:
             item.columnWidth = item.columnWidth || 1 / len;
-            // CMDBUild patch *************************************************
+            // CMDBuild patch *************************************************
 
             last = (i == len-1);
 

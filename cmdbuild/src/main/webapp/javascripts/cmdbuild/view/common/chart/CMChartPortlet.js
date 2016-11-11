@@ -262,7 +262,7 @@
 	});
 
 	/**
-	 * it is a component of the CMChartPortlet that read the CMDBUild
+	 * it is a component of the CMChartPortlet that read the CMDBuild
 	 * chart configuration and return the ExtJs chart configuartion
 	 * to render it
 	 */

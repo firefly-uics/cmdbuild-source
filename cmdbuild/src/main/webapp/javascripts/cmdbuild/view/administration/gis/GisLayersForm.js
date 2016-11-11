@@ -8,7 +8,7 @@
 		extend: 'CMDBuild.view.administration.gis.FormBasePanel',
 
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions",
+			cmFormFunctions: "CMDBuild.view.common.CMFormFunctions",
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions2'
 		},
 

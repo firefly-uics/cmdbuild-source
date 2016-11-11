@@ -6,7 +6,7 @@
 		ID_CLASS_1 = "idClass1",
 		ID_CLASS_2 = "idClass2";
 
-	Ext.define("CMDBUild.cache.CMCacheDomainFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheDomainFunctions", {
 
 		addDomains: function(dd) {
 			for (var i=0, l=dd.length; i<l; ++i) {

@@ -11,7 +11,7 @@
 		requires: ['CMDBuild.core.Utils'],
 
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: "CMDBuild.view.common.CMFormFunctions"
 		},
 
 		_lastCard: null, // to sync the editable panel when goes in edit mode
