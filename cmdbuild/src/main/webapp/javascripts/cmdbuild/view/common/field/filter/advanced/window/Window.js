@@ -110,6 +110,7 @@
 									items: [
 										this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 											delegate: this.delegate,
+											cls: 'cmdb-border-bottom',
 											region: 'north',
 											height: '30%',
 											split: true
