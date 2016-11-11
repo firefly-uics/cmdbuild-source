@@ -83,6 +83,7 @@
 		 */
 		buildFilterCondition: function () {
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
 				fields: [
 					Ext.create('Ext.form.field.Checkbox', {
 						inputValue: true,

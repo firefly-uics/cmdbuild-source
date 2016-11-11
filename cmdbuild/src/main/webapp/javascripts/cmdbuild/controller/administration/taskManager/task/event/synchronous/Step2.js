@@ -50,7 +50,7 @@
 				: this.cmfg('taskManagerFormViewGet').panelFunctionValueGet({ propertyName: CMDBuild.core.constants.Proxy.CLASS_NAME });
 			parameters.disabledPanels = ['functions'];
 
-			this.view.fieldFilter.entryTypeSelect(parameters);
+			this.view.fieldFilter.configure(parameters);
 		}
 	});
 

@@ -97,6 +97,7 @@
 		 */
 		buildFilterCondition: function () { // TODO: multilevel lookups (CMDBuild.WidgetBuilders.LookupAttribute.prototype.genericBuildFieldsetForFilter)
 			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
 				fields: [
 					Ext.create('CMDBuild.view.common.field.comboBox.lookup.Lookup', {
 						attributeModel: this.cmfg('fieldManagerAttributeModelGet'),

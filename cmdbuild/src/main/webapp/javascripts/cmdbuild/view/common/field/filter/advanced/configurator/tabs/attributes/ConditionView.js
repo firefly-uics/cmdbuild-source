@@ -11,6 +11,11 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {String}
 		 */
 		defaultValueCondition: CMDBuild.core.constants.Proxy.EQUAL,
@@ -60,6 +65,7 @@
 		 * @override
 		 */
 		initComponent: function () {
+
 			this.fields = Ext.isArray(this.fields) ? this.fields : [this.fields];
 
 			// Error handling
@@ -67,7 +73,10 @@
 					return _error('initComponent(): unmanaged field property', this, this.fields);
 			// END: Error handling
 
-			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Condition', { view: this });
+			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.Condition', {
+				parentDelegate: this.parentDelegate,
+				view: this
+			});
 
 			// Field margin fix
 			Ext.Array.forEach(this.fields, function (field, i, allFields) {
@@ -163,7 +172,7 @@
 		 * @returns {Object}
 		 */
 		getValue: function () {
-			return this.delegate.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet');
+			return this.delegate.cmfg('fieldFieldsetFilterConditionContainerValueGet');
 		},
 
 		/**

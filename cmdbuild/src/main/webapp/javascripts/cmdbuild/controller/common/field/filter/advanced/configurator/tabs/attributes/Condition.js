@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.filter.advanced.configurator.tabs.attributes.FieldsetCondition}
+		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
 		 */
 		parentDelegate: undefined,
 
@@ -19,7 +19,7 @@
 		cmfgCatchedFunctions: [
 			'fieldFieldsetFilterConditionContainerBuildItems',
 			'fieldFieldsetFilterConditionContainerLabelOrVisibleSet',
-			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet',
+			'fieldFieldsetFilterConditionContainerValueGet',
 			'fieldFieldsetFilterConditionContainerValueSet',
 			'onFieldFieldsetFilterConditionContainerInputParameterChange',
 			'onFieldFieldsetFilterConditionContainerOperatorSelect'
@@ -41,7 +41,8 @@
 					return _error('fieldFieldsetFilterConditionContainerBuildItems(): unmanaged arrayToMerge parameter', this, arrayToMerge);
 			// END: Error handling
 
-			var items = [];
+			var configurationDisabledFeatures = this.cmfg('fieldFilterAdvancedConfiguratorConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_FEATURES),
+				items = [];
 
 			Ext.Array.forEach(arrayToMerge, function (array, i, allArrays) {
 				if (Ext.isArray(array) && !Ext.isEmpty(array))
@@ -50,6 +51,9 @@
 						Ext.isArray(array) ? array : [array]
 					);
 			}, this);
+
+			// Manage feature disabledState: inputParameter
+			this.view.fieldInputParameter.setVisible(!Ext.Array.contains(configurationDisabledFeatures, 'inputParameter'))
 
 			return items;
 		},
@@ -71,11 +75,11 @@
 		/**
 		 * @returns {Object} conditionObject
 		 */
-		fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet: function () {
+		fieldFieldsetFilterConditionContainerValueGet: function () {
 			// Error handling
 				if (this.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionAttributeIsEmpty'))
 					return _error(
-						'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet(): unmanaged attribute property',
+						'fieldFieldsetFilterConditionContainerValueGet(): unmanaged attribute property',
 						this,
 						this.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionAttributeGet')
 					);

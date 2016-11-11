@@ -105,7 +105,7 @@
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 			]);
 
-			this.view.fieldFilter.entryTypeSelect({
+			this.view.fieldFilter.configure({
 				className: this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME),
 				disabledPanels: ['functions'],
 				scope: this,

@@ -23,7 +23,7 @@
 			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionAttributeGet',
 			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionAttributeIsEmpty',
 			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionRemoveButtonClick',
-			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet',
+			'fieldFieldsetFilterConditionContainerValueGet',
 			'fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionVisibilityAndOrFlagManage'
 		],
 
@@ -142,7 +142,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet: function () {
+		fieldFieldsetFilterConditionContainerValueGet: function () {
 			if (this.view.items.getCount() > 0) {
 				var data = [];
 

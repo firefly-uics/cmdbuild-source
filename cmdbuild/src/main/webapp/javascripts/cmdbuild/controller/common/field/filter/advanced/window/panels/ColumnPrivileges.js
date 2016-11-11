@@ -112,7 +112,7 @@
 			if (!Ext.isEmpty(filter)) {
 				var attributePrivileges = {};
 
-				Ext.Array.forEach(this.cmfg('fieldFilterAdvancedWindowSelectedRecordGet', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
+				Ext.Array.forEach(this.cmfg('fieldFilterAdvancedWindowConfigurationGet', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
 					var parts = privilege.split(':');
 
 					if (parts.length == 2)
@@ -143,8 +143,8 @@
 
 						this.fillGridStore(decodedResponse);
 
-						if (!this.cmfg('fieldFilterAdvancedWindowSelectedRecordIsEmpty', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES))
-							this.onFieldFilterAdvancedWindowColumnPrivilegesSetData(this.cmfg('fieldFilterAdvancedWindowSelectedRecordGet', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES));
+						if (!this.cmfg('fieldFilterAdvancedWindowConfigurationIsEmpty', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES))
+							this.onFieldFilterAdvancedWindowColumnPrivilegesSetData(this.cmfg('fieldFilterAdvancedWindowConfigurationGet', CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES));
 					}
 				});
 			}

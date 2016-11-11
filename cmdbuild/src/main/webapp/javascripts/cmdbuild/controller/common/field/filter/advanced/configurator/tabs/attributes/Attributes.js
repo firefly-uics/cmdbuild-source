@@ -340,7 +340,7 @@
 
 			Ext.Object.each(this.fieldFilterAdvancedConfiguratorConfigurationAttributesControllersConditionGroupGet(), function (name, controller, myself) {
 				if (Ext.isObject(controller) && !Ext.Object.isEmpty(controller))
-					data.push(controller.cmfg('fieldFilterAdvancedConfiguratorTabAttributesFieldsetConditionValueGet'));
+					data.push(controller.cmfg('fieldFieldsetFilterConditionContainerValueGet'));
 			}, this);
 
 			if (data.length == 1)
