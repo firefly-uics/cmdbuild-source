@@ -5,7 +5,7 @@
 	 *
 	 * @deprecated (CMDBuild.view.common.PanelFunctions)
 	 */
-	Ext.define("CMDBUild.view.common.CMFormFunctions", {
+	Ext.define("CMDBuild.view.common.CMFormFunctions", {
 
 		enableCMButtons: function() {
 			this.iterateOverCMButtons(function(item) {

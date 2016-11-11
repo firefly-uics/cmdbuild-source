@@ -233,6 +233,10 @@
 							cmControllerType: 'CMDBuild.controller.administration.gis.CMUnconfiguredModPanelController',
 							cmName: 'notconfiguredpanel'
 						}),
+						Ext.create('CMDBuild.view.administration.gis.ModLayerOrder', {
+							cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
+							cmName: 'gis-layers-order'
+						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
 							cmName: 'bim-project'
@@ -247,10 +251,6 @@
 						new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
 							cmControllerType: CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController,
 							cmName: 'gis-filter-configuration'
-						}),
-						new CMDBuild.Administration.ModLayerOrder({
-							cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
-							cmName: 'gis-layers-order'
 						}),
 						new CMDBuild.view.administration.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController,

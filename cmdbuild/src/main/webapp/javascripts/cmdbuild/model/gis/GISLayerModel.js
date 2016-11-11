@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('GISLayerModel', {
+	Ext.define('CMDBuild.model.gis.GISLayerModel', {
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: 'maxZoom', type: 'string'},

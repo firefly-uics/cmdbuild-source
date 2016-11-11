@@ -1,8 +1,8 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.Function', {
+	Ext.define('CMDBuild.model.dataView.sql.Function', {
 		extend: 'Ext.data.Model',
 
 		fields: [

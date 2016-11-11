@@ -7,6 +7,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils',
+			'CMDBuild.model.gis.GISLayerModel',
 			'CMDBuild.proxy.Cache',
 			'CMDBuild.proxy.common.tabs.attribute.Attribute',
 			'CMDBuild.proxy.gis.Layer',
@@ -14,12 +15,12 @@
 		],
 
 		mixins: {
-			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
-			entryType: "CMDBUild.cache.CMCacheClassFunctions",
-			domains: "CMDBUild.cache.CMCacheDomainFunctions",
+			lookup: "CMDBuild.cache.CMCacheLookupFunctions",
+			entryType: "CMDBuild.cache.CMCacheClassFunctions",
+			domains: "CMDBuild.cache.CMCacheDomainFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
-			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
-			gis: "CMDBUild.cache.CMCacheGisFunctions",
+			attachmentCategories: "CMDBuild.cache.CMCacheAttachmentCategoryFunctions",
+			gis: "CMDBuild.cache.CMCacheGisFunctions",
 			filters: "CMDBuild.cache.CMCacheFilterFunctions"
 		},
 

@@ -6,6 +6,18 @@
 		'CMDBuild.core.Utils'
 	]);
 
+	Ext.define("CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate", {
+		/**
+		 * Called by the CMRuntimeParameter when click
+		 * to on the save button
+		 *
+		 * @param {CMDBuild.view.management.common.filter.CMRuntimeParameterWindow} the
+		 * window that calls this method
+		 * @param {object} filter, the filter used to configure the CMRuntimeParameterWindow
+		 */
+		onRuntimeParameterWindowSaveButtonClick: function(runtimeParameterWindow, filter) {}
+	});
+
 	/**
 	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridController
 	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CMCardGridController
