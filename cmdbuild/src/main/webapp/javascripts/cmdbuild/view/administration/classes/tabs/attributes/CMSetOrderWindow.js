@@ -3,7 +3,7 @@
 	Ext.require(['CMDBuild.proxy.common.tabs.attribute.Order']);
 
 	Ext.define('CMDBuild.view.administration.classes.tabs.attributes.CMSetOrderWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		dimensionsMode: 'percentage',
 		buttonAlign: 'center',

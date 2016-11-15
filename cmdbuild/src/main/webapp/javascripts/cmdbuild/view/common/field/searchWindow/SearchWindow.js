@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.searchWindow.SearchWindow}

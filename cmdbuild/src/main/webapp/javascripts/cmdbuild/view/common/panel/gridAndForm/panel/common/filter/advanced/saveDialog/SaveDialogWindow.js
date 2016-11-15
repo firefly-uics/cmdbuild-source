@@ -4,7 +4,7 @@
 	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.SaveDialogWindow
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.SaveDialog}

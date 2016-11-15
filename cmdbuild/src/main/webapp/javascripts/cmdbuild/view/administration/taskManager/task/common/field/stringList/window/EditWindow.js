@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.administration.taskManager.task.common.field.stringList.window.EditWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

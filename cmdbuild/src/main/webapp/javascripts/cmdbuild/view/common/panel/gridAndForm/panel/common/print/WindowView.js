@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.print.WindowView', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

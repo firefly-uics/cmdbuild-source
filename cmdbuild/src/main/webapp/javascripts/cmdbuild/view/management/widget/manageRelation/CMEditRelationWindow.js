@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.widget.manageRelation.CMEditRelationWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.Global',

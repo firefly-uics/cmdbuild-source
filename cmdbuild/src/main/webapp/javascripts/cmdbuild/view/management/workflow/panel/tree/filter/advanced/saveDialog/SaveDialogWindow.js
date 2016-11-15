@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.SaveDialogWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.SaveDialog}
