@@ -46,6 +46,8 @@
 		 *
 		 * @param {Function} callback
 		 * @param {Object} scope
+		 *
+		 * @returns {Void}
 		 */
 		hide: function (callback, scope) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
@@ -62,6 +64,8 @@
 
 		/**
 		 * @param {Boolean} isAdministration
+		 *
+		 * @returns {Void}
 		 */
 		show: function (isAdministration) {
 			CMDBuild.core.interfaces.service.Splash.build(isAdministration).show();

@@ -6,15 +6,6 @@
 
 		config: {
 			openNote: '.OpenNote'
-		},
-
-		/**
-		 * @param {Object} config
-		 *
-		 * @returns {Void}
-		 */
-		constructor: function (config) {
-			this.initConfig(config);
 		}
 	});
 
