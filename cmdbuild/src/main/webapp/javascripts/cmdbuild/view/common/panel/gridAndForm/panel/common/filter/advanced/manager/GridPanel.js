@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager'
+			'CMDBuild.proxy.common.panel.gridAndForm.panel.common.filter.advanced.Manager'
 		],
 
 		/**
@@ -99,7 +99,7 @@
 						]
 					})
 				],
-				store: CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.getStoreUser()
+				store: CMDBuild.proxy.common.panel.gridAndForm.panel.common.filter.advanced.Manager.getStoreUser()
 			});
 
 			this.callParent(arguments);

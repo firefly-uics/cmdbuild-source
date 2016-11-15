@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.configurations.CustomPage',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.Graph'
+			'CMDBuild.proxy.common.panel.gridAndForm.panel.common.Graph'
 		],
 
 		/**
@@ -62,41 +63,42 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			if (
-				Ext.isNumber(this.cardId) && !Ext.isEmpty(this.cardId)
-				&& Ext.isNumber(this.classId) && !Ext.isEmpty(this.classId)
-			) {
-				this.basePath = window.location.toString().split('/');
-				this.basePath = Ext.Array.slice(this.basePath, 0, this.basePath.length - 1).join('/');
+			// Error handling
+				if (!Ext.isNumber(this.cardId) || Ext.isEmpty(this.cardId))
+					return _error('constructor(): unmanaged cardId parameter', this, this.cardId);
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				if (!Ext.isNumber(this.classId) || Ext.isEmpty(this.classId))
+					return _error('constructor(): unmanaged classId parameter', this, this.classId);
+			// END: Error handling
 
-				CMDBuild.proxy.common.panel.gridAndForm.Graph.readAllClasses({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+			this.basePath = window.location.toString().split('/');
+			this.basePath = Ext.Array.slice(this.basePath, 0, this.basePath.length - 1).join('/');
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
-								return item[CMDBuild.core.constants.Proxy.ID] == this.classId;
-							}, this);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-							if (!Ext.isEmpty(targetClassObject)) {
-								this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
+			CMDBuild.proxy.common.panel.gridAndForm.panel.common.Graph.readAllEntryTypes({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-								this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', { delegate: this });
-								this.view.show();
-							} else {
-								_error('constructor(): class not found', this, this.classId);
-							}
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
+							return item[CMDBuild.core.constants.Proxy.ID] == this.classId;
+						}, this);
+
+						if (Ext.isObject(targetClassObject) && !Ext.Object.isEmpty(targetClassObject)) {
+							this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
+
+							this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', { delegate: this });
+							this.view.show();
+						} else {
+							_error('constructor(): class not found', this, this.classId);
 						}
 					}
-				});
-			} else {
-				_error('constructor(): wrong parameters', this, configurationObject);
-			}
+				}
+			});
 		},
 
 		/**

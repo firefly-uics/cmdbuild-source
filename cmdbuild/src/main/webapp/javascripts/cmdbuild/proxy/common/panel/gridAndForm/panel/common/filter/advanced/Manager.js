@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager
 	 */
-	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager', {
+	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.panel.common.filter.advanced.Manager', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
