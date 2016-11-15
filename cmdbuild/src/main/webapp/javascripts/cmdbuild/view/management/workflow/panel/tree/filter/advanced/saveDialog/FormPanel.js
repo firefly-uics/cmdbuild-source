@@ -73,8 +73,8 @@
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.descriptionLabel),
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
-						allowBlank: false,
-						resizable: true
+						allowBlank: false
+						// resizable: true // FIXME: this property drives to a visual bug because of wrong absolute dimensions on textarea
 					})
 				]
 			});

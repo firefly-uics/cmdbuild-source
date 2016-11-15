@@ -111,9 +111,10 @@
 								disableEnableFunctions: true
 							}),
 							{
-								xtype: 'textareafield',
+								xtype: 'textarea',
 								name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.descriptionLabel,
+								resizable: true,
 								allowBlank: false
 							},
 							{
