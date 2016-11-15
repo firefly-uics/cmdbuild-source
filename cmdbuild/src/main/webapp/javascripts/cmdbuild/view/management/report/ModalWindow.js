@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.report.ModalWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -16,8 +16,8 @@
 		baseTitle: CMDBuild.Translation.report,
 
 		border: true,
+		dimensionsMode: 'percentage',
 		frame: false,
-		layout: 'fit',
 		overflowY: true,
 
 		initComponent: function() {

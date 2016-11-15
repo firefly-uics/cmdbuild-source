@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.common.attributes.metadata.MetadataWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -19,6 +19,7 @@
 		grid: undefined,
 
 		autoScroll: true,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.editMetadata,
 
 		initComponent: function() {

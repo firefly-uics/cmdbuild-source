@@ -240,7 +240,9 @@
 	});
 
 	Ext.define("CMDBuild.view.management.dashboard.CMChartWindow", {
-		extend: "CMDBuild.core.window.AbstractModal",
+		extend: "CMDBuild.core.window.AbstractCustomModal",
+
+		dimensionsMode: 'percentage',
 
 		initComponent: function() {
 			this.chartPortlet = new CMDBuild.view.management.dashboard.CMChartPortlet({
@@ -253,8 +255,7 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.chartPortlet],
-				layout : 'fit'
+				items: [this.chartPortlet]
 			});
 
 			this.callParent(arguments);

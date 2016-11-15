@@ -128,7 +128,8 @@
  * @returns {Void}
  */
 function buildDetaiWindow(detailBufferIndex) {
-	var detailsWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
+	var detailsWindow = Ext.create('CMDBuild.core.window.AbstractCustomModal', {
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.details,
 
 		dockedItems: [

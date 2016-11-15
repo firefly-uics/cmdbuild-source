@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.sessionExpired.SessionExpiredWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
 		 * @cfg {CMDBuild.view.common.sessionExpired.FormPanel}
@@ -14,8 +14,14 @@
 		form: undefined,
 
 		border: false,
+		dimensionsMode: 'absolute',
 		frame: false,
 		title: CMDBuild.Translation.sessionExpired,
+
+		dimensions: {
+			height: 155,
+			width: 300
+		},
 
 		/**
 		 * @returns {Void}
@@ -30,12 +36,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Custom window dimensions
-			Ext.apply(this, {
-				height: 155,
-				width: 300
-			});
 		}
 	});
 

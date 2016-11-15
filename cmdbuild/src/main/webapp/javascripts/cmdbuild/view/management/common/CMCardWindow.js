@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMCardWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.Utils'],
 
@@ -12,6 +12,7 @@
 
 		border: false,
 		buttonAlign: 'center',
+		dimensionsMode: 'percentage',
 		frame: false,
 
 		initComponent: function() {

@@ -1,5 +1,7 @@
 Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
-	extend: "CMDBuild.core.window.AbstractModal",
+	extend: "CMDBuild.core.window.AbstractCustomModal",
+
+	dimensionsMode: 'percentage',
 
 	initComponent: function() {
 		this.grid = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
