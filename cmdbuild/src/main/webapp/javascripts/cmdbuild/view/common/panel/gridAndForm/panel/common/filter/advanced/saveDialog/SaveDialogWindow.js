@@ -31,7 +31,6 @@
 		border: true,
 		closeAction: 'hide',
 		frame: true,
-		layout: 'fit',
 		title: CMDBuild.Translation.filterParameters,
 
 		/**
