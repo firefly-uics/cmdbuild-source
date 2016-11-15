@@ -53,7 +53,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.menu.accordion.Administration} node
+		 * @param {CMDBuild.model.administration.menu.Accordion} node
 		 *
 		 * @override
 		 */

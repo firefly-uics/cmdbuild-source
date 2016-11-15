@@ -137,7 +137,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.lookup.accordion.Administration} node
+		 * @param {CMDBuild.model.administration.lookup.Accordion} node
 		 *
 		 * @override
 		 */

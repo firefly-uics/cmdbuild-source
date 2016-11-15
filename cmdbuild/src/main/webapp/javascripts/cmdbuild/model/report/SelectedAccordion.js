@@ -11,7 +11,7 @@
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.SECTION_HIERARCHY, type: 'auto', defaultValue: [] },
+			{ name: CMDBuild.core.constants.Proxy.SECTION_HIERARCHY, type: 'auto', defaultValue: [] }, // Service parameter used on multilevel accordions
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
 		]
 	});
