@@ -3,6 +3,8 @@ CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ * Gis: remove feature in editing
+
  * Print dialog on Relations Graph: current card and relations report
 
  * "Class" and "Activity" must not be visible within translations table and CSV export
