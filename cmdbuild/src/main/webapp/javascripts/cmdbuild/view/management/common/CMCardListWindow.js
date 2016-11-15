@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMCardListWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		ClassName: undefined, // passed at instantiation
 		idClass: undefined, // passed at instantiation
@@ -12,6 +12,7 @@
 		multiSelect: false,
 		extraParams: {},
 		gridConfig: {}, // passed at instantiation
+		dimensionsMode: 'percentage',
 
 		initComponent: function() {
 			if (typeof this.idClass == 'undefined' && typeof this.ClassName == 'undefined') {

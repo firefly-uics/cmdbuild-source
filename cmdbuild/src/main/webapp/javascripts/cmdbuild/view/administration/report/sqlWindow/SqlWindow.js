@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.administration.report.sqlWindow.SqlWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -16,6 +16,7 @@
 		textArea: undefined,
 
 		border: false,
+		dimensionsMode: 'percentage',
 		frame: true,
 		layout: 'fit',
 		title: CMDBuild.Translation.sql,

@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.searchWindow.SearchWindow}
@@ -24,6 +24,7 @@
 		saveButton: undefined,
 
 		closeAction: 'hide',
+		dimensionsMode: 'percentage',
 
 		/**
 		 * @returns {Void}

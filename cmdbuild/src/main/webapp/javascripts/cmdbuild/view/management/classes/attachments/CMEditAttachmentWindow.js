@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.CMEditAttachmentWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -12,6 +12,7 @@
 		attachmentRecord: undefined, // could be set on creation
 
 		autoScroll: true,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
 
 		initComponent: function() {

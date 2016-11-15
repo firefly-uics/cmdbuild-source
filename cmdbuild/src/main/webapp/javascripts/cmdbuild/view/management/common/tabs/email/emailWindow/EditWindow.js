@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -26,6 +26,7 @@
 		form: undefined,
 
 		closeAction: 'hide',
+		dimensionsMode: 'percentage',
 		layout: 'border',
 		title: CMDBuild.Translation.composeEmail,
 

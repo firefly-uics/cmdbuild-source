@@ -1,12 +1,17 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.translatable.window.Window', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.translatable.Window}
 		 */
 		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		baseTitle: CMDBuild.Translation.translations,
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.FormPanel}
@@ -17,10 +22,14 @@
 		autoWidth: true,
 		autoScroll: true,
 		border: false,
+		dimensionsMode: 'absolute',
 		frame: false,
 		layout: 'fit',
 
-		baseTitle: CMDBuild.Translation.translations,
+		dimensions: {
+			height: 'auto',
+			width: 800
+		},
 
 		initComponent: function() {
 			Ext.apply(this, {

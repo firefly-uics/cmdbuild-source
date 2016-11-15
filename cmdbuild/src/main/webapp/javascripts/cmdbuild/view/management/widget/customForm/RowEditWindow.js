@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.RowEditWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -16,10 +16,14 @@
 		form: undefined,
 
 		border: false,
-		defaultSizeW: 0.90,
-		defaultSizeH: 0.80,
+		dimensionsMode: 'percentage',
 		frame: false,
 		title: CMDBuild.Translation.editRow,
+
+		dimensions: {
+			height: 0.50,
+			width: 0.70
+		},
 
 		/**
 		 * @returns {Void}

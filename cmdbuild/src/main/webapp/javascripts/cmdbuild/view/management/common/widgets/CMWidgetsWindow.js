@@ -1,11 +1,13 @@
 (function() {
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetsWindow", {
-		extend: "CMDBuild.core.window.AbstractModal",
+		extend: "CMDBuild.core.window.AbstractCustomModal",
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		delegate: undefined,
+
+		dimensionsMode: 'percentage',
 
 		initComponent: function() {
 			this.widgetsToAdd = {};

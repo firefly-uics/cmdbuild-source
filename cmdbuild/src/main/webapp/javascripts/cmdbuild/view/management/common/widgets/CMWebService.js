@@ -96,11 +96,13 @@
 	}
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMXMLWindow", {
-		extend: "CMDBuild.core.window.AbstractModal",
+		extend: "CMDBuild.core.window.AbstractCustomModal",
 
 		// configuration
 		xmlNode: null,
 		// configuration
+
+		dimensionsMode: 'percentage',
 
 		initComponent: function() {
 			var me = this;
