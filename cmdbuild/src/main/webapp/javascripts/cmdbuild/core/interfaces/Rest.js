@@ -34,6 +34,8 @@
 		 * @param {Object} response
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		adapterCallback: function (options, success, response, originalFunction) {
@@ -62,6 +64,8 @@
 		 * @param {Object} options - the options configuration object passed to the request method
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		adapterSuccess: function (response, options, originalFunction) {
@@ -76,6 +80,8 @@
 		 * @param {Object} response
 		 * @param {Object} options - the options configuration object passed to the request method
 		 * @param {Function} originalFunction
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -117,6 +123,8 @@
 		/**
 		 * @param {Object} options - the options configuration object passed to the request method
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		interceptorCallback: function (options) {
@@ -126,6 +134,8 @@
 		/**
 		 * @param {Object} options - the options configuration object passed to the request method
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		interceptorFailure: function (options) {
@@ -134,6 +144,8 @@
 
 		/**
 		 * @param {Object} options - the options configuration object passed to the request method
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
