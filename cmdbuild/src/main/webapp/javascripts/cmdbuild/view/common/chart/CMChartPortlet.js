@@ -240,7 +240,7 @@
 	});
 
 	Ext.define("CMDBuild.view.management.dashboard.CMChartWindow", {
-		extend: "CMDBuild.core.window.AbstractCustomModal",
+		extend: "CMDBuild.core.window.AbstractModal",
 
 		dimensionsMode: 'percentage',
 

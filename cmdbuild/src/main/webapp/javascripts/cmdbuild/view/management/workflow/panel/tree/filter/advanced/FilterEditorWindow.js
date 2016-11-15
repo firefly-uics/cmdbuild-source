@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.FilterEditorWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.FilterEditor}

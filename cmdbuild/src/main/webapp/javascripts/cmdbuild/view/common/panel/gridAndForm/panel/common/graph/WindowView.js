@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window}

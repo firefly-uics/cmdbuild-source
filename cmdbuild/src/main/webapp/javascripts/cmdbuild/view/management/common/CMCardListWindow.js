@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMCardListWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		ClassName: undefined, // passed at instantiation
 		idClass: undefined, // passed at instantiation

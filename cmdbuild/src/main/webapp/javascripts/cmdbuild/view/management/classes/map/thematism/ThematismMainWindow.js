@@ -1,6 +1,6 @@
 (function() {
 	Ext.define("CMDBuild.view.management.classes.map.thematism.ThematismMainWindow", {
-		extend : "CMDBuild.core.window.AbstractCustomModal",
+		extend : "CMDBuild.core.window.AbstractModal",
 
 		/**
 		 * @cfg {CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow}

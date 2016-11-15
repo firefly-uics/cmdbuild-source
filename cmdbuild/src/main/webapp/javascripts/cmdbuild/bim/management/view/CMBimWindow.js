@@ -3,7 +3,7 @@
 	var CANVAS_ID = "scenejsCanvas";
 
 	Ext.define("CMDBuild.bim.management.view.CMBimWindow", {
-		extend: "CMDBuild.core.window.AbstractCustomModal",
+		extend: "CMDBuild.core.window.AbstractModal",
 
 		dimensionsMode: 'percentage',
 

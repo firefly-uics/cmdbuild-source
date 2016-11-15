@@ -43,7 +43,7 @@
 		exportPanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.window.AbstractCustomModal}
+		 * @property {CMDBuild.core.window.AbstractModal}
 		 */
 		failuresWindow: undefined,
 
@@ -122,7 +122,7 @@
 							}, this);
 
 
-							this.failuresWindow = Ext.create('CMDBuild.core.window.AbstractCustomModal', {
+							this.failuresWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 								dimensionsMode: 'percentage',
 								title: CMDBuild.Translation.common.failure,
 

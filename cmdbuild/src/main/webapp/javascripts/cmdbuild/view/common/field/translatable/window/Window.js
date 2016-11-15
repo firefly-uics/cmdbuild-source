@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.translatable.window.Window', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.translatable.Window}

@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
-	extend: "CMDBuild.core.window.AbstractCustomModal",
+	extend: "CMDBuild.core.window.AbstractModal",
 
 	dimensionsMode: 'percentage',
 

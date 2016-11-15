@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.widget.linkCards.cardWindow.CMCardWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.Utils'],
 
