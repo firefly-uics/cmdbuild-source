@@ -18,7 +18,6 @@
 		border: false,
 		dimensionsMode: 'percentage',
 		frame: true,
-		layout: 'fit',
 		title: CMDBuild.Translation.sql,
 
 		/**

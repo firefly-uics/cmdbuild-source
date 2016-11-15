@@ -31,7 +31,6 @@
 		border: true,
 		closeAction: 'hide',
 		frame: false,
-		layout: 'fit',
 		resizable: false,
 
 		/**

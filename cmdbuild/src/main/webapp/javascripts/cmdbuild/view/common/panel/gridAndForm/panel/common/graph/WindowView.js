@@ -13,13 +13,10 @@
 		 */
 		dimensionsMode: 'percentage',
 
-		title: CMDBuild.Translation.relationGraph,
-
-		listeners: {
-			show: function (window, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormGraphWindowShow');
-			}
-		}
+		border: true,
+		closeAction: 'hide',
+		frame: false,
+		title: CMDBuild.Translation.relationGraph
 	});
 
 })();
