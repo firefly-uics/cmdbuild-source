@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.accordion.Navigation', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.model.menu.accordion.Management'],
+		requires: ['CMDBuild.model.management.menu.Accordion'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.accordion.Navigation}
@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.menu.accordion.Management',
+		storeModelName: 'CMDBuild.model.management.menu.Accordion',
 
 		title: CMDBuild.Translation.navigation
 	});
