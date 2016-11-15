@@ -625,8 +625,9 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-									parentDelegate: this,
+								this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
+
+								this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 									classId: record.get('IdClass'),
 									cardId: record.get('id')
 								});

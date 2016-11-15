@@ -73,6 +73,9 @@
 
 			this.idClass = this.targetEntryType.getId();
 			this.domain = _CMCache.getDomainByName(this.widgetConf['domainName']);
+
+			// Build sub-controllers
+			this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
 		},
 
 		buildCardModuleStateDelegate: function () {
@@ -298,8 +301,7 @@
 		},
 
 		onShowGraphClick: function () {
-			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-				parentDelegate: this,
+			this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 				classId: parseInt(this.idClass),
 				cardId: parseInt(this.cardId)
 			});

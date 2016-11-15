@@ -42,7 +42,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onPanelGridAndFormGraphWindowShow'
+			'onPanelGridAndFormGraphWindowConfigureAndShow'
 		],
 
 		/**
@@ -52,8 +52,6 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {Object} configurationObject.cardId
-		 * @param {Object} configurationObject.classId
 		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
@@ -63,16 +61,29 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			// Error handling
-				if (!Ext.isNumber(this.cardId) || Ext.isEmpty(this.cardId))
-					return _error('constructor(): unmanaged cardId parameter', this, this.cardId);
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', { delegate: this });
+		},
 
-				if (!Ext.isNumber(this.classId) || Ext.isEmpty(this.classId))
-					return _error('constructor(): unmanaged classId parameter', this, this.classId);
+		/**
+		 * @param {Object} parameters
+		 * @param {Number} parameters.cardId
+		 * @param {Number} parameters.classId
+		 *
+		 * @returns {Void}
+		 */
+		onPanelGridAndFormGraphWindowConfigureAndShow: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			// Error handling
+				if (!Ext.isNumber(parameters.cardId) || Ext.isEmpty(parameters.cardId))
+					return _error('constructor(): unmanaged cardId parameter', this, parameters.cardId);
+
+				if (!Ext.isNumber(parameters.classId) || Ext.isEmpty(parameters.classId))
+					return _error('constructor(): unmanaged classId parameter', this, parameters.classId);
 			// END: Error handling
 
-			this.basePath = window.location.toString().split('/');
-			this.basePath = Ext.Array.slice(this.basePath, 0, this.basePath.length - 1).join('/');
+			var basePath = window.location.toString().split('/');
+			basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -85,38 +96,29 @@
 
 					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
 						var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
-							return item[CMDBuild.core.constants.Proxy.ID] == this.classId;
+							return item[CMDBuild.core.constants.Proxy.ID] == parameters.classId;
 						}, this);
 
 						if (Ext.isObject(targetClassObject) && !Ext.Object.isEmpty(targetClassObject)) {
-							this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
+							this.view.removeAll();
+							this.view.add({
+								xtype: 'component',
 
-							this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', { delegate: this });
+								autoEl: {
+									tag: 'iframe',
+									src: basePath
+										+ '/javascripts/cmdbuild-network/?basePath=' + basePath
+										+ '&classId=' + targetClassObject[CMDBuild.core.constants.Proxy.NAME] // EntryType name
+										+ '&cardId=' + parameters.cardId
+										+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
+										+ '&language=' + CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.LANGUAGE)
+								}
+							});
 							this.view.show();
 						} else {
-							_error('constructor(): class not found', this, this.classId);
+							_error('constructor(): entryType not found', this, parameters.classId);
 						}
 					}
-				}
-			});
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormGraphWindowShow: function () {
-			this.view.removeAll();
-			this.view.add({
-				xtype: 'component',
-
-				autoEl: {
-					tag: 'iframe',
-					src: this.basePath
-						+ '/javascripts/cmdbuild-network/?basePath=' + this.basePath
-						+ '&classId=' + this.className
-						+ '&cardId=' + this.cardId
-						+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
-						+ '&language=' + CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.LANGUAGE)
 				}
 			});
 		}
