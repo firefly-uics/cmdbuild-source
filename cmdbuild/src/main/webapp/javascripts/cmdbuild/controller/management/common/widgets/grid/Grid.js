@@ -217,7 +217,9 @@
 			var columns = [];
 			var classId = this.classType.get(CMDBuild.core.constants.Proxy.ID);
 
-			if (CMDBuild.core.Utils.isSuperclass(classId))
+			var c = _CMCache.getEntryTypeById(classId);
+
+			if (c && c.get('superclass'))
 				columns.push(this.buildClassColumn());
 
 			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {

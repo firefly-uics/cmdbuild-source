@@ -40,8 +40,11 @@
 			this.classId = entry.get('id');
 			fillMenu.call(this, entry);
 
-			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(this.classId);
-			if (CMDBuild.core.Utils.isSuperclass(this.classId)) {
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(this.classId));
+
+			var c = _CMCache.getEntryTypeById(this.classId);
+
+			if (c && c.get('superclass')) {
 				this.setDisabled(this.isEmpty() || privileges.crudDisabled.create);
 				this.showDropDownArrow();
 			} else {
@@ -56,11 +59,13 @@
 		 * @override
 		 */
 		enable: function () {
+			var c = _CMCache.getEntryTypeById(this.classId);
+
 			if (
 				!Ext.isEmpty(this.classId)
 				&& (
-					!CMDBuild.core.Utils.isSuperclass(this.classId)
-					|| (CMDBuild.core.Utils.isSuperclass(this.classId) && !this.isEmpty())
+					!c && c.get('superclass')
+					|| (c && c.get('superclass') && !this.isEmpty())
 				)
 			) {
 				this.callParent(arguments);
@@ -120,11 +125,11 @@
 
 		if (entry) {
 			var entryId = entry.get('id'),
-				isSuperclass = CMDBuild.core.Utils.isSuperclass(entryId);
+				c = _CMCache.getEntryTypeById(entryId);
 
 			this.setTextSuffix(entry.data.text);
 
-			if (isSuperclass) {
+			if (c && c.get('superclass')) {
 				var descendants = getDescendantsById(entryId);
 
 				Ext.Array.sort(descendants, function(et1, et2) {
@@ -169,7 +174,7 @@
 	}
 
 	function addSubclass(entry) {
-		var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(entry.get('id'));
+		var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(entry.get('id')));
 
 		if (privileges.create && ! privileges.crudDisabled.create) {
 			this.menu.add({

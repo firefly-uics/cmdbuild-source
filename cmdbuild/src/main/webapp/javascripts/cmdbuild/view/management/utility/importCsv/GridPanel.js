@@ -1,7 +1,6 @@
 (function () {
 
 	Ext.require([
-		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.common.tabs.attribute.Attribute',
 		'CMDBuild.proxy.index.Json'
 	]);
@@ -463,7 +462,9 @@
 			var headers = [];
 			var fields = [];
 
-			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
+			var c = _CMCache.getEntryTypeById(this.currentClassId);
+
+			if (c && c.get('superclass')) {
 				headers.push(this.buildClassColumn());
 			}
 
