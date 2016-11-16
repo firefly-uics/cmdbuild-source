@@ -288,7 +288,7 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.panelProperties);
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.panelProperties);
 
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {

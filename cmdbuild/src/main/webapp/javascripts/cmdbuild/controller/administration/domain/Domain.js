@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.administration.domain.Domain',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		mixins: ['CMDBuild.controller.administration.domain.ExternalServices'],
@@ -285,7 +285,7 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN];
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.cmfg('domainTabPropertiesFormGet'));
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.controllerProperties.cmfg('domainTabPropertiesFormGet'));
 
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {

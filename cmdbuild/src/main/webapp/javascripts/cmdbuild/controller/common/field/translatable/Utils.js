@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.field.translatable.Utils', {
+	Ext.define('CMDBuild.controller.common.field.translatable.Utils', {
 
 		requires: [
 			'CMDBuild.proxy.common.field.translatable.Translatable',

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.buttons.Base', {
 		extend: 'Ext.button.Button',
@@ -15,7 +15,12 @@
 		 */
 		withSpacer: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			// Button minWidth setup
 			if (Ext.isEmpty(this.iconCls))
 				Ext.apply(this, {
@@ -31,16 +36,16 @@
 			// Add spacer class when button is used as grid icon
 			if (!Ext.isEmpty(this.tooltip) && this.withSpacer)
 				Ext.apply(this, {
-					iconCls: this.iconCls + ' cm-action-col-icon-spacer'
+					iconCls: this.iconCls + ' cmdb-action-col-icon-spacer'
 				});
 
-			// IsDisabled method instantiantion
+			// IsDisabled method instantiation
 			if (!Ext.isEmpty(this.isDisabled) && Ext.isFunction(this.isDisabled))
 				Ext.apply(this, {
 					isDisabled: Ext.bind(this.isDisabled, this.scope)
 				});
 
-			this.on('show', function(button, eOpts) {
+			this.on('show', function (button, eOpts) {
 				// IsDisabled method execute
 				if (Ext.isFunction(this.isDisabled))
 					this.setDisabled(this.isDisabled());

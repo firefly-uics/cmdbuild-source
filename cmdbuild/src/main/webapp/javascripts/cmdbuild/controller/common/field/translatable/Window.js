@@ -97,6 +97,8 @@
 		 * @returns {Void}
 		 */
 		onFieldTranslatableWindowConfigureAndShow: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			Ext.apply(this, parameters);
 
 			var translationsModel = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TRANSLATIONS);

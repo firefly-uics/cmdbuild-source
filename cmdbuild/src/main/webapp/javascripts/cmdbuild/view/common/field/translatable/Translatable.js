@@ -48,7 +48,8 @@
 			Ext.apply(this, {
 				items: [
 					this.field = this.delegate.cmfg('fieldTranslatableBuildField'),
-					CMDBuild.configuration.localization.hasEnabledLanguages() ? Ext.create('CMDBuild.core.buttons.FieldTranslation', {
+					CMDBuild.configuration.localization.hasEnabledLanguages() ? Ext.create('CMDBuild.core.buttons.iconized.Translation', {
+						tooltip: CMDBuild.Translation.translations,
 						margin: '0 0 0 5',
 						scope: this,
 

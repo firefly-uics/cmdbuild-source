@@ -52,7 +52,7 @@
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationGeneralOptionsTabShow');
 
-					CMDBuild.view.common.field.translatable.Utils.commit(this.view);
+					CMDBuild.controller.common.field.translatable.Utils.commit(this.view);
 				}
 			});
 		},

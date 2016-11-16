@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.dataView.Filter',
 			'CMDBuild.core.Utils',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -247,7 +247,7 @@
 		success: function(response, options, decodedResponse) {
 			var me = this;
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.form);
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
