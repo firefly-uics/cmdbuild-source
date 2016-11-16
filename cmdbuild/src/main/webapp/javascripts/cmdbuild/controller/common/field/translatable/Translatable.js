@@ -39,6 +39,11 @@
 		],
 
 		/**
+		 * @proeprty {CMDBuild.controller.common.field.translatable.Window}
+		 */
+		controllerWindow: undefined,
+
+		/**
 		 * @cfg {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		view: undefined,

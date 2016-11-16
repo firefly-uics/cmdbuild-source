@@ -421,8 +421,6 @@ em { font-style: oblique !important; }
 
 .cm-bold { font-weight: bold; }
 
-.cm-action-col-icon-spacer { margin: 0px 3px; }
-
 /* Attachemnt window */
 	.cm_attachement_metadata_container {
 		border-top-style: solid !important;

@@ -10,7 +10,7 @@
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -313,7 +313,7 @@
 						this.grid.getSelectionModel().select(rowIndex, true);
 						this.form.setDisabledModify(true);
 
-						CMDBuild.view.common.field.translatable.Utils.commit(this.form.step1Panel);
+						CMDBuild.controller.common.field.translatable.Utils.commit(this.form.step1Panel);
 					}
 				}
 			});
