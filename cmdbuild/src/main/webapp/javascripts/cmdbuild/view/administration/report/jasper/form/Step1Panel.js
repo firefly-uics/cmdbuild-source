@@ -11,7 +11,7 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		description: undefined,
 
@@ -63,14 +63,14 @@
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						disableEnableFunctions: true
 					}),
-					this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.description = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.REPORT,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TITLE, source: this }, // TODO: waiting for refactor (rename "name")
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION

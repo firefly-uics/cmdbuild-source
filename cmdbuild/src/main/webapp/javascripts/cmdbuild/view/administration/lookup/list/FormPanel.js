@@ -106,14 +106,14 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 					}),
-					Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.LOOKUP_VALUE,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TRANSLATION_UUID, source: this },
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION

@@ -278,7 +278,7 @@
 		EXTERNAL_GRAPHIC: 'externalGraphic',
 		FAILURES: 'failures',
 		FIELD: 'field',
-		FIELD_MODE: 'fieldmode',
+		FIELD_TYPE: 'fieldType',
 		FIELDS: 'fields',
 		FILE: 'file',
 		FILE_NAME: 'fileName',

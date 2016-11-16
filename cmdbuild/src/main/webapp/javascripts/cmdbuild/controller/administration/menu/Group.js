@@ -329,9 +329,6 @@
 			CMDBuild.proxy.Menu.save({
 				params: params,
 				scope: this,
-				success: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.success();
-				},
 				callback: function (options, success, response) {
 					this.onMenuGroupMenuSelected();
 
@@ -362,9 +359,6 @@
 			CMDBuild.proxy.Menu.remove({
 				params: params,
 				scope: this,
-				success: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.success();
-				},
 				callback: function (options, success, response) {
 					this.onMenuGroupMenuSelected();
 				}

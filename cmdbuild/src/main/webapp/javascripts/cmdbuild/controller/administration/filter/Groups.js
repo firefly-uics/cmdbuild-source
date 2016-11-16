@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.filter.group.Default',
 			'CMDBuild.proxy.administration.filter.group.Group',
 			'CMDBuild.view.common.field.translatable.Utils'

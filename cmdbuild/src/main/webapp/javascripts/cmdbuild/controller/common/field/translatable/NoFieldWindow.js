@@ -24,9 +24,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onTranslatableWindowAbortButtonClick',
-			'onTranslatableWindowBeforeShow',
-			'onTranslatableWindowConfirmButtonClick'
+			'onFieldTranslatableWindowAbortButtonClick',
+			'onFieldTranslatableWindowBeforeShow',
+			'onFieldTranslatableWindowConfirmButtonClick'
 		],
 
 		/**
@@ -48,7 +48,7 @@
 		 * 		{CMDBuild.model.common.field.translatable.Window} translations
 		 * 	}
 		 */
-		translationFieldConfig: {},
+		config: {},
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.Window}
@@ -120,14 +120,14 @@
 				var decodedConfigurationObject = {};
 
 				if (
-					Ext.isObject(this.translationFieldConfig)
-					&& !Ext.Object.isEmpty(this.translationFieldConfig)
+					Ext.isObject(this.config)
+					&& !Ext.Object.isEmpty(this.config)
 				) {
 					decodedConfigurationObject = {};
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.TYPE] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TYPE];
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.TYPE] = this.config[CMDBuild.core.constants.Proxy.TYPE];
 					decodedConfigurationObject[CMDBuild.core.constants.Proxy.OWNER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.OWNER);
 					decodedConfigurationObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.IDENTIFIER);
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.FIELD] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.FIELD];
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.FIELD] = this.config[CMDBuild.core.constants.Proxy.FIELD];
 
 					if (withTranslationsObject)
 						decodedConfigurationObject[CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationsGet(translationsObjectEncoded);
@@ -161,7 +161,7 @@
 			var decodedValue = configurationKey;
 
 			if (!Ext.isEmpty(configurationKey)) {
-				var configurationValue = this.translationFieldConfig[configurationKey];
+				var configurationValue = this.config[configurationKey];
 
 				decodedValue = configurationValue;
 
@@ -206,20 +206,20 @@
 			return decodedValue;
 		},
 
-		onTranslatableWindowAbortButtonClick: function() {
+		onFieldTranslatableWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
 		/**
 		 * Build fields with translations refreshing all data
 		 */
-		onTranslatableWindowBeforeShow: function() {
+		onFieldTranslatableWindowBeforeShow: function() {
 			this.setViewTitle();
 
 			if (this.isConfigurationValid()) {
 				// Get translations object from buffer
-				if (this.buffer.hasOwnProperty(this.translationFieldConfig.identifier))
-					this.translationsSet(this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS]);
+				if (this.buffer.hasOwnProperty(this.config.identifier))
+					this.translationsSet(this.buffer[this.config.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS]);
 
 				this.form.reset();
 
@@ -242,13 +242,13 @@
 		/**
 		 * Bufferize translations to save on card save
 		 */
-		onTranslatableWindowConfirmButtonClick: function() {
+		onFieldTranslatableWindowConfirmButtonClick: function() {
 			this.translationsSet(this.form.getValues());
 
-			this.buffer[this.translationFieldConfig.identifier] = this.translationFieldConfig;
-			this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData();
+			this.buffer[this.config.identifier] = this.config;
+			this.buffer[this.config.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.config[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData();
 
-			this.onTranslatableWindowAbortButtonClick();
+			this.onFieldTranslatableWindowAbortButtonClick();
 		},
 
 		// Translation method
@@ -261,13 +261,13 @@
 				encoded = encoded || false;
 
 				if (
-					!Ext.isEmpty(this.translationFieldConfig)
-					&& this.translationFieldConfig.hasOwnProperty(CMDBuild.core.constants.Proxy.TRANSLATIONS)
+					!Ext.isEmpty(this.config)
+					&& this.config.hasOwnProperty(CMDBuild.core.constants.Proxy.TRANSLATIONS)
 				) {
 					if (encoded)
-						return Ext.encode(this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData());
+						return Ext.encode(this.config[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData());
 
-					return this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS];
+					return this.config[CMDBuild.core.constants.Proxy.TRANSLATIONS];
 				}
 
 				return Ext.create('CMDBuild.model.common.field.translatable.Window');
@@ -289,7 +289,7 @@
 			 * @param {Object} translationsObject
 			 */
 			translationsSet: function(translationsObject) {
-				this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
+				this.config[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
 			}
 	});
 

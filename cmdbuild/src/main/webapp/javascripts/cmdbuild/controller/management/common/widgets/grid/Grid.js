@@ -250,7 +250,7 @@
 					editor.hideLabel = true;
 
 					if (!Ext.isEmpty(header)) {
-						editor.disabled = attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == CMDBuild.core.constants.Proxy.READ;
+						editor.disabled = attribute['fieldmode'] == CMDBuild.core.constants.Proxy.READ;
 
 						if (attribute['isnotnull']) {
 							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
@@ -270,7 +270,7 @@
 						}
 
 						// Read only attributes header setup
-						header.disabled = attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == CMDBuild.core.constants.Proxy.READ;
+						header.disabled = attribute['fieldmode'] == CMDBuild.core.constants.Proxy.READ;
 
 						columns.push(header);
 					}

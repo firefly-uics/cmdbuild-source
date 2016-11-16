@@ -80,6 +80,11 @@
 		 */
 		selectedAttribute: undefined,
 
+		/**
+		 * @property {Object}
+		 */
+		classObj: {},
+
 		constructor:function() {
 
 			this.modifyButton = new Ext.button.Button({
@@ -103,7 +108,7 @@
 			this.cmButtons = [this.saveButton, this.abortButton];
 
 			this.fieldMode = new Ext.form.ComboBox({
-				name: CMDBuild.core.constants.Proxy.FIELD_MODE,
+				name: 'fieldmode',
 				fieldLabel: tr.field_visibility,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -161,7 +166,7 @@
 				}
 			});
 
-			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -172,14 +177,16 @@
 				listeners: {
 					scope: this,
 					enable: function(field, eOpts) { // TODO: on creation, classObj should be already known (refactor)
-						field.translationFieldConfig = {
-							type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
-							owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
-							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-							field: CMDBuild.core.constants.Proxy.DESCRIPTION
-						};
+						if (Ext.isObject(this.classObj) && !Ext.Object.isEmpty(this.classObj)) {
+							field.configurationSet({
+								type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
+								owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
+								identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+								field: CMDBuild.core.constants.Proxy.DESCRIPTION
+							});
 
-						field.translationsRead();
+							field.delegate.cmfg('fieldTranslatableConfigurationReadTranslations');
+						}
 					}
 				}
 			});

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -9,16 +9,20 @@
 
 		/**
 		 * Complete fields properties with all configured languages
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
 		 */
-		constructor: function() {
-			var modelFields = [];
-			var languages = CMDBuild.configuration.localization.getEnabledLanguages();
+		constructor: function (data) {
+			var languages = CMDBuild.configuration.localization.getEnabledLanguages(),
+				modelFields = [];
 
-			Ext.Object.each(languages, function(key, value, myself) {
+			Ext.Object.each(languages, function (key, value, myself) {
 				modelFields.push({ name: value.get(CMDBuild.core.constants.Proxy.TAG), type: 'string' });
 			}, this);
 
-			CMDBuild.model.common.field.translatable.Window.setFields(modelFields);
+			this.self.setFields(modelFields);
 
 			this.callParent(arguments);
 		},
@@ -26,10 +30,10 @@
 		/**
 		 * @returns {Boolean}
 		 */
-		isEmpty: function() {
+		isEmpty: function () {
 			var result = false;
 
-			result = !Ext.Array.some(Ext.Object.getValues(this.getData()), function(value, i, allValues) { // Returns true at first non empty property
+			result = !Ext.Array.some(Ext.Object.getValues(this.getData()), function (value, i, allValues) { // Returns true at first non empty property
 				return !Ext.isEmpty(value);
 			}, this);
 

@@ -159,7 +159,7 @@
 											} else {
 												Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
 													buffer: this.translatableAttributesConfigurationsBuffer,
-													translationFieldConfig: {
+													config: {
 														type: CMDBuild.core.constants.Proxy.MENU_ITEM,
 														identifier: record.get('uuid'),
 														field: CMDBuild.core.constants.Proxy.DESCRIPTION

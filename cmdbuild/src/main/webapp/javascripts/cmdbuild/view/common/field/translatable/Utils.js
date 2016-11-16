@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.translatable.Utils', {
 
 		requires: [
-			'CMDBuild.proxy.localization.Localization',
-			'CMDBuild.view.common.field.translatable.Base'
+			'CMDBuild.proxy.common.field.translatable.Translatable',
+			'CMDBuild.view.common.field.translatable.Translatable'
 		],
 
 		singleton: true,
@@ -12,23 +12,22 @@
 		/**
 		 * Service function to save all translatable fields, to call on entity save success
 		 *
-		 * @returns {Ext.form.Panel}
+		 * @param {Ext.form.Panel} form
+		 *
+		 * @returns {Void}
 		 */
-		commit: function(form) {
+		commit: function (form) {
 			if (
-				!Ext.isEmpty(form)
-				&& form instanceof Ext.form.Panel
+				Ext.isObject(form) && !Ext.Object.isEmpty(form) && Ext.isFunction(form.cascade)
 				&& CMDBuild.configuration.localization.hasEnabledLanguages()
 			) {
-				form.cascade(function(item) {
+				form.cascade(function (item) {
 					if (
-						!Ext.isEmpty(item)
-						&& item.isVisible()
-						&& item instanceof CMDBuild.view.common.field.translatable.Base
+						Ext.isObject(item) && !Ext.Object.isEmpty(item)
+						&& Ext.isFunction(item.isVisible) && item.isVisible()
+						&& item instanceof CMDBuild.view.common.field.translatable.Translatable
 					) {
-						if (!Ext.Object.isEmpty(item.configurationGet())) {
-							CMDBuild.proxy.localization.Localization.update({ params: item.configurationGet(true, true) });
-						}
+						CMDBuild.proxy.common.field.translatable.Translatable.update({ params: item.paramsGet({ includeTranslations: true }) });
 					}
 				});
 			}

@@ -67,7 +67,7 @@
 			Ext.Array.forEach(this.cmfg('getCardAttributes'), function(attribute, i, allAttributes) {
 				var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-				if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
+				if (attribute['fieldmode'] == 'read')
 					item.setDisabled(true);
 
 				itemsArray.push(item);
