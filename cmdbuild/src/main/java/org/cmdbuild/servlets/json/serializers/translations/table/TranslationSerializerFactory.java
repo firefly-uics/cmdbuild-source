@@ -3,13 +3,13 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.json.JSONArray;
 
@@ -25,7 +25,7 @@ public class TranslationSerializerFactory {
 	private static final String MENU = "menu";
 
 	private final boolean activeOnly;
-	private final DataAccessLogic dataLogic;
+	private final DataAccessLogicHelper dataLogic;
 	private final FilterLogic filterLogic;
 	private final Iterable<String> languages;
 	private final LookupStore lookupStore;
@@ -139,7 +139,7 @@ public class TranslationSerializerFactory {
 
 		private boolean activeOnly;
 		private AuthenticationLogic authLogic;
-		private DataAccessLogic dataLogic;
+		private DataAccessLogicHelper dataLogic;
 		private FilterLogic filterLogic;
 		private Iterable<String> languages;
 		private LookupStore lookupStore;
@@ -163,7 +163,7 @@ public class TranslationSerializerFactory {
 			return this;
 		}
 
-		public SerializerBuilder withDataAccessLogic(final DataAccessLogic dataLogic) {
+		public SerializerBuilder withDataAccessLogic(final DataAccessLogicHelper dataLogic) {
 			this.dataLogic = dataLogic;
 			return this;
 		}

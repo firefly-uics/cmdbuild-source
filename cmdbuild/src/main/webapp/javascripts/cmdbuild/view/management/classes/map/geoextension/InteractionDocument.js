@@ -463,15 +463,6 @@
 			callback.apply(callbackScope, [ layer ]);
 		});
 	}
-	function layerByName(name, callback, callbackScope) {
-		function checkName(layer) {
-			return (layer.name === name);
-		}
-		_CMCache.getAllLayers(function(layers) {
-			var layer = layers.find(checkName);
-			callback.apply(callbackScope, [ layer ]);
-		});
-	}
 	function layerByClassAndName(className, name, callback, callbackScope) {
 		function checkName(layer) {
 			return (layer.name === name && layer.masterTableName === className);

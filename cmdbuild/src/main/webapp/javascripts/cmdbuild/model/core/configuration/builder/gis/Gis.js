@@ -10,7 +10,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CARD_BROWSER_BY_DOMAIN_CONFIGURATION, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'float'},
+			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'float' },
 			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'float' },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.GEO_SERVER, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Geoserver}

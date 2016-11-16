@@ -272,16 +272,12 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeAbortButtonClick: function () {
-			if (
-				this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty')
-				&& !Ext.isEmpty(this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID))
-			) {
+			if (this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty'))
 				this.cmfg('workflowTreeActivitySelect', {
-					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID),
 					forceFilter: true,
-					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
+					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID),
+					metadata: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.METADATA)
 				});
-			}
 		},
 
 		/**
@@ -550,13 +546,13 @@
 		 * @param {Object} response
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
-		 * @param {String} activitySubsetId
+		 * @param {Object} metadata
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		positionActivityGetSuccess: function (response, options, decodedResponse, activitySubsetId) {
+		positionActivityGetSuccess: function (response, options, decodedResponse, metadata) {
 			// Error handling
 				if (!Ext.isObject(decodedResponse) || Ext.Object.isEmpty(decodedResponse))
 					return _error('positionActivityGetSuccess(): unmanaged response', this, decodedResponse);
@@ -585,7 +581,7 @@
 				callback: function (records, operation, success) {
 					this.view.getSelectionModel().deselectAll();
 
-					this.selectByMetadata(position, activitySubsetId);
+					this.selectByMetadata(position, metadata);
 					this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
 				}
 			});
@@ -637,13 +633,46 @@
 			 * Select position instance's activity by metadata
 			 *
 			 * @param {Number} position
+			 * @param {String} metadata
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			selectByMetadata: function (position, metadata) {
+				if (Ext.isArray(metadata) && !Ext.isEmpty(metadata)) {
+					var metadataValueActivitySubsetId = undefined,
+						metadataValueNextActivitySubsetId = undefined;
+
+					// Manual search as optimization to reduce loops number
+					Ext.Array.forEach(metadata, function (metadata, i, allMetadata) {
+						switch (metadata[CMDBuild.core.constants.Proxy.NAME]) {
+							case CMDBuild.core.constants.Metadata.getActivitySubsetId(): {
+								metadataValueActivitySubsetId = metadata[CMDBuild.core.constants.Proxy.VALUE];
+							} break;
+
+							case CMDBuild.core.constants.Metadata.getNextActivitySubsetId(): {
+								metadataValueNextActivitySubsetId = metadata[CMDBuild.core.constants.Proxy.VALUE];
+							} break;
+						}
+					}, this)
+
+					this.selectByMetadataActivitySubsetId(position, metadataValueActivitySubsetId);
+					this.selectByMetadataActivitySubsetId(position, metadataValueNextActivitySubsetId);
+				}
+			},
+
+			/**
+			 * Manage selection by ActivitySubsetId value
+			 *
+			 * @param {Number} position
 			 * @param {String} metadataValue
 			 *
 			 * @returns {Void}
 			 *
 			 * @private
 			 */
-			selectByMetadata: function (position, metadataValue) {
+			selectByMetadataActivitySubsetId: function (position, metadataValue) {
 				if (
 					Ext.isString(metadataValue) && !Ext.isEmpty(metadataValue)
 					&& Ext.isNumber(position) && !Ext.isEmpty(position)
@@ -816,11 +845,11 @@
 		 * 	3. without filter and flow status
 		 *
 		 * @param {Object} parameters
-		 * @param {String} parameters.activitySubsetId
 		 * @param {String} parameters.enableForceFlowStatus
 		 * @param {String} parameters.forceFilter - only for internal use, false as default
 		 * @param {String} parameters.forceFlowStatus - only for internal use, false as default
 		 * @param {Number} parameters.instanceId
+		 * @param {String} parameters.metadata
 		 *
 		 * @returns {Void}
 		 */
@@ -829,6 +858,7 @@
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
 			parameters.forceFlowStatus = Ext.isBoolean(parameters.forceFlowStatus) ? parameters.forceFlowStatus : false;
+			parameters.metadata = Ext.isArray(parameters.metadata) ? parameters.metadata : [];
 
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
@@ -875,7 +905,7 @@
 					}
 				},
 				success: function (response, options, decodedResponse) {
-					Ext.callback(this.positionActivityGetSuccess, this, [response, options, decodedResponse, parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]]);
+					Ext.callback(this.positionActivityGetSuccess, this, [response, options, decodedResponse, parameters.metadata]);
 				}
 			});
 		},

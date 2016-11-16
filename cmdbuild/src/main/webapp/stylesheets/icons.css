@@ -3,6 +3,7 @@
 .attach { background-image: url("../images/icons/attach.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
 .delete { background-image: url("../images/icons/cross.png") !important; } /* @deprecated */
+.detail { background-image: url("../images/icons/tree/domain.png") !important; } /* @deprecated */
 .down { background-image: url("../images/icons/down.gif") !important;}
 .down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
 .download { background-image: url("../images/icons/download.png") !important; }
