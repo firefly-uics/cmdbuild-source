@@ -101,7 +101,7 @@
 				})
 			]);
 			this.tabDelegate.cmfg('workflowFormTabNoteToolbarTopBuild', [
-				Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+				Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 					text: CMDBuild.Translation.modifyNote,
 					scope: this,
 

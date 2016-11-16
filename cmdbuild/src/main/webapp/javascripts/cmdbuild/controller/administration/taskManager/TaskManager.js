@@ -98,7 +98,7 @@
 			switch (type[0]) {
 				case 'all':
 					return componentToolbar.add(
-						Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
+						Ext.create('CMDBuild.core.buttons.icon.split.add.Add', {
 							text: CMDBuild.Translation.addTask,
 
 							menu: Ext.create('Ext.menu.Menu', {
@@ -169,7 +169,7 @@
 				case 'event':
 					if (Ext.isEmpty(type[1]))
 						return componentToolbar.add(
-							Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.split.add.Add', {
 								text: CMDBuild.Translation.addTask,
 
 								menu: Ext.create('Ext.menu.Menu', {
@@ -200,7 +200,7 @@
 
 				default:
 					return componentToolbar.add(
-						Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+						Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 							text: CMDBuild.Translation.addTask,
 							scope: this,
 

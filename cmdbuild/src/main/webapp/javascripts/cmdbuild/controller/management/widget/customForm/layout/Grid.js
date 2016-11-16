@@ -122,7 +122,7 @@
 				fixed: true,
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.iconized.Clone', {
+					Ext.create('CMDBuild.core.buttons.icon.Clone', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.cloneRow,
 						scope: this,
@@ -147,7 +147,7 @@
 							});
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+					Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
 						scope: this,
@@ -169,7 +169,7 @@
 							this.cmfg('onWidgetCustomFormLayoutGridEditRowButtonClick', record);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+					Ext.create('CMDBuild.core.buttons.icon.Remove', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.deleteRow,
 						scope: this,

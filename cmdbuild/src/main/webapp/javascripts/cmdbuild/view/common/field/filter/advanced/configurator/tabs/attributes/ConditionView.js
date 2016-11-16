@@ -92,7 +92,7 @@
 					[
 						Ext.create('Ext.container.Container', { // Avoid item stretch thats needs for labelOr field
 							items: [
-								Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+								Ext.create('CMDBuild.core.buttons.icon.Remove', {
 									tooltip: CMDBuild.Translation.remove,
 									margin: '5 5 0 0',
 									scope: this,

@@ -123,7 +123,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 	//private
 	buildUIButtons: function() {
-		this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+		this.addButton = Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 			scope: this,
 			handler: this.onAddClick
 		});
@@ -141,13 +141,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			handler: this.onAbort
 		});
 
-		this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+		this.modifyButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onModify
 	    });
 
-		this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+		this.removeButton = Ext.create('CMDBuild.core.buttons.icon.Remove', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onRemove

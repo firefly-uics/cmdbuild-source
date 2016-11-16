@@ -32,7 +32,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addCard,
 								disabled: true
 							})
@@ -47,7 +47,7 @@
 						items: [
 							new CMDBuild.field.GridSearchField({ grid: this }),
 							this.controllerAdvancedFilterButtons.getView(),
-							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 								delegate: this.delegate,
 								delegateEventPrefix: 'onDataViewSql',
 								formatList: [

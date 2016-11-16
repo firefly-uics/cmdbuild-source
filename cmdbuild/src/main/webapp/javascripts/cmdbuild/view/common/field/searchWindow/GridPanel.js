@@ -581,7 +581,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.iconized.Graph', {
+						Ext.create('CMDBuild.core.buttons.icon.Graph', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.openRelationGraph,
 							scope: this,

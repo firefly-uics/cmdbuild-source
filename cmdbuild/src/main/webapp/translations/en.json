@@ -1354,6 +1354,7 @@
 	"workflowAttributes" : "Process attributes",
 	"workflowEngine": "Workflow engine",
 	"write": "Write",
+	"xml": "XML",
 	"xpdlFile": "XPDL file",
 	"xpdlFileUploaded": "XPDL file uploaded",
 	"yes": "Yes",

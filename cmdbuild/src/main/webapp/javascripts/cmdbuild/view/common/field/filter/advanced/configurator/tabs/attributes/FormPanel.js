@@ -11,7 +11,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.split.add.Add}
+		 * @property {CMDBuild.core.buttons.icon.split.add.Add}
 		 */
 		addAttributeButton: undefined,
 
@@ -38,7 +38,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.addAttributeButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
+							this.addAttributeButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Add', {
 								text: CMDBuild.Translation.chooseAnAttribute,
 								disabled: true
 							})

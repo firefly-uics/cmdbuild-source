@@ -54,7 +54,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyProcess,
 								scope: this,
 
@@ -62,7 +62,7 @@
 									this.delegate.cmfg('onWorkflowTabPropertiesModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeProcess,
 								scope: this,
 
@@ -70,7 +70,7 @@
 									this.delegate.cmfg('onWorkflowTabPropertiesRemoveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printProcess,
 								delegateEventPrefix: 'onWorkflowTabProperties',

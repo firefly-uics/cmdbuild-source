@@ -1,4 +1,5 @@
-(function() {
+(function () {
+
 	Ext.define("CMDBuild.core.buttons.CMClassesMenuButtonDelegate", {
 		/**
 		 *
@@ -48,4 +49,5 @@
 		var et = item.entryType;
 		this.callDelegates("onCMClassesMenuButtonItemClick", [this, et]);
 	}
+
 })();

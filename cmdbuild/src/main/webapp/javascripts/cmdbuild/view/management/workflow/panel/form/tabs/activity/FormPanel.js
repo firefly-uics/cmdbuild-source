@@ -77,7 +77,7 @@
 		},
 
 		buildTBar: function() {
-			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+			this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -102,7 +102,7 @@
 			};
 
 			this.cmTBar = [
-				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 					text: CMDBuild.Translation.modifyActivity,
 					scope: this,
 
@@ -110,7 +110,7 @@
 						this.delegate.superController.cmfg('onWorkflowFormModifyButtonClick');
 					}
 				}),
-				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.icon.Remove', {
 					text: CMDBuild.Translation.abortProcess,
 					scope: this,
 

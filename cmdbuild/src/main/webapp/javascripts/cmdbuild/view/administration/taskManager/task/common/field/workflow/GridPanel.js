@@ -41,7 +41,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								scope: this,
 
 								handler: function (button, e) {
@@ -75,7 +75,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,

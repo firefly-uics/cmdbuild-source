@@ -64,7 +64,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.taskManager.SingleExecution', {
+							Ext.create('CMDBuild.core.buttons.icon.taskManager.SingleExecution', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.singleExecution,
 								scope: this,
@@ -77,7 +77,7 @@
 									this.delegate.cmfg('onTaskManagerGridSingleExecutionButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.taskManager.CyclicExecution', {
+							Ext.create('CMDBuild.core.buttons.icon.taskManager.CyclicExecution', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.cyclicExecution,
 								scope: this,
@@ -90,7 +90,7 @@
 									this.delegate.cmfg('onTaskManagerGridCyclicExecutionButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Stop', {
+							Ext.create('CMDBuild.core.buttons.icon.Stop', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.stop,
 								scope: this,
