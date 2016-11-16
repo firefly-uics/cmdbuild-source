@@ -50,8 +50,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: '.',
-            decimalSeparator: ',',
             currencySign: '\u20ab',
             // Vietnamese Dong
             dateFormat: 'd/m/Y'

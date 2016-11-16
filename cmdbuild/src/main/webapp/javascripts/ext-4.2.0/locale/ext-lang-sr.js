@@ -49,8 +49,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: '.',
-            decimalSeparator: ',',
             currencySign: '\u0414\u0438\u043d\u002e',
             // Serbian Dinar
             dateFormat: 'd.m.Y'

@@ -4,8 +4,8 @@ import static com.google.common.collect.FluentIterable.from;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DataAccessLogicHelper;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
@@ -13,7 +13,7 @@ import com.google.common.base.Predicate;
 
 public class ProcessSectionSerializer extends ClassSectionSerializer {
 
-	public ProcessSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	public ProcessSectionSerializer(final DataAccessLogicHelper dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final Iterable<String> selectedLanguages) {
 		super(dataLogic, activeOnly, translationLogic, sorters, separator, selectedLanguages);
@@ -34,7 +34,7 @@ public class ProcessSectionSerializer extends ClassSectionSerializer {
 			@Override
 			public boolean apply(final CMClass input) {
 				final CMClass processBaseClass = dataLogic.findClass(Constants.BASE_PROCESS_CLASS_NAME);
-				return processBaseClass.isAncestorOf(input);
+				return processBaseClass.isAncestorOf(input) && !processBaseClass.equals(input);
 			}
 		});
 		if (activeOnly) {

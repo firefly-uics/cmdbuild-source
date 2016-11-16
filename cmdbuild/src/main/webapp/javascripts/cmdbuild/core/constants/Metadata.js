@@ -10,6 +10,7 @@
 		config: {
 			activitySubsetId: 'ActivitySubsetId', // Workflow
 			additionalActivityLabel: 'AdditionalActivityLabel', // Workflow
+			nextActivitySubsetId: 'NextActivitySubsetId', // Workflow
 			selectedAttributesGroup: 'SelectedAttributesGroup' // Workflow
 		}
 	});

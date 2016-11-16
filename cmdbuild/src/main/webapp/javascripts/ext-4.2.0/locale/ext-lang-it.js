@@ -82,8 +82,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: '.',
-            decimalSeparator: ',',
             currencySign: '\u20ac',  // Euro
             dateFormat: 'd/m/Y'
         });
@@ -178,8 +176,6 @@ Ext.define("Ext.locale.en.form.field.Text", {
 
 Ext.define("Ext.locale.en.form.field.Number", {
     override: "Ext.form.field.Number",
-    decimalSeparator: ",",
-    decimalPrecision: 2,
     minText: "Il valore minimo \u00E8 {0}",
     maxText: "Il valore massimo \u00E8 {0}",
     nanText: "{0} non \u00E8 un valore numerico valido"

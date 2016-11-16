@@ -157,7 +157,7 @@
 		onDeleteAttachmentClick: function(record) {
 			var me = this;
 
-			Ext.Msg.confirm(tr.delete_attachment, tr.delete_attachment_confirm,
+			Ext.Msg.confirm(CMDBuild.Translation.management.modcard.delete_attachment, CMDBuild.Translation.management.modcard.delete_attachment_confirm,
 				function(btn) {
 					if (btn != 'yes') {
 						return;

@@ -76,8 +76,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: ',',
-            decimalSeparator: '.',
             currencySign: 'R$',
             // Brazilian Real
             dateFormat: 'd/m/Y'

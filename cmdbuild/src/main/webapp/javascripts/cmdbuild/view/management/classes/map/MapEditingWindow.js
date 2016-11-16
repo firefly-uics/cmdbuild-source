@@ -93,6 +93,7 @@
 								this.onRemoveMenuitemSelect.call(this, attribute);
 							}
 							this.callDelegates("removeFeatureButtonHasBeenClicked");
+							this.interactionDocument.getMapPanel().clearSelections();
 						}
 					});
 
@@ -192,6 +193,8 @@
 							attribute);
 					var feature = this.searchFeature(layer, attribute, currentCard.cardId);
 					layer.getSource().removeFeature(feature);
+					var adapter = layer.get("adapter");
+					adapter.setStatus("None");
 					this.removeButton.disable();
 					this.addButton.enable();
 					

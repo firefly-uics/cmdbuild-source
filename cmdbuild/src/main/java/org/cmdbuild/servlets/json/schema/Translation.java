@@ -33,6 +33,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.serializers.translations.commons.DefaultDataAccessLogicHelper;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorListener;
@@ -224,7 +225,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withOutput(Output.CSV) //
 				.withActiveOnly(activeOnly) //
 				.withAuthLogic(authLogic()) //
-				.withDataAccessLogic(userDataAccessLogic()) //
+				.withDataAccessLogic(new DefaultDataAccessLogicHelper(userDataAccessLogic())) //
 				.withFilterLogic(filterLogic()) //
 				.withLookupStore(lookupStore()) //
 				.withMenuLogic(menuLogic()) //
@@ -265,7 +266,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.newInstance() //
 				.withActiveOnly(activeOnly) //
 				.withAuthLogic(authLogic()) //
-				.withDataAccessLogic(userDataAccessLogic()) //
+				.withDataAccessLogic(new DefaultDataAccessLogicHelper(userDataAccessLogic())) //
 				.withFilterLogic(filterLogic()) //
 				.withLookupStore(lookupStore()) //
 				.withMenuLogic(menuLogic()) //

@@ -78,8 +78,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: '.',
-            decimalSeparator: ',',
             currencySign: 'kn',
             // Croation Kuna
             dateFormat: 'd.m.Y'

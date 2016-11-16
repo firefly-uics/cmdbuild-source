@@ -563,7 +563,7 @@
 		},
 		getGeometries : function(cardId, className) {
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
-			var translation = undefined;
+			var translation = null;
 			featuresOnLayer.forEach(function(feature) {
 				var geojson = new ol.format.GeoJSON();
 				var json = geojson.writeFeature(feature);

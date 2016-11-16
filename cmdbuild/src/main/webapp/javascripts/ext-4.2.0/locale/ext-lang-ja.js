@@ -94,8 +94,6 @@ Ext.onReady(function() {
 
     if (exists('Ext.util.Format')) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: ',',
-            decimalSeparator: '.',
             currencySign: '\u00a5',
             // Japanese Yen
             dateFormat: 'Y/m/d'
@@ -184,8 +182,6 @@ Ext.define("Ext.locale.ja.form.field.Text", {
 
 Ext.define("Ext.locale.ja.form.field.Number", {
     override: "Ext.form.field.Number",
-    decimalSeparator: ".",
-    decimalPrecision: 2,
     minText: "このフィールドの最小値は {0} です。",
     maxText: "このフィールドの最大値は {0} です。",
     nanText: "{0} は数値ではありません。"
