@@ -34,26 +34,6 @@
 		},
 
 		/**
-		 * Clones a ExtJs store
-		 *
-		 * @param {Ext.data.Store} sourceStore
-		 *
-		 * @returns {Ext.data.Store} clonedStore
-		 */
-		deepCloneStore: function (sourceStore) {
-			var clonedStore = Ext.create('Ext.data.Store', { model: sourceStore.model });
-
-			sourceStore.each(function (record) {
-				var newRecordData = Ext.clone(record.copy().data);
-				var model = new sourceStore.model(newRecordData, newRecordData.id);
-
-				clonedStore.add(model);
-			}, this);
-
-			return clonedStore;
-		},
-
-		/**
 		 * @param {Object} meta
 		 * @param {String} ns
 		 *
@@ -62,8 +42,6 @@
 		 * @deprecated
 		 */
 		extractMetadataByNamespace: function (meta, ns) {
-			_deprecated('extractMetadataByNamespace', this);
-
 			var xaVars = {};
 
 			for (var metaItem in meta) {
@@ -83,10 +61,10 @@
 		 * @param {Array} methods
 		 *
 		 * @returns {Array} out
+		 *
+		 * @deprecated
 		 */
 		forwardMethods: function (wrapper, target, methods) {
-			_deprecated('forwardMethods', this);
-
 			if (!Ext.isArray(methods))
 				methods = [methods];
 
@@ -109,11 +87,9 @@
 		 *
 		 * @returns {Array} out
 		 *
-		 * @deprecated CMDBuild.core.Utils.getEntryTypeAncestorsId
+		 * @deprecated
 		 */
 		getAncestorsId: function (entryTypeId) {
-			_deprecated('getAncestorsId', this);
-
 			var et = null;
 			var out = [];
 
@@ -131,34 +107,6 @@
 
 					if (!Ext.isEmpty(et))
 						out.push(et.get('id'));
-				}
-			}
-
-			return out;
-		},
-
-		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
-		 *
-		 * @returns {Array} out
-		 *
-		 * @deprecated
-		 *
-		 * FIXME: parseInt will be useless when model will be refactored
-		 */
-		getEntryTypeAncestorsId: function (entryType) {
-			_deprecated('getEntryTypeAncestorsId', this);
-
-			var out = [];
-
-			if (!Ext.Object.isEmpty(entryType)) {
-				out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
-
-				while (!Ext.isEmpty(entryType) && !Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
-					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.constants.Proxy.PARENT));
-
-					if (!Ext.isEmpty(entryType))
-						out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
 				}
 			}
 
@@ -191,62 +139,6 @@
 			}
 
 			return privileges;
-		},
-
-		/**
-		 * @param {Ext.data.Model} card
-		 *
-		 * @returns {Object}
-		 *
-		 * @deprecated
-		 */
-		getEntryTypePrivilegesByCard: function (card) {
-			_deprecated('getEntryTypePrivilegesByCard', this);
-
-			var privileges = {
-				write: false,
-				create: false,
-				crudDisabled: {}
-			};
-
-			if (Ext.isObject(card) && !Ext.Object.isEmpty(card))
-				privileges = CMDBuild.core.Utils.getEntryTypePrivileges(
-					_CMCache.getEntryTypeById(
-						card.get('IdClass')
-					)
-				);
-
-			return privileges;
-		},
-
-		/**
-		 * @param {Number} id
-		 *
-		 * @returns {Object}
-		 *
-		 * @deprecated
-		 */
-		getEntryTypePrivilegesById: function (id) {
-			_deprecated('getEntryTypePrivilegesById', this);
-
-			return CMDBuild.core.Utils.getEntryTypePrivileges(
-				_CMCache.getEntryTypeById(id)
-			);
-		},
-
-		/**
-		 * @param {String} name
-		 *
-		 * @returns {Object}
-		 *
-		 * @deprecated
-		 */
-		getEntryTypePrivilegesByName: function (name) {
-			_deprecated('getEntryTypePrivilegesByName', this);
-
-			return CMDBuild.core.Utils.getEntryTypePrivileges(
-				_CMCache.getEntryTypeByName(name || '')
-			);
 		},
 
 		/**
@@ -397,45 +289,6 @@
 			}
 
 			return false;
-		},
-
-		/**
-		 * @param {Number} id
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @deprecated
-		 */
-		isSimpleTable: function (id) {
-			_deprecated('isSimpleTable', this);
-
-			var table = _CMCache.getEntryTypeById(id);
-
-			if (table) {
-				return table.data.tableType == CMDBuild.core.constants.Global.getTableTypeSimpleTable();
-			} else {
-				return false;
-			}
-		},
-
-		/**
-		 * @param {Number} id
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @deprecated
-		 */
-		isSuperclass: function (id) {
-			_deprecated('isSimpleTable', this);
-
-			var c = _CMCache.getEntryTypeById(id);
-
-			if (c) {
-				return c.get('superclass');
-			} else {
-				// TODO maybe is not the right thing to do...
-				return false;
-			}
 		},
 
 		/**

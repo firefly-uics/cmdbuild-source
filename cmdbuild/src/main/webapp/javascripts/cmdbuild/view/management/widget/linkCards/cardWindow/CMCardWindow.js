@@ -51,7 +51,7 @@
 			this.addEvents(ee.displayModeDidActivate);
 
 			if (this.classId) {
-				var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesById(this.classId);
+				var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(this.classId));
 				this.cardPanel.writePrivilege = privileges.write;
 			}
 

@@ -107,9 +107,12 @@
 	}
 
 	function getIconsToRender(record) {
+		if (!record)
+			return false;
+
 		var icons = ["showDetail"];
 		var entryType = _CMCache.getEntryTypeById(record.get('IdClass'));
-		var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(record);
+		var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(record.get('IdClass')));
 
 		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
 			icons = ["editDetail", "deleteDetail"];

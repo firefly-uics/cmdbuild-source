@@ -289,7 +289,10 @@
 		},
 
 		isEditable: function(card) {
-			var privileges = CMDBuild.core.Utils.getEntryTypePrivilegesByCard(card);
+			if (!card)
+				return false;
+
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(card.get('IdClass')));
 			return (privileges.create);
 		},
 

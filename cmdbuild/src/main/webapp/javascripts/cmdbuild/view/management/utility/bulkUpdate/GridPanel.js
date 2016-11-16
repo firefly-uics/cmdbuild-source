@@ -313,7 +313,9 @@
 			var headers = [];
 			var fields = [];
 
-			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
+			var c = _CMCache.getEntryTypeById(this.currentClassId);
+
+			if (c && c.get('superclass')) {
 				headers.push(this.buildClassColumn());
 			}
 

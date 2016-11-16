@@ -22,7 +22,7 @@
 	Ext.define('CMDBuild.view.management.classes.map.CardGrid', {
 		extend : 'Ext.grid.Panel',
 
-		requires : [ 'CMDBuild.proxy.gis.Card', 'CMDBuild.core.Utils' ],
+		requires : ['CMDBuild.proxy.gis.Card'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.classes.map.CardGrid}
@@ -271,7 +271,9 @@
 			var headers = [];
 			var fields = [];
 
-			if (CMDBuild.core.Utils.isSuperclass(this.currentClassId)) {
+			var c = _CMCache.getEntryTypeById(this.currentClassId);
+
+			if (c && c.get('superclass')) {
 				headers.push(this.buildClassColumn());
 			}
 
