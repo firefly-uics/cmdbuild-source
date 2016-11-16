@@ -588,7 +588,7 @@
 		}
 
 		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+			me.printGridMenu = Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.CSV
@@ -634,7 +634,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.iconized.Graph', {
+						Ext.create('CMDBuild.core.buttons.icon.Graph', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.openRelationGraph,
 							scope: this,

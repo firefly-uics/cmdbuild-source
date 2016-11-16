@@ -96,7 +96,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+						Ext.create('CMDBuild.core.buttons.icon.Remove', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.remove,
 							scope: this,

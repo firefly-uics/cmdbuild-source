@@ -83,7 +83,7 @@
 									}
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 

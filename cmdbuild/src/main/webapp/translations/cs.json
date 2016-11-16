@@ -1354,6 +1354,7 @@
 	"widget": "Nástroje",
 	"workflow": "Proces",
 	"workflowAttributes" : "Atributy procesu",
+	"xml": "XML",
 	"workflowEngine": "Procesní server",
 	"write": "Zapsat",
 	"xpdlFile": "XPDL soubor",

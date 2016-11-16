@@ -22,7 +22,7 @@
 		activeCheckbox: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.state.Double}
+		 * @property {CMDBuild.core.buttons.icon.state.Double}
 		 */
 		activeStateToggleButton: undefined,
 
@@ -55,7 +55,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyGroup,
 								scope: this,
 
@@ -63,7 +63,7 @@
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesModifyButtonClick');
 								}
 							}),
-							this.activeStateToggleButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+							this.activeStateToggleButton = Ext.create('CMDBuild.core.buttons.icon.state.Double', {
 								state1text: CMDBuild.Translation.disableGroup,
 								state2text: CMDBuild.Translation.enableGroup,
 								scope: this,

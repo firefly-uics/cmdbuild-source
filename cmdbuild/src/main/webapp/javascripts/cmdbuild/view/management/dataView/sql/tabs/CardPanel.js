@@ -30,20 +30,20 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.deleteCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
+							Ext.create('CMDBuild.core.buttons.icon.Clone', {
 								text: CMDBuild.Translation.cloneCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', { disabled: true }),
-							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.icon.RelationGraph', { disabled: true }),
+							Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 								text: CMDBuild.Translation.print + ' ' + CMDBuild.Translation.card.toLowerCase(),
 								disabled: true
 							})

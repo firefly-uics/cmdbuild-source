@@ -277,7 +277,7 @@
 
 			this.referenceFilterMetadata = {};
 
-			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 				text: CMDBuild.Translation.editMetadata,
 				margin: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL + 5),
 				scope: this,

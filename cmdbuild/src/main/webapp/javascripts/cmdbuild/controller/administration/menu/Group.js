@@ -45,7 +45,7 @@
 		menuTreePanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 * @property {CMDBuild.core.buttons.icon.MoveRight}
 		 */
 		removeItemButton: undefined,
 

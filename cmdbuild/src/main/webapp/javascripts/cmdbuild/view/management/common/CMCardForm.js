@@ -407,7 +407,7 @@
 				}
 			});
 
-			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.ODT
@@ -427,7 +427,7 @@
 				this.cloneCardButton
 			];
 
-			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+			this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 				scope: this,
 
 				handler: function(button, e) {

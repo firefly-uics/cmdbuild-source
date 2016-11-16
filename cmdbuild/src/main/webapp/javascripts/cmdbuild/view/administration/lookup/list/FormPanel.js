@@ -22,7 +22,7 @@
 		activeCheckbox: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.state.Double}
+		 * @property {CMDBuild.core.buttons.icon.state.Double}
 		 */
 		enableDisableButton: undefined,
 
@@ -51,7 +51,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyLookup,
 								scope: this,
 
@@ -59,7 +59,7 @@
 									this.delegate.cmfg('onLookupListModifyButtonClick');
 								}
 							}),
-							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.icon.state.Double', {
 								state1text: CMDBuild.Translation.disableLookup,
 								state2text: CMDBuild.Translation.enableLookup,
 								scope: this,

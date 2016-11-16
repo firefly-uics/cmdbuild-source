@@ -1354,6 +1354,7 @@
 	"workflowAttributes" : "Χαρακτηριστικά διαδικασίας",
 	"workflowEngine": "<em>Workflow engine</em>",
 	"write": "<em>Write</em>",
+	"xml": "XML",
 	"xpdlFile": "<em>XPDL file</em>",
 	"xpdlFileUploaded": "<em>XPDL file uploaded</em>",
 	"yes": "<em>Yes</em>",

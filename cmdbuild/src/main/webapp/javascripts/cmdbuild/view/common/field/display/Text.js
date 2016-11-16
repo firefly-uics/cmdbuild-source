@@ -16,7 +16,7 @@
 		allowBlank: true,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Expand}
+		 * @property {CMDBuild.core.buttons.icon.Expand}
 		 */
 		detailsButton: undefined,
 
@@ -46,7 +46,7 @@
 			Ext.apply(this, {
 				delegate: Ext.create('CMDBuild.controller.common.field.display.Text', { view: this }),
 				items: [
-					this.detailsButton = Ext.create('CMDBuild.core.buttons.iconized.Expand', {
+					this.detailsButton = Ext.create('CMDBuild.core.buttons.icon.Expand', {
 						border: false,
 						hidden: true,
 						text: '',

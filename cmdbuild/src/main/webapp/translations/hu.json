@@ -1354,6 +1354,7 @@
 	"workflowAttributes" : "Folyamat attribútumok",
 	"workflowEngine": "Workflow engine",
 	"write": "Írás",
+	"xml": "XML",
 	"xpdlFile": "XPDL fájl",
 	"xpdlFileUploaded": "XPDL fájl feltöltve",
 	"yes": "<em>Yes</em>",

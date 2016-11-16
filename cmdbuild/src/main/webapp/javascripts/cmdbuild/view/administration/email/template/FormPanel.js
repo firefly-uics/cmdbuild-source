@@ -39,7 +39,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyTemplate,
 								scope: this,
 
@@ -47,7 +47,7 @@
 									this.delegate.cmfg('onEmailTemplateModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeTemplate,
 								scope: this,
 
@@ -201,7 +201,7 @@
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.editValues,
 								margin: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL + 5),
 								maxWidth: 100,

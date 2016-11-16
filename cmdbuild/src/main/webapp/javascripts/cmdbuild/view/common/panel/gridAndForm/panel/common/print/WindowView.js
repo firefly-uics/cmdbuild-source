@@ -35,7 +35,7 @@
 
 						items: [
 							'->',
-							Ext.create('CMDBuild.core.buttons.iconized.Download', {
+							Ext.create('CMDBuild.core.buttons.icon.Download', {
 								scope: this,
 
 								handler: function(button, e) {

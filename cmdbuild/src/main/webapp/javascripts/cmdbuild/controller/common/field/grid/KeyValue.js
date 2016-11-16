@@ -30,7 +30,7 @@
 
 			if (this.view.enableRowDelete)
 				actionButtons.push(
-					Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+					Ext.create('CMDBuild.core.buttons.icon.Remove', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.deleteRow,
 						scope: this,

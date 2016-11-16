@@ -45,7 +45,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Save', {
+							Ext.create('CMDBuild.core.buttons.icon.Save', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.save,
 								scope: this,
@@ -61,7 +61,7 @@
 									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerSaveButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.modify,
 								scope: this,
@@ -74,7 +74,7 @@
 									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerModifyButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
+							Ext.create('CMDBuild.core.buttons.icon.Clone', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.clone,
 								scope: this,
@@ -83,7 +83,7 @@
 									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerCloneButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,

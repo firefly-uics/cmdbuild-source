@@ -118,7 +118,7 @@
 
 			this.tbar = [];
 
-			this.addRelationButton = Ext.create('CMDBuild.core.buttons.iconized.add.Relation');
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Relation');
 
 			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
@@ -128,7 +128,7 @@
 				this.tbar.push(this.addRelationButton);
 
 			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 					scope: this,
 
 					handler: function(button, e) {

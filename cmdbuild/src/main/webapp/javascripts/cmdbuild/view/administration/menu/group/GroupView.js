@@ -30,7 +30,7 @@
 		menuTreePanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 * @property {CMDBuild.core.buttons.icon.MoveRight}
 		 */
 		removeItemButton: undefined,
 
@@ -73,7 +73,7 @@
 									me.delegate.cmfg('onMenuGroupAddFolderButtonClick', this.getValue());
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeMenu,
 								scope: this,
 
@@ -146,7 +146,7 @@
 								fixed: true,
 
 								items: [
-									Ext.create('CMDBuild.core.buttons.iconized.Translation', {
+									Ext.create('CMDBuild.core.buttons.icon.Translation', {
 										tooltip: CMDBuild.Translation.translations,
 										withSpacer: true,
 										scope: this,
@@ -216,7 +216,7 @@
 						},
 
 						items: [
-							this.removeItemButton = Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
+							this.removeItemButton = Ext.create('CMDBuild.core.buttons.icon.MoveRight', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 								disabled: true,
