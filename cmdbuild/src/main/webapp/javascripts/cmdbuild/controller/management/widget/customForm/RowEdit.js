@@ -106,7 +106,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
+						if (attribute['fieldmode'] == 'read')
 							item.setDisabled(true);
 
 						// Force execution of template resolver

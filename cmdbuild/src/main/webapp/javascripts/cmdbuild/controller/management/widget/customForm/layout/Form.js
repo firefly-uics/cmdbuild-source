@@ -90,7 +90,7 @@
 								CMDBuild.core.constants.Proxy.CAPABILITIES,
 								CMDBuild.core.constants.Proxy.READ_ONLY
 							])
-							|| attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read'
+							|| attribute['fieldmode'] == 'read'
 						) {
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(
 								attribute,

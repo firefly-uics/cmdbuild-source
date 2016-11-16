@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.dataView.Sql',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -160,8 +159,6 @@
 					success: function(response, options, decodedResponse) {
 						this.form.reset();
 
-						CMDBuild.core.Message.success();
-
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
@@ -240,8 +237,6 @@
 			var me = this;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
-
-			CMDBuild.core.Message.success();
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {

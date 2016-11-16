@@ -17,7 +17,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		instanceNameField: undefined,
 
@@ -84,14 +84,14 @@
 						},
 
 						items: [
-							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 								name: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 								fieldLabel: CMDBuild.Translation.instanceName,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: true,
 
-								translationFieldConfig: {
+								config: {
 									type: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 									identifier: CMDBuild.core.constants.Proxy.INSTANCE_NAME, // Just for configuration validation
 									field: CMDBuild.core.constants.Proxy.INSTANCE_NAME

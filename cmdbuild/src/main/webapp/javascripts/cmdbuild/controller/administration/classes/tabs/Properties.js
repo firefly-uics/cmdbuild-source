@@ -9,7 +9,6 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.classes.Classes'
 		],
 
@@ -272,8 +271,6 @@
 
 						this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('classesIdentifierGet') });
-
-						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -300,8 +297,6 @@
 					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
 				}
 			});
-
-			CMDBuild.core.Message.success();
 		}
 	});
 

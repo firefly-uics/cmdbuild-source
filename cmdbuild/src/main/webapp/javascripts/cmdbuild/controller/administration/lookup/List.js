@@ -274,8 +274,6 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
 
-			CMDBuild.core.Message.success();
-
 			this.onLookupListLookupSelected();
 		}
 	});

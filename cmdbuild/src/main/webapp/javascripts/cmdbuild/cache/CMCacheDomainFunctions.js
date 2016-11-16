@@ -96,7 +96,7 @@
 					IS_NOT_NULL: 'isnotnull',
 					IS_INHERITED: "inherited",
 					IS_ACTIVE: CMDBuild.core.constants.Proxy.ACTIVE,
-					FIELD_MODE: CMDBuild.core.constants.Proxy.FIELD_MODE,
+					FIELD_MODE: 'fieldmode',
 					GROUP: CMDBuild.core.constants.Proxy.GROUP,
 					ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
 					CLASS_ORDER_SIGN: "classOrderSign",

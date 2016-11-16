@@ -8,7 +8,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -269,8 +268,6 @@
 								loadMask: true
 							}
 						});
-
-						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -298,8 +295,6 @@
 					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
 				}
 			});
-
-			CMDBuild.core.Message.success();
 		},
 
 		// SelectedDomain property methods

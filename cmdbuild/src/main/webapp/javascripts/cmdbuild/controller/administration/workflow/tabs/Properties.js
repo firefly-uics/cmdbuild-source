@@ -349,8 +349,6 @@
 
 						this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('workflowIdentifierGet') });
-
-						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -377,8 +375,6 @@
 					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
 				}
 			});
-
-			CMDBuild.core.Message.success();
 		}
 	});
 

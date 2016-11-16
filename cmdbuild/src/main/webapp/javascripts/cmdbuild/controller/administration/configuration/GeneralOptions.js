@@ -53,8 +53,6 @@
 					this.cmfg('onConfigurationGeneralOptionsTabShow');
 
 					CMDBuild.view.common.field.translatable.Utils.commit(this.view);
-
-					CMDBuild.core.Message.success();
 				}
 			});
 		},
@@ -73,7 +71,7 @@
 
 						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
-						this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
+						this.view.instanceNameField.configurationSet(this.view.instanceNameField.config); // Custom function call to read translations data
 
 						Ext.create('CMDBuild.core.configurations.builder.Instance'); // Rebuild configuration model
 					}
