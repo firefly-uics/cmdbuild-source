@@ -227,7 +227,6 @@
 		DOMAIN_DIRECTION: 'domainDirection',
 		DOMAIN_ID: 'domainId',
 		DOMAIN_NAME: 'domainName',
-		DOMAIN_SOURCE: 'src',
 		DOMAINS: 'domains',
 		DRAFT: 'draft',
 		EDGE_COLOR: 'edgeColor',
