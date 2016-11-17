@@ -405,7 +405,7 @@
 			parameters[CMDBuild.core.constants.Proxy.CARD_ID] =  this.cardId;
 			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = domain.getId();
-			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = getSrc(this);
+			parameters[CMDBuild.core.constants.Proxy.SRC] = getSrc(this);
 
 			CMDBuild.proxy.widget.ManageRelation.readAllRelations({
 				params: parameters,
@@ -604,7 +604,7 @@
 			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = node.get('dom_id');
-			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = node.get('src');
+			parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
 
 			CMDBuild.proxy.widget.ManageRelation.readAllRelations({
 				params: parameters,

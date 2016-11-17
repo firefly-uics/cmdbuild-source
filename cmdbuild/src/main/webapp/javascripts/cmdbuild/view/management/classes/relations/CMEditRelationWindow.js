@@ -15,10 +15,11 @@
 		successCb: Ext.emptyFn,
 
 		// configuration
+			classObject: undefined,
+			extraParams: {},
 			relation: undefined, // {dst_id: '', dst_cid: '', dom_id: '', rel_id: '', masterSide: '_1', slaveSide: '_2', rel_attr: []}
 			sourceCard: undefined, // the source of the relation
-			extraParams: {},
-			classObject: undefined,
+			src: undefined, // Gives the side where i'm on domain
 		// configuration
 
 		/**
@@ -47,8 +48,14 @@
 			this.buttons = [this.saveButton, this.abortButton];
 
 			// Setup advancedFilter to exclude cards from hidden classes
-			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.constants.Proxy.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			var attributesAndConditionArray = [],
+				disabledArray = [];
+
+			if (Ext.isString(this.src) && !Ext.isObject(this.src)) {
+				disabledArray = this.src == '_1' ? this.domain.get('disabled2') : this.domain.get('disabled1'); // Get other side disabled classes
+			} else { /** @legacy */
+				disabledArray = this.classObject.get(CMDBuild.core.constants.Proxy.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			}
 
 			if (!Ext.isEmpty(disabledArray)) {
 				// HACK to avoid filter error for a and condition with only one parameter

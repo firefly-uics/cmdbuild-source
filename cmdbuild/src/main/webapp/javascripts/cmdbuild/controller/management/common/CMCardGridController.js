@@ -200,10 +200,37 @@
 			}
 		},
 
-		onCardSelected: function(sm, selection) {
-			if (Ext.isArray(selection)) {
-				if (selection.length > 0) {
-					_CMCardModuleState.setCard(selection[0]);
+		/**
+		 * @param {Ext.selection.Model} selectionModel
+		 * @param {Array} selected
+		 *
+		 * @returns {Void}
+		 */
+		onCardSelected: function(selectionModel, selected, eOpts) {
+			if (Ext.isArray(selected) && !Ext.isEmpty(selected)) {
+				selected = selected[0];
+
+				if (
+					Ext.isNumber(selected.get('Id')) && !Ext.isEmpty(selected.get('Id'))
+					&& Ext.isString(selected.get('IdClass_value')) && !Ext.isEmpty(selected.get('IdClass_value'))
+				) {
+					CMDBuild.proxy.Card.read({
+						params: {
+							cardId: selected.get('Id'),
+							className: selected.get('IdClass_value')
+						},
+						loadMask: false,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
+
+							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+								_CMCardModuleState.setCard(new CMDBuild.DummyModel(decodedResponse));
+							} else {
+								_error('onCardSelected(): unmanaged response', this, decodedResponse);
+							}
+						}
+					});
 				}
 			}
 		},
