@@ -178,11 +178,11 @@
 									&& ( // ... and i'm on N side of domain (so i have only one target) ...
 										(
 											domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
-											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1'
+											&& item[CMDBuild.core.constants.Proxy.SRC] == '_1'
 										)
 										|| (
 											domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
-											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2'
+											&& item[CMDBuild.core.constants.Proxy.SRC] == '_2'
 										)
 										|| domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
 									)
@@ -249,7 +249,7 @@
 			var domain = _CMCache.getDomainById(model.dom_id);
 			var classData = _CMCache.getEntryTypeById(model.dst_cid);
 			var isMany = false;
-			var destination = model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
+			var destination = model[CMDBuild.core.constants.Proxy.SRC] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
 
 			if (domain)
 				isMany = domain.isMany(destination);
@@ -258,6 +258,7 @@
 				domain: domain,
 				classObject: classData,
 				sourceCard: this.card,
+				src: model[CMDBuild.core.constants.Proxy.SRC],
 				relation: {
 					dst_cid: model.dst_cid,
 					dom_id: model.dom_id,
@@ -326,22 +327,22 @@
 															} else if (
 																(
 																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
-																	&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' // Direct
+																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_1' // Direct
 																)
 																|| (
 																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
-																	&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2' // Inverse
+																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_2' // Inverse
 																)
 															) {
 																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
 															} else if (
 																(
 																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
-																	&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' // Direct
+																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_1' // Direct
 																)
 																|| (
 																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
-																	&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2' // Inverse
+																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_2' // Inverse
 																)
 															) {
 																// Here should never enter because you'll be blocked from button pop-up

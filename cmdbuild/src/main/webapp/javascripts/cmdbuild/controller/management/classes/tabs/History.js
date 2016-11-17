@@ -304,7 +304,7 @@
 								this.classesTabHistorySelectedClassSet({ value: selectedClass });
 
 								var params = {};
-								params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get(CMDBuild.core.constants.Proxy.ID);
+								params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get('Id');
 								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 								CMDBuild.proxy.management.classes.tabs.History.readCard({
