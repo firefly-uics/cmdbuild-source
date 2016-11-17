@@ -40,6 +40,8 @@ FIXES
 
  * GIS configurations problems while using comma as decimal separator
 
+ * Enabled classes errors while creating relations on super-classes recursive domain
+
 
 
 

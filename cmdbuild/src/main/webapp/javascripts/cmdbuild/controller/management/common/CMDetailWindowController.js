@@ -143,7 +143,7 @@
 		parameters[CMDBuild.core.constants.Proxy.CARD_ID] =  me.card.get("Id");
 		parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = me.entryType.getName();
 		parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = me.view.detail.get("id");
-		parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
+		parameters[CMDBuild.core.constants.Proxy.SRC] = me.view.detail.getDetailSide();
 
 		CMDBuild.proxy.Relation.readAll({
 			params: parameters,
