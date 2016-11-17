@@ -42,6 +42,8 @@ FIXES
 
  * Enabled classes errors while creating relations on super-classes recursive domain
 
+ * Classes tab notes doesn't display data
+
 
 
 
