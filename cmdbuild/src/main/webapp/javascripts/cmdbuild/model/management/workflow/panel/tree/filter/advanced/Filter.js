@@ -5,6 +5,13 @@
 	Ext.define('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', {
 		extend: 'Ext.data.Model',
 
+		/**
+		 * Property used by advanced filter class to check if model is compatible
+		 *
+		 * @cfg {Boolean}
+		 */
+		isFilterAdvancedCompatible: true,
+
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CONFIGURATION, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
