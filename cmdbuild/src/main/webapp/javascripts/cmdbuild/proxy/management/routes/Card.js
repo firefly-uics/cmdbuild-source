@@ -27,10 +27,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		readClass: function (parameters) {
+		readClassByName: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.read });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readByName });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		}

@@ -27,7 +27,7 @@
 		 */
 		getStore: function (parameters) {
 			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CARD, {
 				autoLoad: false,
 				//model: 'CMDBuild.model.gis.Card',
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',

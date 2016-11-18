@@ -33,7 +33,7 @@
 				model: 'CMDBuild.model.administration.classes.tabs.widgets.workflow.TargetWorkflow',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.workflow.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -46,11 +46,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters classes and processes witch are superclasses
-						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeProcessClass()
-							&& !record.get('superclass')
-						);
+					function (record) { // Filters super-processes
+						return !record.get('superclass');
 					}
 				],
 				sorters: [
@@ -69,7 +66,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readStart });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters);
 		}
 	});
 

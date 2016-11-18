@@ -58,7 +58,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readStart });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters);
 		}
 	});
 

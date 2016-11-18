@@ -39,7 +39,7 @@
 						name: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						fieldLabel: CMDBuild.Translation.selectAClass,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						allowBlank: false,
