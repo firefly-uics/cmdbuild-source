@@ -23,7 +23,7 @@
 			baseParams = Ext.isObject(baseParams) ? baseParams : {};
 			baseParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CARD, {
 				autoLoad: true,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				baseParams: baseParams, // Retro-compatibility
@@ -93,7 +93,7 @@
 			baseParams = Ext.isObject(baseParams) ? baseParams : {};
 			baseParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 
-			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CARD, {
 				autoLoad: !isOneTime,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				isOneTime: isOneTime,

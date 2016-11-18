@@ -58,24 +58,18 @@
 			this.view.removeAll();
 
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.ID] = this.card.get('IdClass');
 
-			CMDBuild.proxy.widget.Ping.readClass({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.widget.Ping.readClassById({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
-							return item[CMDBuild.core.constants.Proxy.ID] == this.card.get('IdClass');
-						}, this);
-
-						if (!Ext.Object.isEmpty(this.targetClassObject)) {
-							this.resolveConfigurationTemplates(this.targetClassObject[CMDBuild.core.constants.Proxy.NAME]);
-						} else {
-							_error('class "' + this.card.get('IdClass') + '" not found', this);
-						}
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.resolveConfigurationTemplates(decodedResponse[CMDBuild.core.constants.Proxy.NAME]);
+					} else {
+						_error('onWidgetPingBeforeActiveView(): class not found', this, this.card.get('IdClass'));
 					}
 				}
 			});
@@ -122,7 +116,7 @@
 					}
 				});
 			} else {
-				_error('wrong or unmanaged className parameter', this);
+				_error('resolveConfigurationTemplates(): unmanaged className parameter', this, className);
 			}
 		},
 

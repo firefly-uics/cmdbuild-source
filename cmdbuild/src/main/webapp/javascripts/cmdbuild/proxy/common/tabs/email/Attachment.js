@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.proxy.common.tabs.email.Attachment', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.proxy.index.Json',
@@ -70,13 +71,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreTargetClass: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+		getStoreTargetEntryType: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ENTRY_TYPE, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.entryType.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -88,8 +89,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters root of all classes
-						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					function (record) { // Filters root class
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [
@@ -119,12 +120,12 @@
 		 *
 		 * @returns {Void}
 		 */
-		readAllClasses: function (parameters) {
+		readAllEntryTypes: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.getAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.entryType.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ENTRY_TYPE, parameters);
 		},
 
 		/**

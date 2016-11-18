@@ -19,7 +19,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.instance.read });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_INSTANCE, parameters);
 		},
 
 		/**
@@ -32,7 +32,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.instance.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_INSTANCE, parameters);
 		},
 
 		/**

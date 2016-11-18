@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.proxy.userAndGroup.group.Group', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.userAndGroup.group.StartingClass'
+			'CMDBuild.model.userAndGroup.group.StartingClass',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -40,12 +41,12 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreStartingClass: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ENTRY_TYPE, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.StartingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.entryType.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -57,8 +58,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters root of all classes
-						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					function (record) { // Filters root class
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [

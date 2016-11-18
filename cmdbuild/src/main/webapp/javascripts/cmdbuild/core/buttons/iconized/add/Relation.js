@@ -80,7 +80,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.core.buttons.iconized.add.Relation.readClass({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.core.buttons.iconized.add.Relation.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

@@ -18,9 +18,11 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.joda.time.DateTime;
 import org.json.JSONException;
+import org.slf4j.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
@@ -146,6 +148,8 @@ public class CSVImporter {
 
 	}
 
+	private static final Logger logger = Log.CMDBUILD;
+
 	// a casual number from which start
 	private static Long idCounter = 1000L;
 
@@ -172,6 +176,7 @@ public class CSVImporter {
 		for (final CsvReader.CsvLine line : lines) {
 			final CardFiller cardFiller = new CardFiller(importClass, view, lookupStore);
 			final Long fakeId = getAndIncrementIdForCsvCard();
+			logger.debug("importing line '{}' using fake id '{}'", line, fakeId);
 			final CsvCard mutableCard = new CsvCard(importClass, view.createCardFor(importClass));
 			final CSVCard csvCard = new CSVCard(mutableCard, fakeId);
 			for (final Entry<String, String> entry : line.entries()) {
@@ -180,7 +185,7 @@ public class CSVImporter {
 							mutableCard, //
 							entry.getKey(), //
 							entry.getValue() //
-							);
+					);
 				} catch (final CardFiller.CardFillerException ex) {
 					csvCard.addInvalidAttribute(ex.attributeName, ex.attributeValue);
 				}
