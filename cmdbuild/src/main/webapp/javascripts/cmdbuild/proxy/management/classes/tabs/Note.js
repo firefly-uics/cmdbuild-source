@@ -21,7 +21,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
 		}
 	});
 

@@ -19,7 +19,7 @@
 		getStore: function (parameters) {
 			parameters.extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CARD, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.attributes.ForeignKeyStore',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
@@ -49,7 +49,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.read });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
 		}
 	});
 

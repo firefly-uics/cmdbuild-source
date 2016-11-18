@@ -72,7 +72,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.common.panel.gridAndForm.Graph.readAllClasses({
+				CMDBuild.proxy.common.panel.gridAndForm.Graph.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

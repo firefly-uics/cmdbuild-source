@@ -47,7 +47,7 @@
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 
-								store: CMDBuild.proxy.common.tabs.email.Attachment.getStoreTargetClass(),
+								store: CMDBuild.proxy.common.tabs.email.Attachment.getStoreTargetEntryType(),
 								queryMode: 'local',
 
 								listeners: {

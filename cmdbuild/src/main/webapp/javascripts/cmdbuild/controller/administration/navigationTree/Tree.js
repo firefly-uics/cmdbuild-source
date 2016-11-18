@@ -412,7 +412,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false; // Also inactive to get all processes if shark isn't on
 
-				CMDBuild.proxy.navigationTree.NavigationTree.readAllClasses({ // TODO: waiting for refactor (CRUD)
+				CMDBuild.proxy.navigationTree.NavigationTree.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

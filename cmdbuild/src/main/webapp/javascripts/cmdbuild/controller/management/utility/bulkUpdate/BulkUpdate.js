@@ -136,63 +136,55 @@
 				this.form.removeAll();
 
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ID] = selectedNode.get(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.utility.BulkUpdate.readClass({ // TODO: waiting for refactor (CRUD)
+				CMDBuild.proxy.utility.BulkUpdate.readClassById({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						var selectedNodeId = selectedNode.get(CMDBuild.core.constants.Proxy.ID);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							this.selectedClassSet({ value: decodedResponse });
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							var selectedClass = Ext.Array.findBy(decodedResponse, function (item, index) {
-								return item[CMDBuild.core.constants.Proxy.ID] == selectedNodeId;
-							}, this);
+							// Grid update
+							if (!this.selectedClassIsEmpty())
+								this.cardGridController.onEntryTypeSelected(this.selectedClassGet(), this); // @legacy
 
-							if (Ext.isObject(selectedClass) && !Ext.Object.isEmpty(selectedClass)) {
-								this.selectedClassSet({ value: selectedClass });
+							// Form update
+							var params = {};
+							params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedNode.get(CMDBuild.core.constants.Proxy.NAME);
 
-								// Grid update
-								if (!this.selectedClassIsEmpty())
-									this.cardGridController.onEntryTypeSelected(this.selectedClassGet(), this); // @legacy
+							CMDBuild.proxy.utility.BulkUpdate.readAttributes({
+								params: params,
+								scope: this,
+								success: function (response, options, decodedResponse) {
+									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
 
-								// Form update
-								var params = {};
-								params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedNode.get(CMDBuild.core.constants.Proxy.NAME);
+									if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
+										Ext.Array.each(decodedResponse, function (attributeObject, i, allAttributesObjects) {
+											if (
+												attributeObject[CMDBuild.core.constants.Proxy.NAME] != 'Notes'
+												|| ( // FIXME: HTML fields breaks the UI
+													!Ext.isEmpty(attributeObject[CMDBuild.core.constants.Proxy.EDITOR_TYPE])
+													&& attributeObject[CMDBuild.core.constants.Proxy.EDITOR_TYPE] == 'HTML'
+												)
+											) {
+												var field = CMDBuild.Management.FieldManager.getFieldForAttr(attributeObject);
 
-								CMDBuild.proxy.utility.BulkUpdate.readAttributes({
-									params: params,
-									scope: this,
-									success: function (response, options, decodedResponse) {
-										decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+												if (field) {
+													field.disable();
+													field.margin = '0 0 0 5';
 
-										if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
-											Ext.Array.each(decodedResponse, function (attributeObject, i, allAttributesObjects) {
-												if (
-													attributeObject[CMDBuild.core.constants.Proxy.NAME] != 'Notes'
-													|| ( // FIXME: HTML fields breaks the UI
-														!Ext.isEmpty(attributeObject[CMDBuild.core.constants.Proxy.EDITOR_TYPE])
-														&& attributeObject[CMDBuild.core.constants.Proxy.EDITOR_TYPE] == 'HTML'
-													)
-												) {
-													var field = CMDBuild.Management.FieldManager.getFieldForAttr(attributeObject);
-
-													if (field) {
-														field.disable();
-														field.margin = '0 0 0 5';
-
-														this.form.add(Ext.create('CMDBuild.view.management.utility.bulkUpdate.FieldPanel', { field: field }));
-													}
+													this.form.add(Ext.create('CMDBuild.view.management.utility.bulkUpdate.FieldPanel', { field: field }));
 												}
-											}, this);
-									}
-								});
-							} else {
-								_error('selected class not found', this);
-							}
+											}
+										}, this);
+								}
+							});
+						} else {
+							_error('onUtilityBulkUpdateClassSelected(): class not found', this, selectedNode.get(CMDBuild.core.constants.Proxy.ID));
 						}
 					}
 				});

@@ -71,7 +71,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.common.tabs.email.Attachment.readAllClasses({
+			CMDBuild.proxy.common.tabs.email.Attachment.readAllEntryTypes({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
