@@ -26,19 +26,6 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 */
-		getAll: function (parameters) { // FIXME: waiting for refactor (server)
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.getAll });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
 		 *
 		 * @management
 		 */

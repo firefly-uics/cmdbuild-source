@@ -69,10 +69,10 @@
 				model: 'CMDBuild.model.administration.taskManager.task.connector.Class',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -81,10 +81,9 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters processes and root of all classes
+					function (record) { // Filters root and system classes
 						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeClass()
-							&& record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
+							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
 							&& !record.get(CMDBuild.core.constants.Proxy.SYSTEM)
 						);
 					}

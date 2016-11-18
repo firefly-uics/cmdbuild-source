@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.dataView.filter.SourceClass', {
+	Ext.define('CMDBuild.model.dataView.filter.SourceEntity', {
 		extend: 'Ext.data.Model',
 
 		fields: [

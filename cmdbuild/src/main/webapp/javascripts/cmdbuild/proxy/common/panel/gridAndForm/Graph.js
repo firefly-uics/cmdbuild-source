@@ -14,12 +14,12 @@
 		 *
 		 * @returns {Void}
 		 */
-		readAllClasses: function (parameters) {
+		readAllEntryTypes: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.getAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.entryType.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ENTRY_TYPE, parameters);
 		}
 	});
 

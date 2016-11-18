@@ -28,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.abort });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters, true);
 		},
 
 		/**
@@ -67,7 +67,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readStart });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters);
 		},
 
 		/**
@@ -93,7 +93,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters, true);
 		}
 	});
 

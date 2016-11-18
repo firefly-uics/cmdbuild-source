@@ -81,7 +81,7 @@
 
 		classes: {
 			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
-			read: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+			read: '',
 			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletetable',
 
@@ -89,8 +89,7 @@
 			readById: 'services/json/schema/modclass/readbyid',
 			readByName: 'services/json/schema/modclass/readbyname',
 
-			foreignKeyTargetClass: 'services/json/schema/modclass/getfktargetingclass',
-			getAll: 'services/json/schema/modclass/getallclasses' /** @deprecated */
+			foreignKeyTargetClass: 'services/json/schema/modclass/getfktargetingclass'
 		},
 
 		configuration: {
@@ -663,7 +662,7 @@
 
 		workflow: {
 			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
-			read: 'services/json/schema/modclass/getallclasses', /** @deprecated */
+			read: '',
 			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletetable', // TODO: waiting for refactor (crud)
 
@@ -671,13 +670,12 @@
 			readById: 'services/json/workflow/readbyid',
 			readByName: 'services/json/workflow/readbyname',
 
-			getAll: 'services/json/schema/modclass/getallclasses', /** @deprecated */
 			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',
 
 			activity: {
-				create: '', // TODO: waiting for refactor (crud)
+				create: '',
 				read: 'services/json/workflow/getactivityinstance', // TODO: waiting for refactor (crud)
 				update: 'services/json/workflow/saveactivity', // TODO: waiting for refactor (crud)
 				remove: '',
