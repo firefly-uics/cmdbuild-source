@@ -71,7 +71,7 @@
 
 						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
-						this.view.instanceNameField.configurationSet(this.view.instanceNameField.config); // Custom function call to read translations data
+						this.view.instanceNameField.delegate.cmfg('fieldTranslatableConfigurationReadTranslations'); // Custom function call to read translations data
 
 						Ext.create('CMDBuild.core.configurations.builder.Instance'); // Rebuild configuration model
 					}
