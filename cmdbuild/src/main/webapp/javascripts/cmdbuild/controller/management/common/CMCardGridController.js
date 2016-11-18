@@ -199,7 +199,7 @@
 		onCardSelected: function(selectionModel, selected, eOpts) {
 			if (Ext.isArray(selected) && !Ext.isEmpty(selected)) {
 				selected = selected[0];
-_debug('selected', selected);
+
 				if (
 					Ext.isNumber(selected.get('Id')) && !Ext.isEmpty(selected.get('Id'))
 					&& Ext.isString(selected.get('IdClass_value')) && !Ext.isEmpty(selected.get('IdClass_value'))
