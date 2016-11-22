@@ -3,7 +3,8 @@
 	Ext.require([
 		'CMDBuild.controller.management.classes.StaticsController',
 		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.Message'
+		'CMDBuild.core.Message',
+		'CMDBuild.core.Utils'
 	]);
 
 	Ext.define("CMDBuild.controller.management.widget.linkCards.cardWindow.CMBaseCardPanelController", {
@@ -288,7 +289,10 @@
 		},
 
 		isEditable: function(card) {
-			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			if (!card)
+				return false;
+
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(card.get('IdClass')));
 			return (privileges.create);
 		},
 

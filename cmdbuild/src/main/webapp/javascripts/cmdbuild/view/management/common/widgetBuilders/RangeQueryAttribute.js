@@ -22,14 +22,3 @@ CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.getQueryOptions = function
 		[operator.BETWEEN, CMDBuild.Translation.between]
 	];
 };
-
-/**
- * @override
- */
-CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = function(field, query, originalFieldName) {
-	var field2 = field.cloneConfig();
-	field2.hideLabel = true;
-	field2.disable();
-
-	return this.genericBuildFieldsetForFilter([field, field2], query, originalFieldName);
-};

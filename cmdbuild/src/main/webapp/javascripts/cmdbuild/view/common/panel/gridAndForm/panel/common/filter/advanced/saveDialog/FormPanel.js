@@ -1,7 +1,6 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.management.common.filter.CMSaveFilterWindow
 	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.FormPanel
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel', {
@@ -78,6 +77,7 @@
 						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.descriptionLabel),
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 						allowBlank: false
+						// resizable: true // FIXME: this property drives to a visual bug because of wrong absolute dimensions on textarea
 					})
 				]
 			});

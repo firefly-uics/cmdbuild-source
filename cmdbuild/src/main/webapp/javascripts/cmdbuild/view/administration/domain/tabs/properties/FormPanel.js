@@ -22,7 +22,7 @@
 		cardinalityCombo: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		domainDescription: undefined,
 
@@ -32,7 +32,7 @@
 		masterDetailCheckbox: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		masterDetailLabel: undefined,
 
@@ -59,7 +59,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyDomain,
 								scope: this,
 
@@ -67,7 +67,7 @@
 									this.delegate.cmfg('onDomainModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeDomain,
 								scope: this,
 
@@ -125,7 +125,7 @@
 							}
 						}
 					}),
-					this.domainDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.domainDescription = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -133,7 +133,7 @@
 						allowBlank: false,
 						vtype: 'commentextended',
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
@@ -167,7 +167,7 @@
 						store: CMDBuild.proxy.administration.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
-					Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -175,13 +175,13 @@
 						allowBlank: false,
 						vtype: 'commentextended',
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
 							field: CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION
 						}
 					}),
-					Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -189,7 +189,7 @@
 						allowBlank: false,
 						vtype: 'commentextended',
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
 							field: CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION
@@ -231,14 +231,14 @@
 							}
 						}
 					}),
-					this.masterDetailLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.masterDetailLabel = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL,
 						fieldLabel: CMDBuild.Translation.masterDetailLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						hidden: true, // Hidden by default
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
 							field: CMDBuild.core.constants.Proxy.MASTER_DETAIL

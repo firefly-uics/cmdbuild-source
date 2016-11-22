@@ -1,6 +1,6 @@
 {
 	"description": "Ελληνικά",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Ενότητα Διαχείρισης",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "<em>An error has occurred</em>",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "<em>Attribute level mapping table must be correctly filled</em>",
 		"busy_wf_widgets": "Τα οπτικά στοιχεία ελέγχου είναι απασχολημένα, ελέγξτε την κατάσταση του server πριν προσπαθήσετε ξανά.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "<em>Class level mapping table must be correctly filled</em>",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Λεπτομέρειες",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "<em>Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct</em>",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "<em>Check if the namespace, the method name and the parameters of the web service are correct</em>"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "<em>Reference level mapping table must be correctly filled</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
@@ -999,6 +996,7 @@
 	"initialLatitude": "Αρχικό γεωγραφικό πλάτος",
 	"initialLongitude": "Αρχικό γεωγραφικό μήκος",
 	"initialZoomLevel": "Αρχικό επίπεδο zoom",
+	"inputParameter": "Παράμετρος εισαγωγής",
 	"instance": "<em>Instance</em>",
 	"instanceName": "Όνομα στιγμιοτύπου",
 	"inverseDescription": "<em>Inverse description</em>",
@@ -1117,6 +1115,7 @@
 	"open_3d_viewer": "Άνοιγμα 3D viewer",
 	"openRelationGraph": "<em>Open relation graph</em>",
 	"operativeInstructions": "<em>Operative instructions</em>",
+	"or": "<em>or</em>",
 	"origin": "Προέλευση",
 	"otherOptions": "<em>Other options</em>",
 	"others": "<em>Others</em>",
@@ -1236,7 +1235,6 @@
 	"set": "<em>Set</em>",
 	"setAsDefault": "Θέσε ως προεπιλογή",
 	"setFilter": "Θέσε Φίλτρο",
-	"setLater": "Παράμετρος εισαγωγής",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Εγκατάσταση",
 	"showDetails": "<em>Show details</em>",
@@ -1356,6 +1354,7 @@
 	"workflowAttributes" : "Χαρακτηριστικά διαδικασίας",
 	"workflowEngine": "<em>Workflow engine</em>",
 	"write": "<em>Write</em>",
+	"xml": "XML",
 	"xpdlFile": "<em>XPDL file</em>",
 	"xpdlFileUploaded": "<em>XPDL file uploaded</em>",
 	"yes": "<em>Yes</em>",

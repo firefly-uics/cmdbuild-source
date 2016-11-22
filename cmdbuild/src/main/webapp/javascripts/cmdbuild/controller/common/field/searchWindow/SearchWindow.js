@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.comboBox.Searchable}
+		 * @cfg {Object}
 		 */
 		parentDelegate: undefined,
 

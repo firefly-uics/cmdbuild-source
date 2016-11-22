@@ -114,7 +114,7 @@
 
 	function ensureDataSource(me) {
 		if (!me.dataSource) {
-			me.dataSource = new CMDBuild.data.CMMiniCardGridBaseDataSource();
+			me.dataSource = Ext.create('CMDBuild.view.management.classes.map.CMMiniCardGridBaseDataSource');
 		}
 
 		me.store = me.dataSource.getStore();

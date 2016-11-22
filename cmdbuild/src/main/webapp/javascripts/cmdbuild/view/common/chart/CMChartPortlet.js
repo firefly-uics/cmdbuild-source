@@ -242,6 +242,8 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartWindow", {
 		extend: "CMDBuild.core.window.AbstractModal",
 
+		dimensionsMode: 'percentage',
+
 		initComponent: function() {
 			this.chartPortlet = new CMDBuild.view.management.dashboard.CMChartPortlet({
 				chartConfiguration: this.chartConfiguration,
@@ -253,8 +255,7 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.chartPortlet],
-				layout : 'fit'
+				items: [this.chartPortlet]
 			});
 
 			this.callParent(arguments);
@@ -262,7 +263,7 @@
 	});
 
 	/**
-	 * it is a component of the CMChartPortlet that read the CMDBUild
+	 * it is a component of the CMChartPortlet that read the CMDBuild
 	 * chart configuration and return the ExtJs chart configuartion
 	 * to render it
 	 */

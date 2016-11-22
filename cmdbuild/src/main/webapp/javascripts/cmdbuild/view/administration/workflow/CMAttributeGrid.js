@@ -17,7 +17,7 @@
 		IS_NOT_NULL: 'isnotnull',
 		IS_INHERITED: 'inherited',
 		IS_ACTIVE: CMDBuild.core.constants.Proxy.ACTIVE,
-		FIELD_MODE: CMDBuild.core.constants.Proxy.FIELD_MODE,
+		FIELD_MODE: 'fieldmode',
 		GROUP: CMDBuild.core.constants.Proxy.GROUP,
 		ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
 		CLASS_ORDER_SIGN: 'classOrderSign',
@@ -135,31 +135,31 @@
 					flex: 1,
 					hidden: true
 				},
-				new Ext.ux.CheckColumn({
-					header: translation.isbasedsp,
+				Ext.create('Ext.grid.column.CheckColumn', {
 					dataIndex: ATTR.IS_BASEDSP,
-					cmReadOnly: true
+					text: translation.isbasedsp,
+					processEvent: Ext.emptyFn // Makes column readOnly
 				}),
-				new Ext.ux.CheckColumn({
-					header: translation.isunique,
+				Ext.create('Ext.grid.column.CheckColumn', {
 					dataIndex: ATTR.IS_UNIQUE,
-					cmReadOnly: true
+					text: translation.isunique,
+					processEvent: Ext.emptyFn // Makes column readOnly
 				}),
-				new Ext.ux.CheckColumn({
-					header: translation.isnotnull,
+				Ext.create('Ext.grid.column.CheckColumn', {
 					dataIndex: ATTR.IS_NOT_NULL,
-					cmReadOnly: true
+					text: translation.isnotnull,
+					processEvent: Ext.emptyFn // Makes column readOnly
 				}),
-				new Ext.ux.CheckColumn({
-					header: translation.inherited,
-					hidden: true,
+				Ext.create('Ext.grid.column.CheckColumn', {
 					dataIndex: ATTR.IS_INHERITED,
-					cmReadOnly: true
+					text: translation.inherited,
+					hidden: true,
+					processEvent: Ext.emptyFn // Makes column readOnly
 				}),
-				new Ext.ux.CheckColumn({
-					header: translation.isactive,
+				Ext.create('Ext.grid.column.CheckColumn', {
 					dataIndex: ATTR.IS_ACTIVE,
-					cmReadOnly: true
+					text: translation.isactive,
+					processEvent: Ext.emptyFn // Makes column readOnly
 				}),
 				{
 					header: translation.field_visibility,

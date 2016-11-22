@@ -13,7 +13,7 @@
 			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.workflow.Workflow',
 			'CMDBuild.proxy.administration.workflow.tabs.Xpdl',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -349,8 +349,6 @@
 
 						this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('workflowIdentifierGet') });
-
-						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -368,7 +366,7 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE] || [];
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.propertiesPanel);
 
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
@@ -377,8 +375,6 @@
 					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
 				}
 			});
-
-			CMDBuild.core.Message.success();
 		}
 	});
 

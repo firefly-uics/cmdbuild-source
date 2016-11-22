@@ -59,7 +59,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.fileTypes.Sql', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Sql', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.sql,
 								scope: this,
@@ -68,7 +68,7 @@
 									this.delegate.cmfg('onReportJasperGenerateSqlButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.fileTypes.Zip', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Zip', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.zip,
 								scope: this,

@@ -11,6 +11,8 @@
 
 		/**
 		 * @param {Object} decodedResponse
+		 *
+		 * @returns {Void}
 		 */
 		display: function(decodedResponse) {
 			if (
@@ -47,6 +49,8 @@
 
 		/**
 		 * @param {Object} message
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */

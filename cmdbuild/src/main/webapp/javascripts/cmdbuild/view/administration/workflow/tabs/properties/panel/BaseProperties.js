@@ -17,7 +17,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		descriptionField: undefined,
 
@@ -61,7 +61,7 @@
 							}
 						}
 					}),
-					this.descriptionField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.descriptionField = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -69,7 +69,7 @@
 						allowBlank: false,
 						vtype: 'commentextended',
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.CLASS,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION

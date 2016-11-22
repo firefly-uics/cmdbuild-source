@@ -21,6 +21,7 @@
 			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.panel.form.tabs.Activity'
 		],
 
@@ -108,6 +109,9 @@
 			_CMWFState.addDelegate(this);
 
 			this.setDelegate(delegate || Ext.create('CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate'));
+
+			// Build sub-controllers
+			this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
 		},
 
 		/**
@@ -330,7 +334,10 @@
 		},
 
 		isEditable: function(card) {
-			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			if (!card)
+				return false;
+
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(card.get('IdClass')));
 			return (privileges.create);
 		},
 
@@ -466,8 +473,7 @@
 		onShowGraphClick: function() {
 			var pi = _CMWFState.getProcessInstance();
 
-			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-				parentDelegate: this,
+			this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 				classId: pi.getClassId(),
 				cardId: pi.getId()
 			});

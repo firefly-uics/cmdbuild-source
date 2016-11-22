@@ -14,7 +14,7 @@
 		delegate: undefined,
 
 		allowBlank: true,
-		considerAsFieldToDisable: true,
+		considerAsFieldToDisable: true, /** @deprecated */
 		displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 		fieldLabel: CMDBuild.Translation.enabledGroups,
 		name: CMDBuild.core.constants.Proxy.GROUPS,
@@ -38,7 +38,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
-			return this.delegate.cmfg('onFieldMultiselectGroupStoreGet');
+			return this.delegate.cmfg('fieldMultiselectGroupStoreGet');
 		},
 
 		/**
@@ -47,21 +47,21 @@
 		 * @override
 		 */
 		getValue: function () {
-			return this.delegate.cmfg('onFieldMultiselectGroupValueGet', this.callParent(arguments));
+			return this.delegate.cmfg('fieldMultiselectGroupValueGet', this.callParent(arguments));
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		reset: function () {
-			this.delegate.cmfg('onFieldMultiselectGroupReset');
+			this.delegate.cmfg('fieldMultiselectGroupReset');
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		selectAll: function () {
-			this.delegate.cmfg('onFieldMultiselectGroupSelectAll');
+			this.delegate.cmfg('fieldMultiselectGroupSelectAll');
 		},
 
 		/**

@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.common.panel.gridAndForm.Print',
+			'CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -107,19 +107,19 @@
 		decodeMode: function () {
 			switch (this.mode) {
 				case 'cardDetails':
-					return CMDBuild.proxy.common.panel.gridAndForm.Print.createCardDetails;
+					return CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print.createCardDetails;
 
 				case 'classSchema':
-					return CMDBuild.proxy.common.panel.gridAndForm.Print.createClassSchema;
+					return CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print.createClassSchema;
 
 				case 'dataViewSql':
-					return CMDBuild.proxy.common.panel.gridAndForm.Print.createDataViewSqlSchema;
+					return CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print.createDataViewSqlSchema;
 
 				case 'schema':
-					return CMDBuild.proxy.common.panel.gridAndForm.Print.createSchema;
+					return CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print.createSchema;
 
 				case 'view':
-					return CMDBuild.proxy.common.panel.gridAndForm.Print.createView;
+					return CMDBuild.proxy.common.panel.gridAndForm.panel.common.Print.createView;
 
 				default: {
 					_error('decodeMode(): unmanaged mode property', this, this.mode);

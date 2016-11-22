@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.graph.WindowView', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window}
@@ -13,13 +13,10 @@
 		 */
 		dimensionsMode: 'percentage',
 
-		title: CMDBuild.Translation.relationGraph,
-
-		listeners: {
-			show: function (window, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormGraphWindowShow');
-			}
-		}
+		border: true,
+		closeAction: 'hide',
+		frame: false,
+		title: CMDBuild.Translation.relationGraph
 	});
 
 })();

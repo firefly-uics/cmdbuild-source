@@ -16,8 +16,8 @@
 		textArea: undefined,
 
 		border: false,
+		dimensionsMode: 'percentage',
 		frame: true,
-		layout: 'fit',
 		title: CMDBuild.Translation.sql,
 
 		/**
@@ -55,7 +55,8 @@
 						border: false,
 						frame: false,
 						overflowY: 'auto',
-						readOnly: true
+						readOnly: true,
+						resizable: true
 					})
 				]
 			});

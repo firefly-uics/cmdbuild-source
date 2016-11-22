@@ -49,7 +49,8 @@
 							name: CMDBuild.core.constants.Proxy.FILTER,
 							fieldLabel: CMDBuild.Translation.cqlFilter,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+							resizable: true
 						})
 					]
 				})
@@ -92,6 +93,7 @@
 							}
 						}),
 						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+							considerAsFieldToDisable: true,
 							enableCellEditing: true,
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,

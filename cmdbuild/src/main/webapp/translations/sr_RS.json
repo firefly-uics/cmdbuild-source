@@ -1,6 +1,6 @@
 {
 	"description": "Српски",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Администрациони модул",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Дошло је до грешке",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Табела мапирања атрибута мора бити коректно попуњена",
 		"busyVisualControls": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Табела мапирања класа мора бити коректно попуњена",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Детаљи",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Слање поруке није успело. Могући узроци: 1) Сервис није имплементиран; 2) URL и/или број порта није тачан",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Проверите да ли су простор имена, назив методе и параметри web service-a тачни."
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Табела мапирања референци мора бити коректно попуњена",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Обавезно поље",
@@ -999,6 +996,7 @@
 	"initialLatitude": "Почетна географска ширина",
 	"initialLongitude": "Почетна географска дужина",
 	"initialZoomLevel": "Почетно увећање",
+	"inputParameter": "Улазни параметар",
 	"instance": "Инстанца",
 	"instanceName": "Назив инстанце",
 	"inverseDescription": "Инверзни опис",
@@ -1116,6 +1114,7 @@
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Отвори граф релација",
 	"operativeInstructions": "Документација о извршеним активностима",
+	"or": "<em>or</em>",
 	"origin": "Полазна класа",
 	"otherOptions": "Остале опције",
 	"others": "<em>Others</em>",
@@ -1236,7 +1235,6 @@
 	"set": "Постави",
 	"setAsDefault": "Постави као подразумевани",
 	"setFilter": "Постави филтер",
-	"setLater": "Улазни параметар",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Општа подешавања",
 	"showDetails": "Прикажи детаље",
@@ -1356,6 +1354,7 @@
 	"workflowAttributes": "Атрибути радног процеса",
 	"workflowEngine": "Радни процеси (Workflow)",
 	"write": "Писање",
+	"xml": "XML",
 	"xpdlFile": "XPDL датотека",
 	"xpdlFileUploaded": "XPDL датотека постављена на сервер",
 	"yes": "<em>Yes</em>",

@@ -9,6 +9,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: 'fieldmode', type: 'string' },
 			{ name: 'inherited', type: 'boolean' },
 			{ name: 'isbasedsp', type: 'boolean' },
 			{ name: 'isnotnull', type: 'boolean' },
@@ -18,7 +19,6 @@
 			{ name: CMDBuild.core.constants.Proxy.CLASS_ORDER_SIGN, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string'},
 			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.FIELD_MODE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.GROUP, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.META, type: 'auto', defaultValue: {} },

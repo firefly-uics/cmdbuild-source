@@ -109,7 +109,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
+							Ext.create('CMDBuild.core.buttons.icon.filter.Set', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.rowAndColumnPrivileges,
 								scope: this,
@@ -118,7 +118,7 @@
 									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetFilterClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
+							Ext.create('CMDBuild.core.buttons.icon.filter.Clear', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.clearRowAndColumnPrivilege,
 								scope: this,
@@ -127,7 +127,7 @@
 									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesRemoveFilterClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.UserInterface', {
+							Ext.create('CMDBuild.core.buttons.icon.UserInterface', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.uiConfigurationForGroups,
 								scope: this,

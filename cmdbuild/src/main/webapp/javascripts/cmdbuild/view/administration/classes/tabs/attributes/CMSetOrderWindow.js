@@ -5,10 +5,8 @@
 	Ext.define('CMDBuild.view.administration.classes.tabs.attributes.CMSetOrderWindow', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 
-		height: 300,
-		width: 300,
+		dimensionsMode: 'percentage',
 		buttonAlign: 'center',
-
 		title: CMDBuild.Translation.administration.modClass.attributeProperties.set_sorting_criteria,
 
 		initComponent: function() {

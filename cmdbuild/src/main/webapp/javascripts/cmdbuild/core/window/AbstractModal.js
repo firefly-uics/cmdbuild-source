@@ -1,31 +1,29 @@
 (function () {
 
 	/**
-	 * Reads the size in percentage in the configuration file and create a modal popup-window
-	 *
-	 * @deprecated CMDBuild.core.window.AbstractCustomModal
-	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.core.window.AbstractModal', {
 		extend: 'Ext.window.Window',
 
 		/**
-		 * @cfg {Boolean}
+		 * Dimensions managed values:
+		 * - Number
+		 * - 'auto'
+		 *
+		 * @cfg {Object}
+		 * 	Ex: {
+		 * 		{Number or String} height,
+		 * 		{Number or String} width
+		 * 	}
 		 */
-		autoHeight: false,
+		dimensions: {},
 
 		/**
-		 * @cfg {Boolean}
+		 * @cfg {String} ['absolute' || 'none' || 'percentage']
 		 */
-		autoWidth: false,
+		dimensionsMode: 'none',
 
-		/**
-		 * @cfg {Number}
-		 */
-		defaultSize: 0.80,
-
-		buttonAlign: 'center',
 		constrain: true,
 		layout: 'fit',
 		modal: true,
@@ -37,32 +35,37 @@
 		 * @override
 		 */
 		initComponent: function () {
-			if (!this.autoHeight) {
-				var percentualHeight;
-				var configHeight = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE);
+			switch (this.dimensionsMode) {
+				case 'absolute': {
+					if (Ext.Object.isEmpty(this.dimensions)) // Apply defaults
+						Ext.apply(this.dimensions, {
+							height: 600,
+							width: 800
+						});
 
-				if (configHeight) {
-					percentualHeight = configHeight/100;
-				} else {
-					percentualHeight = this.defaultSize;
-				}
+					if (Ext.isNumber(this.dimensions.height))
+						this.height = this.dimensions.height;
 
-				this.height = Ext.getBody().getHeight() * percentualHeight;
-			}
+					if (Ext.isNumber(this.dimensions.width))
+						this.width = this.dimensions.width;
+				} break;
 
-			if (!this.autoWidth) {
-				var percentualWidth;
-				var configWidth = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE);
+				case 'percentage': {
+					if (Ext.Object.isEmpty(this.dimensions)) // Apply defaults
+						Ext.apply(this.dimensions, {
+							height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE),
+							width: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE)
+						});
 
-				if (configWidth) {
-					percentualWidth = configWidth/100;
-				} else {
-					percentualWidth = this.defaultSize;
-				}
+					if (Ext.isNumber(this.dimensions.height))
+						this.height = Ext.getBody().getHeight() * (this.dimensions.height / 100);
 
-				this.width = Ext.getBody().getWidth() * percentualWidth;
-			} else {
-				this.width = 660; // Default width setup based on text field default width inside window
+					if (Ext.isNumber(this.dimensions.width))
+						this.width = Ext.getBody().getWidth() * (this.dimensions.width / 100);
+				} break;
+
+				case 'none':
+				default: {}
 			}
 
 			this.callParent(arguments);

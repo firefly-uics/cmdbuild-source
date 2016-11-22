@@ -30,7 +30,7 @@
 		menuTreePanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 * @property {CMDBuild.core.buttons.icon.MoveRight}
 		 */
 		removeItemButton: undefined,
 
@@ -73,7 +73,7 @@
 									me.delegate.cmfg('onMenuGroupAddFolderButtonClick', this.getValue());
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeMenu,
 								scope: this,
 
@@ -146,26 +146,17 @@
 								fixed: true,
 
 								items: [
-									Ext.create('CMDBuild.core.buttons.FieldTranslation', {
+									Ext.create('CMDBuild.core.buttons.icon.Translation', {
+										tooltip: CMDBuild.Translation.translations,
+										withSpacer: true,
 										scope: this,
 
 										getClass: function (value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
-											return (record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages()) ? '' : 'translate';
+											return (record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages()) ? '' : 'translation';
 										},
 
 										handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-											if (Ext.isEmpty(record.get('uuid'))) {
-												CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.saveMenuBeforeAccess, false);
-											} else {
-												Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
-													buffer: this.translatableAttributesConfigurationsBuffer,
-													translationFieldConfig: {
-														type: CMDBuild.core.constants.Proxy.MENU_ITEM,
-														identifier: record.get('uuid'),
-														field: CMDBuild.core.constants.Proxy.DESCRIPTION
-													}
-												});
-											}
+											this.delegate.cmfg('onMenuGroupTranslateButtonClick', record);
 										},
 
 										isDisabled: function (grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
@@ -225,7 +216,7 @@
 						},
 
 						items: [
-							this.removeItemButton = Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
+							this.removeItemButton = Ext.create('CMDBuild.core.buttons.icon.MoveRight', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 								disabled: true,

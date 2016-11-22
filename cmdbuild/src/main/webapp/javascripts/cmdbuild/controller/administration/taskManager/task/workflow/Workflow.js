@@ -18,12 +18,13 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onTaskManagerFormTaskAbortButtonClick',
+			'onTaskManagerFormTaskAddButtonClick',
 			'onTaskManagerFormTaskCloneButtonClick',
+			'onTaskManagerFormTaskModifyButtonClick',
 			'onTaskManagerFormTaskRemoveButtonClick',
-			'onTaskManagerFormTaskWorkflowAddButtonClick = onTaskManagerFormTaskAddButtonClick',
-			'onTaskManagerFormTaskWorkflowModifyButtonClick = onTaskManagerFormTaskModifyButtonClick',
 			'onTaskManagerFormTaskWorkflowRowSelected = onTaskManagerFormTaskRowSelected',
-			'onTaskManagerFormTaskWorkflowSaveButtonClick = onTaskManagerFormTaskSaveButtonClick'
+			'onTaskManagerFormTaskWorkflowSaveButtonClick = onTaskManagerFormTaskSaveButtonClick',
+			'onTaskManagerFormTaskWorkflowValidateSetup -> controllerStep1, controllerStep2'
 		],
 
 		/**
@@ -32,7 +33,7 @@
 		controllerStep1: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.taskManager.task.common.CronConfiguration}
+		 * @property {CMDBuild.controller.administration.taskManager.task.workflow.Step2}
 		 */
 		controllerStep2: undefined,
 
@@ -49,7 +50,7 @@
 
 			// Build sub controllers
 			this.controllerStep1 = Ext.create('CMDBuild.controller.administration.taskManager.task.workflow.Step1', { parentDelegate: this });
-			this.controllerStep2 = Ext.create('CMDBuild.controller.administration.taskManager.task.common.CronConfiguration', { parentDelegate: this });
+			this.controllerStep2 = Ext.create('CMDBuild.controller.administration.taskManager.task.workflow.Step2', { parentDelegate: this });
 
 			this.cmfg('taskManagerFormPanelsAdd', [
 				this.controllerStep1.getView(),
@@ -62,31 +63,16 @@
 		 *
 		 * @override
 		 */
-		onTaskManagerFormTaskWorkflowAddButtonClick: function () {
-			this.onTaskManagerFormTaskAddButtonClick(arguments); // CallParent alias
-
-			this.controllerStep1.eraseWorkflowForm();
-		},
-
-		/**
-		 * @returns {Void}
-		 *
-		 * @override
-		 */
-		onTaskManagerFormTaskWorkflowModifyButtonClick: function () {
-			this.onTaskManagerFormTaskModifyButtonClick(arguments); // CallParent alias
-
-			if (!this.controllerStep1.checkWorkflowComboSelected())
-				this.controllerStep1.setDisabledWorkflowAttributesGrid(true);
-		},
-
-		/**
-		 * @returns {Void}
-		 *
-		 * @override
-		 */
 		onTaskManagerFormTaskWorkflowRowSelected: function () {
 			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
+				this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({
+					forceToolbarBottomState: true,
+					forceToolbarTopState: true,
+					state: false
+				});
+
+				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
+
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
@@ -97,32 +83,18 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.administration.taskManager.task.workflow.Workflow', decodedResponse);
+							this.cmfg('taskManagerFormViewGet').loadRecord(
+								Ext.create('CMDBuild.model.administration.taskManager.task.workflow.Workflow', decodedResponse)
+							);
 
-							// FIXME: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
-
-							// Setup step 1
-							this.controllerStep1.setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
-							this.controllerStep1.setValueDescription(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
-							this.controllerStep1.setValueId(record.get(CMDBuild.core.constants.Proxy.ID));
-							this.controllerStep1.setValueWorkflowAttributesGrid(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES));
-							this.controllerStep1.setValueWorkflowCombo(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME));
-
-							// Setup step 2
-							this.controllerStep2.setValueBase(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
-							this.controllerStep2.setValueAdvancedFields(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
-
-							this.cmfg('taskManagerFormPanelForwarder', {
-								functionName: 'disableModify',
-								params: true
-							});
+							this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({ state: false });
 
 							this.onTaskManagerFormTaskRowSelected(arguments); // CallParent alias
+						} else {
+							_error('onTaskManagerFormTaskWorkflowRowSelected(): unmanaged response', this, decodedResponse);
 						}
 					}
 				});
-
-				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 			}
 		},
 
@@ -132,40 +104,25 @@
 		 * @override
 		 */
 		onTaskManagerFormTaskWorkflowSaveButtonClick: function () {
-			var attributesGridValues = this.controllerStep1.getValueWorkflowAttributeGrid();
-			var formData = this.cmfg('taskManagerFormViewDataGet', true);
-			var submitDatas = {};
+			var formData = Ext.create('CMDBuild.model.administration.taskManager.task.workflow.Workflow', this.cmfg('taskManagerFormViewDataGet'));
 
 			// Validate before save
-			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE])) {
-				submitDatas[CMDBuild.core.constants.Proxy.CRON_EXPRESSION] = this.controllerStep2.getCronDelegate().getValue();
-
-				// Form submit values formatting
-				if (!Ext.Object.isEmpty(attributesGridValues))
-					submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
-
-				// Data filtering to submit only right values
-				submitDatas[CMDBuild.core.constants.Proxy.ACTIVE] = formData[CMDBuild.core.constants.Proxy.ACTIVE];
-				submitDatas[CMDBuild.core.constants.Proxy.DESCRIPTION] = formData[CMDBuild.core.constants.Proxy.DESCRIPTION];
-				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
-				submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME];
-
-				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
+			if (this.validate(formData.get(CMDBuild.core.constants.Proxy.ACTIVE)))
+				if (this.cmfg('taskManagerSelectedTaskIsEmpty')) {
 					CMDBuild.proxy.administration.taskManager.task.Workflow.create({
-						params: submitDatas,
+						params: formData.getSubmitData('create'),
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.proxy.administration.taskManager.task.Workflow.update({
-						params: submitDatas,
+						params: formData.getSubmitData('update'),
 						scope: this,
 						success: this.success
 					});
 				}
-			}
 
-			this.onTaskManagerFormTaskSaveButtonClick(arguments); // CallParent alias
+			this.onTaskManagerFormTaskSaveButtonClick(); // CallParent alias
 		},
 
 		/**
@@ -175,37 +132,35 @@
 		 * @private
 		 */
 		removeItem: function () {
-			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
+			// Error handling
+				if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
+					return _error('removeItem(): empty selected task property', this, this.cmfg('taskManagerSelectedTaskGet'));
+			// END: Error handling
 
-				CMDBuild.proxy.administration.taskManager.task.Workflow.remove({
-					params: params,
-					scope: this,
-					success: this.success
-				});
-			} else {
-				_error('removeItem(): cannot remove empty selected grid task', this, this.cmfg('taskManagerSelectedTaskGet'));
-			}
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
+
+			CMDBuild.proxy.administration.taskManager.task.Workflow.remove({
+				params: params,
+				scope: this,
+				success: this.success
+			});
 
 			this.callParent(arguments);
 		},
 
 		/**
-		 * Task validation
-		 *
-		 * @param {Boolean} enable
+		 * @param {Boolean} fullValidation
 		 *
 		 * @returns {Boolean}
 		 *
 		 * @override
+		 * @private
 		 */
-		validate: function (enable) {
-			// Workflow form validation
-			this.controllerStep1.getWorkflowDelegate().validate(enable);
+		validate: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-			// Cron field validation
-			this.controllerStep2.getCronDelegate().validate(enable);
+			this.cmfg('onTaskManagerFormTaskWorkflowValidateSetup', fullValidation);
 
 			return this.callParent(arguments);
 		}

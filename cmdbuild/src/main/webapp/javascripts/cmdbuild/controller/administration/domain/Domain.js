@@ -8,9 +8,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.domain.Domain',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		mixins: ['CMDBuild.controller.administration.domain.ExternalServices'],
@@ -269,8 +268,6 @@
 								loadMask: true
 							}
 						});
-
-						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -288,7 +285,7 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN];
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.cmfg('domainTabPropertiesFormGet'));
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.controllerProperties.cmfg('domainTabPropertiesFormGet'));
 
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
@@ -298,8 +295,6 @@
 					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
 				}
 			});
-
-			CMDBuild.core.Message.success();
 		},
 
 		// SelectedDomain property methods

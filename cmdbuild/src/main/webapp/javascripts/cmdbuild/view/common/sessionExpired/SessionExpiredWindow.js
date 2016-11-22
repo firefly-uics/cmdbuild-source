@@ -14,8 +14,14 @@
 		form: undefined,
 
 		border: false,
+		dimensionsMode: 'absolute',
 		frame: false,
 		title: CMDBuild.Translation.sessionExpired,
+
+		dimensions: {
+			height: 155,
+			width: 300
+		},
 
 		/**
 		 * @returns {Void}
@@ -30,12 +36,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Custom window dimensions
-			Ext.apply(this, {
-				height: 155,
-				width: 300
-			});
 		}
 	});
 

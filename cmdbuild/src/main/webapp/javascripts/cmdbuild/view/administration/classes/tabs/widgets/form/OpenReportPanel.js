@@ -89,6 +89,7 @@
 									fixed: true
 								})
 							],
+							considerAsFieldToDisable: true,
 							enableCellEditing: true,
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,

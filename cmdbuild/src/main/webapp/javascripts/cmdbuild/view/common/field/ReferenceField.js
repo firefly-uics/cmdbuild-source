@@ -2,7 +2,10 @@
 
 	var FILTER_FIELD = "_SystemFieldFilter";
 
-	Ext.require('CMDBuild.proxy.Card');
+	Ext.require([
+		'CMDBuild.core.Utils',
+		'CMDBuild.proxy.Card'
+	]);
 
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
@@ -18,7 +21,7 @@
 				var extraFieldConf = extraFieldConf || {};
 
 				if (attribute.filter) { // is using a template
-					var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, "system.template.");
+					var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, "system.template.");
 					xaVars[FILTER_FIELD] = attribute.filter;
 					templateResolver = new CMDBuild.Management.TemplateResolver({
 						getBasicForm: function() {
@@ -436,7 +439,7 @@
 	// If set the velue programmatically it could be a integer or a string or null or undefined if the set is raised after a selection on the UI,
 	//the value is an array of models
 	function normalizeValue(me, v) {
-		v = CMDBuild.Utils.getFirstSelection(v);
+		v = Ext.isArray(v) ? v[0] : v;
 
 		if (v && typeof v == "object" && typeof v.get == "function")
 			v = v.get(me.valueField);

@@ -4,8 +4,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.administration.taskManager.Grid'
+			'CMDBuild.model.administration.taskManager.Grid',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -35,7 +35,12 @@
 					url: CMDBuild.proxy.index.Json.taskManager.workflow.readAll,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [

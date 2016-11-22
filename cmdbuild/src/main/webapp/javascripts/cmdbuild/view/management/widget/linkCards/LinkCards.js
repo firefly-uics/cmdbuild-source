@@ -14,7 +14,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Reload}
+		 * @property {CMDBuild.core.buttons.icon.Reload}
 		 */
 		applyDefaultSelectionButton: undefined,
 
@@ -31,7 +31,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.state.Map}
+		 * @property {CMDBuild.core.buttons.icon.state.Map}
 		 */
 		mapButton: undefined,
 
@@ -41,7 +41,7 @@
 		mapPanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.state.Double}
+		 * @property {CMDBuild.core.buttons.icon.state.Double}
 		 */
 		toggleGridFilterButton: undefined,
 
@@ -66,7 +66,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.toggleGridFilterButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+							this.toggleGridFilterButton = Ext.create('CMDBuild.core.buttons.icon.state.Double', {
 								state1text: CMDBuild.Translation.disableGridFilter,
 								state1icon: 'searchFilterClear',
 								state2text: CMDBuild.Translation.enableGridFilter,
@@ -78,7 +78,7 @@
 									this.delegate.cmOn('onToggleGridFilterButtonClick', button.getActiveState());
 								}
 							}),
-							this.applyDefaultSelectionButton = Ext.create('CMDBuild.core.buttons.iconized.Reload', {
+							this.applyDefaultSelectionButton = Ext.create('CMDBuild.core.buttons.icon.Reload', {
 								text: CMDBuild.Translation.applyDefaultSelection,
 								disabled: Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION]),
 								scope: this,
@@ -88,7 +88,7 @@
 								}
 							}),
 							'->',
-							this.mapButton = Ext.create('CMDBuild.core.buttons.iconized.state.Map', {
+							this.mapButton = Ext.create('CMDBuild.core.buttons.icon.state.Map', {
 								hidden: !this.gisMapEnabled,
 								scope: this,
 

@@ -29,6 +29,7 @@
 		 */
 		classComboBox: undefined,
 
+		dimensionsMode: 'percentage',
 		layout: 'border',
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 

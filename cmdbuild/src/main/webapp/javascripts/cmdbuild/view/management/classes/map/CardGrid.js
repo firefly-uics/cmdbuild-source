@@ -22,7 +22,7 @@
 	Ext.define('CMDBuild.view.management.classes.map.CardGrid', {
 		extend : 'Ext.grid.Panel',
 
-		requires : [ 'CMDBuild.proxy.gis.Card' ],
+		requires : ['CMDBuild.proxy.gis.Card'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.classes.map.CardGrid}
@@ -41,7 +41,7 @@
 
 		/**
 		 * @returns {Void}
-		 * 
+		 *
 		 * @override
 		 */
 		initComponent : function() {
@@ -72,7 +72,7 @@
 		 *            record.Id
 		 * @param {String}
 		 *            record.IdClass
-		 * 
+		 *
 		 * @returns {Void}
 		 */
 		navigateOnCard : function(record) {
@@ -214,11 +214,11 @@
 		 *            fields
 		 * @param {Number}
 		 *            pageSize
-		 * 
+		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 * 
+		 *
 		 * @private
-		 * 
+		 *
 		 * TODO: waiting for refactor (build grid proxy)
 		 */
 		buildStore : function(fields, pageSize) {
@@ -271,7 +271,9 @@
 			var headers = [];
 			var fields = [];
 
-			if (_CMUtils.isSuperclass(this.currentClassId)) {
+			var c = _CMCache.getEntryTypeById(this.currentClassId);
+
+			if (c && c.get('superclass')) {
 				headers.push(this.buildClassColumn());
 			}
 

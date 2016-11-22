@@ -2,6 +2,8 @@
 	Ext.define("CMDBuild.controller.management.common.CMDetailWindowController", {
 		extend: "CMDBuild.controller.management.common.CMCardWindowController",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		constructor: function() {
 			this.callParent(arguments);
 		},
@@ -225,7 +227,7 @@
 			throw "Wrong cardinality for a MasterDetail domain";
 		}
 
-		if (Ext.Array.contains(_CMUtils.getAncestorsId(masterClassId), detail.get("idClass1"))) {
+		if (Ext.Array.contains(CMDBuild.core.Utils.getAncestorsId(masterClassId), detail.get("idClass1"))) {
 			if (cardinality == "1:N") {
 				return "_1";
 			} else {

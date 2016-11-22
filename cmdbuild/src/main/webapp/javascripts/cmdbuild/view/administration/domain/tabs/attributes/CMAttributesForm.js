@@ -65,7 +65,8 @@
 		domainName: undefined,
 
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: "CMDBuild.view.common.CMFormFunctions",
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions2'
 		},
 
 		/**
@@ -101,7 +102,7 @@
 			this.cmButtons = [this.saveButton, this.abortButton];
 
 			this.fieldMode = new Ext.form.ComboBox({
-				name: CMDBuild.core.constants.Proxy.FIELD_MODE,
+				name: 'fieldmode',
 				fieldLabel: tr.field_visibility,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -145,10 +146,21 @@
 				name : CMDBuild.core.constants.Proxy.NAME,
 				allowBlank : false,
 				vtype : "alphanum",
-				cmImmutable : true
+				cmImmutable : true,
+
+				listeners: {
+					scope: this,
+					change: function (field, newValue, oldValue, eOpts) {
+						this.panelFunctionFieldSynch({
+							slaveField: this.attributeDescription,
+							newValue: newValue,
+							oldValue: oldValue
+						});
+					}
+				}
 			});
 
-			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -159,39 +171,49 @@
 				listeners: {
 					scope: this,
 					enable: function(field, eOpts) { // TODO: on creation, classObj should be already known (refactor)
-						field.translationFieldConfig = {
-							type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
-							owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
-							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-							field: CMDBuild.core.constants.Proxy.DESCRIPTION
-						};
+						if (Ext.isObject(this.classObj) && !Ext.Object.isEmpty(this.classObj)) {
+							field.configurationSet({
+								type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
+								owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
+								identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+								field: CMDBuild.core.constants.Proxy.DESCRIPTION
+							});
 
-						field.translationsRead();
+							field.delegate.cmfg('fieldTranslatableConfigurationReadTranslations');
+						}
 					}
 				}
 			});
 
-			this.attributeNotNull = new Ext.ux.form.XCheckbox({
+			this.attributeNotNull = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isnotnull,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isnotnull'
 			});
 
-			this.attributeUnique = new Ext.ux.form.XCheckbox({
+			this.attributeUnique = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isunique,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isunique'
 			});
 
-			this.isBasedsp = new Ext.ux.form.XCheckbox({
+			this.isBasedsp = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isbasedsp,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : 'isbasedsp'
 			});
 
-			this.isActive = new Ext.ux.form.XCheckbox({
+			this.isActive = Ext.create('Ext.form.field.Checkbox', {
 				fieldLabel : tr.isactive,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				uncheckedValue: false,
+				inputValue: true,
 				name : CMDBuild.core.constants.Proxy.ACTIVE
 			});
 
@@ -201,7 +223,9 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				displayField: CMDBuild.core.constants.Proxy.NAME,
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
-				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				triggerAction: 'all',
 				editable: false,
 				cmImmutable: true,
@@ -247,7 +271,7 @@
 
 			this.referenceFilterMetadata = {};
 
-			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 				text: CMDBuild.Translation.editMetadata,
 				margin: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL + 5),
 				scope: this,
@@ -278,7 +302,9 @@
 			});
 
 			this.lookupTypes = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				fieldLabel : tr.lookup,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -297,7 +323,9 @@
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
-				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				allowBlank: false,
 				cmImmutable: true,
@@ -310,7 +338,9 @@
 			});
 
 			this.foreignKeyDest = new CMDBuild.FkCombo( {
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				fieldLabel : tr.destination,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -396,7 +426,6 @@
 				]
 			});
 
-			this.plugins = [new CMDBuild.FormPlugin()];
 			this.callParent(arguments);
 		},
 
@@ -422,9 +451,6 @@
 			this.items = [this.baseProperties, this.specificProperties];
 			this.callParent(arguments);
 			this.comboType.on("select", onSelectComboType, this);
-			this.attributeName.on("change", function(fieldname, newValue, oldValue) {
-				this.autoComplete(this.attributeDescription, newValue, oldValue);
-			}, this);
 			this.comboType.getStore().load({
 				params: {
 					tableType: "DOMAIN"
@@ -524,7 +550,7 @@
 				flex: 1,
 				items: [
 					this.attributeName,
-					this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -535,14 +561,16 @@
 						listeners: {
 							scope: this,
 							enable: function(field, eOpts) { // TODO: on creation, domainName should be already known (refactor)
-								field.translationFieldConfig = {
-									type: CMDBuild.core.constants.Proxy.ATTRIBUTE_DOMAIN,
-									owner: this.domainName,
-									identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-									field: CMDBuild.core.constants.Proxy.DESCRIPTION
-								};
+								if (Ext.isObject(this.domainName) && !Ext.Object.isEmpty(this.domainName)) {
+									field.configurationSet({
+										type: CMDBuild.core.constants.Proxy.ATTRIBUTE_DOMAIN,
+										owner: this.domainName,
+										identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+										field: CMDBuild.core.constants.Proxy.DESCRIPTION
+									});
 
-								field.translationsRead();
+									field.delegate.cmfg('fieldTranslatableConfigurationReadTranslations');
+								}
 							}
 						}
 					}),

@@ -6,10 +6,13 @@
 	 * 	- alphanumlines: alphanumeric and lines ("_" and "-")
 	 * 	- comment: all except pipe (all excluded |)
 	 * 	- commentextended: all except pipe and apostrophe (all excluded | ')
+	 * 	- emailorblank
 	 * 	- ipv4: ipv4 validation (CIDR support)
 	 * 	- ipv6: ipv6 validation (CIDR support)
 	 * 	- multimail: to validate a field with multiple email addresses separated by commas (,)
+	 * 	- numeric: validate field with numeric values consider also scale and precision
 	 * 	- password: to validate password fields with confirmation capabilities
+	 * 	- time
 	 */
 	Ext.apply(Ext.form.field.VTypes, {
 		// Alpha-numeric extended (alphanumextended)
@@ -91,6 +94,16 @@
 			 * @type {RegExp}
 			 */
 			commentextendedMask: /^[^'|]*$/i,
+
+		// Email or blank (emailorblank)
+			emailorblank: function (value) {
+				return (
+					Ext.isEmpty(value)
+					|| this.email(value)
+				);
+			},
+
+			emailorblankText: this.emailText,
 
 		// IPv4 (ipv4)
 			/**
@@ -178,6 +191,53 @@
 			 * @type {RegExp}
 			 */
 			multiemailMask: /[\w.\-@'"!#$%&'*+/=?^_`{|}~,]/i,
+
+		// Numeric (numeric)
+			/**
+			 * @param {String} value
+			 * @param {Object} field
+			 *
+			 * @returns {Boolean}
+			 */
+			numeric: function (value, field) {
+				var precision = Ext.isNumber(field.precision) ? field.precision : 20,
+					scale = Ext.isNumber(field.scale) ? field.scale : 0,
+					integerPartMaxlength = precision - scale;
+					splitByDecimalSeparator = value.split(field.decimalSeparator)
+					integerPart = Math.abs(splitByDecimalSeparator[0]),
+					decimalPart = splitByDecimalSeparator[1];
+
+				if (scale > 0) {
+					if (!Ext.isEmpty(integerPart) && String(integerPart).length > integerPartMaxlength) {
+						this.numericText = Ext.String.format(CMDBuild.Translation.vtypeNumericMaxIntegerDigitsText, integerPartMaxlength);
+
+						return false;
+					}
+
+					if (!Ext.isEmpty(decimalPart) && String(decimalPart).length > scale) {
+						this.numericText = Ext.String.format(CMDBuild.Translation.vtypeNumericMaxDecimalDigitsText, scale);
+
+						return false;
+					}
+				}
+
+				return this.numericMask.test(value);
+			},
+
+			/**
+			 * @type {RegExp}
+			 */
+			numericMask: /^[0-9.-]/i,
+
+			/**
+			 * @type {RegExp}
+			 */
+			numericRegExp: /^(([+,\-]?[0-9]+)|[0-9]*)(\.[0-9]+)?$/,
+
+			/**
+			 * @type {String}
+			 */
+			numericText: CMDBuild.Translation.vtypeNumericInvalidCharacterText,
 
 		// Password (password)
 			/**

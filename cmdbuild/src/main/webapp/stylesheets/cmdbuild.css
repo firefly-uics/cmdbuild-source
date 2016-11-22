@@ -4,6 +4,7 @@
 @import url("./footer.css");
 @import url("./grids.css");
 @import url("./icons.css");
+@import url("./notification.css");
 @import url("./panels.css");
 @import url("./splashScreen.css");
 @import url("./trees.css");
@@ -290,14 +291,6 @@ em { font-style: oblique !important; }
 		cursor: pointer;
 	}
 
-	.show_detail_link {
-		cursor: pointer;
-		font-weight: bold;
-		padding-top: 0.5em;
-		padding-bottom: 0.5em;
-		text-decoration: underline;
-	}
-
 /* Custom rule to fix collapsible tab panel tool */
 	.x-tab-panel-header .x-tool { display: none; }
 
@@ -428,8 +421,6 @@ em { font-style: oblique !important; }
 
 .cm-bold { font-weight: bold; }
 
-.cm-action-col-icon-spacer { margin: 0px 3px; }
-
 /* Attachemnt window */
 	.cm_attachement_metadata_container {
 		border-top-style: solid !important;
@@ -460,6 +451,3 @@ em { font-style: oblique !important; }
 
 /* Generic field invalid class */
 	.cm-form-invalid-field { border-color: #cc3300 !important; }
-
-/* Text area resize*/
-	.x-form-textarea { resize: both !important; }

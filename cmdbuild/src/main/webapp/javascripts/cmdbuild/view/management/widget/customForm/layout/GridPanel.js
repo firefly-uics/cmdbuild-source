@@ -11,7 +11,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.add.Add}
+		 * @property {CMDBuild.core.buttons.icon.add.Add}
 		 */
 		addButton: undefined,
 
@@ -21,7 +21,7 @@
 		columns: [],
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Export}
+		 * @property {CMDBuild.core.buttons.icon.Export}
 		 */
 		exportButton: undefined,
 
@@ -31,7 +31,7 @@
 		gridEditorPlugin: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Import}
+		 * @property {CMDBuild.core.buttons.icon.Import}
 		 */
 		importButton: undefined,
 
@@ -57,7 +57,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							this.addButton = Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
 
@@ -65,21 +65,21 @@
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
-							this.importButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
+							this.importButton = Ext.create('CMDBuild.core.buttons.icon.Import', {
 								scope: this,
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
 								}
 							}),
-							this.exportButton = Ext.create('CMDBuild.core.buttons.iconized.Export', {
+							this.exportButton = Ext.create('CMDBuild.core.buttons.icon.Export', {
 								scope: this,
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridExportButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
+							Ext.create('CMDBuild.core.buttons.icon.Reload', {
 								text: CMDBuild.Translation.resetToDefault,
 								scope: this,
 
