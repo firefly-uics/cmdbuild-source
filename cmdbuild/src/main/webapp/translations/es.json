@@ -1052,7 +1052,7 @@
 	"maximizeGrid": "<em>Maximize grid</em>",
 	"maximumLevel": "Máximo nivel seleccionable",
 	"maximumZoom": "Zoom máximo",
-	"minRadius": "<em>Min. Radius</em>",
+	"maxRadius": "<em>Max. Radius</em>",
 	"menu": "Menú",
 	"merge": "<em>Merge</em>",
 	"message": "<em>Message</em>",
