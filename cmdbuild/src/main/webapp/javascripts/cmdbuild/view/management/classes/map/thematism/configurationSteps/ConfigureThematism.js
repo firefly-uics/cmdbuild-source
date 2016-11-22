@@ -47,7 +47,12 @@
 					fieldLabel : CMDBuild.Translation.thematicAnalysis,
 					vertical : true,
 					border : true,
-					items : getAnalysisItems(this.parentWindow)
+					items : getAnalysisItems(this.parentWindow),
+					listeners : {
+						change : function() {
+							me.eraseColorsTable();
+						}
+					}
 				}, {
 					xtype : "radiogroup",
 					name : "source",
@@ -77,6 +82,10 @@
 		init : function() {
 			var thematismConfiguration = this.parentWindow.getThematismConfiguration();
 			this.parentWindow.initForm(this, thematismConfiguration);
+		},
+		eraseColorsTable:function() {
+			var configuration = this.parentWindow.getLayoutConfiguration();
+			configuration.colorsTable = [];
 		},
 		loadLayers : function(callback, callbackScope) {
 			var card = this.interactionDocument.getCurrentCard();

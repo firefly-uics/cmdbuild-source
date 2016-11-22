@@ -327,10 +327,7 @@
 		var isNumerable = isANumber(field.type);
 		if (analysisType.type === CMDBuild.gis.constants.layers.RANGES_ANALYSIS && isNumerable) {
 			groups = groupRangesData(field, analysisType, sourceType, cardsArray, attributeName);
-		} else if (analysisType.type === CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS/*
-																						 * &&
-																						 * isNumerable <<---N.B.
-																						 */) {
+		} else if (analysisType.type === CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS) {
 			groups = groupGraduateData(field, analysisType, sourceType, cardsArray, attributeName);
 		} else {
 			groups = groupSingleData(field, analysisType, sourceType, cardsArray, attributeName);
@@ -426,8 +423,8 @@
 		};
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
-			card.value = grade(card, minMax, ratioMinMax);
-			chargeCardByCard(groups, card);
+			card.grade = grade(card, minMax, ratioMinMax);
+			chargeCardByCard(groups, card, card.grade);
 		}
 		return groups;
 	}
@@ -436,7 +433,7 @@
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
 			valorizeCard(field, analysisType.strategy, sourceType, card, attributeName);
-			chargeCardByCard(groups, card);
+			chargeCardByCard(groups, card, card.value);
 		}
 		return groups;
 	}
@@ -452,13 +449,13 @@
 		}
 		card.value = value;
 	}
-	function chargeCardByCard(groups, card) {
-		if (groups[card.value]) {
+	function chargeCardByCard(groups, card, value) {
+		if (groups[value]) {
 			// can be different from cards count?
-			groups[card.value].count++;
-			groups[card.value].cards.push(card);
+			groups[value].count++;
+			groups[value].cards.push(card);
 		} else {
-			groups[card.value] = {
+			groups[value] = {
 				count : 1,
 				cards : [ card ]
 			};
