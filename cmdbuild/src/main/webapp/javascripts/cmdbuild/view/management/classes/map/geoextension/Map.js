@@ -10,8 +10,8 @@
 			CENTER_LATITUDE : 'centerLatitude',
 			ICON_SIZE : .7,
 			DEFAULT_SEGMENTS : 10,
-			MAX_GRADE_RADIUS : 5,
-			MIN_GRADE_RADIUS : 1,
+			MAX_GRADE_RADIUS : 40,
+			MIN_GRADE_RADIUS : 5,
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",

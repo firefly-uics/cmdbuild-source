@@ -190,7 +190,7 @@
 					type : type
 				});
 				if (coordinate) {
-					return new ol.geom.Circle(coordinate, 2);
+					return new ol.geom.Point(coordinate);
 				}
 			}
 			return feature.clone().getGeometry();
@@ -218,7 +218,6 @@
 				if (configuration.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS) {
 					style = this.getGraduateStyle(card);
 					feature.setStyle(style);
-					feature.getGeometry().setRadius(card.value);
 				} else {
 					style = this.getStyle(feature.getGeometry().getType(), rowColor.color);
 					feature.setStyle(style);
@@ -310,7 +309,7 @@
 		getGraduateStyle : function(card) {
 			var configuration = this.getConfiguration();
 			var color = configuration.layoutConfiguration.gradeColor;
-			var radius = card.value;
+			var radius = card.grade;
 			return point("#" + color, radius);
 		}
 	});
@@ -338,13 +337,16 @@
 	}
 	function point(color, radius) {
 		var point = new ol.style.Style({
-			fill : new ol.style.Fill({
-				color : color,
-				opacity : 0.5
-			}),
-			stroke : new ol.style.Stroke({
-				width : 1,
-				color : color
+			image : new ol.style.Circle({
+				fill : new ol.style.Fill({
+					color : color
+				}),
+				stroke : new ol.style.Stroke({
+					width : 2,
+					color : color
+				}),
+				radius : radius
+
 			})
 		});
 		return point;

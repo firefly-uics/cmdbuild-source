@@ -29,6 +29,9 @@
 						getLayoutConfiguration : function() {
 							return this.parentWindow.getLayoutConfiguration();
 						},
+						getThematismConfiguration : function() {
+							return this.parentWindow.getThematismConfiguration();
+						},
 						getCurrentLayer : function() {
 							return this.parentWindow.getCurrentLayer();
 						},
