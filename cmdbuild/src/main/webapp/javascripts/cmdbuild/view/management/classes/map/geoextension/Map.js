@@ -10,10 +10,12 @@
 			CENTER_LATITUDE : 'centerLatitude',
 			ICON_SIZE : .7,
 			DEFAULT_SEGMENTS : 10,
+			MAX_GRADE_RADIUS : 5,
+			MIN_GRADE_RADIUS : 1,
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",
-				DENSITY_ANALYSIS : "density_analysis",
+				GRADUATE_ANALYSIS : "graduate_analysis",
 				TABLE_SOURCE : "table_source",
 				FUNCTION_SOURCE : "function_source",
 				DEFAULT_RADIUS : 8,
@@ -21,7 +23,8 @@
 				GEO_MIN_ZINDEX : 1000,
 				GIS_MIN_ZINDEX : 10000,
 				THEMATIC_MIN_ZINDEX : 100000,
-				GEOSERVER_LAYER : "_Geoserver"
+				GEOSERVER_LAYER : "_Geoserver",
+				THEMATISM_LAYER : "_Thematism"
 			},
 
 			navigationTree : {
@@ -43,8 +46,18 @@
 				POLYGON_FILL : 'rgba(0, 0, 255, 0.1)',
 				POLYGON_LINE : 'blue',
 				LINE_LINE : 'green',
+			},
+			legend: {
+				START_WIDTH : 500,
+				START_HEIGHT : 120
+			},
+			thematic_commands: {
+				CHANGE_LAYER:'CHANGE_LAYER',
+				HIDE_LEGEND:'HIDE_LEGEND',
+				HIDE_CURRENT:'HIDE_CURRENT',
+				MODIFY:'MODIFY',
+				NEW:'NEW',
 			}
-
 		}
 	};
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Map', {
@@ -65,6 +78,7 @@
 		frame : false,
 		layout : 'border',
 		baseLayer : undefined,
+		legendIsOpen : true,
 
 		/**
 		 * @property {"CMDBuild.view.management.classes.map.thematism.Legend"}
@@ -172,9 +186,17 @@
 			var divContainerControl = document.createElement('div');
 			document.getElementById(this.id + "-body").appendChild(divContainerControl);
 			this.legend = Ext.create("CMDBuild.view.management.classes.map.thematism.Legend", {
-				parentDiv : divContainerControl
+				parentDiv : divContainerControl,
+				interactionDocument : this.interactionDocument,
+				thematicView : this.thematicView
 			});
 			this.legend.compose();
+		},
+		setOpenLegend : function(value) {
+			this.legendIsOpen = value;
+		},
+		getOpenLegend : function(value) {
+			return this.legendIsOpen;
 		},
 		refreshLegend : function() {
 			var arrLayers = this.interactionDocument.getThematicLayers();
@@ -246,8 +268,9 @@
 		 */
 		removeLayerByName : function(className, layerName) {
 			var layer = this.getLayerByClassAndName(className, layerName);
-
-			this.map.removeLayer(layer);
+			if (layer) {
+				this.map.removeLayer(layer);
+			}
 		},
 
 		/**
@@ -272,7 +295,7 @@
 					configuration.zoom = layers[0].minZoom
 				}
 				me.view.setZoom(configuration.zoom);
-			}) ;
+			});
 		},
 		getZoom : function() {
 			return this.view.getZoom();

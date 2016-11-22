@@ -62,7 +62,6 @@
 			this.layer = this.buildThematicLayer(this.thematism.name);
 			this.layer.set("name", this.thematism.name);
 			this.layer.name = this.thematism.name;
-			this.interactionDocument.changed();
 		},
 
 		/**
@@ -139,7 +138,7 @@
 				view : view,
 				adapter : this
 			});
-			thematicLayer.masterTableName = "_Thematism";
+			thematicLayer.masterTableName = CMDBuild.gis.constants.layers.THEMATISM_LAYER;
 
 			return thematicLayer;
 		},
@@ -165,7 +164,7 @@
 							master_card : feature.get("master_card"),
 							master_className : feature.get("master_className"),
 							master_class : feature.get("master_class"),
-							geometry : feature.clone().getGeometry(),
+							geometry : me.getGeometry(feature),
 							strategy : strategy
 						});
 					} else {
@@ -179,6 +178,22 @@
 					me.layer.getSource().removeFeature(feature);
 				}
 			});
+		},
+
+		getGeometry : function(feature) {
+			var analysis = this.thematism.configuration.thematismConfiguration.analysis;
+			if (analysis === CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS) {
+				var type = toCMDBuildType(feature.getGeometry().getType());
+				var coordinates = feature.getGeometry().getCoordinates();
+				var coordinate = this.interactionDocument.getCenter({
+					coordinates : coordinates,
+					type : type
+				});
+				if (coordinate) {
+					return new ol.geom.Circle(coordinate, 2);
+				}
+			}
+			return feature.clone().getGeometry();
 		},
 
 		/**
@@ -196,10 +211,18 @@
 			feature.setGeometry(originalFeature.geometry);
 
 			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(rowColor, card) {
-				if (! rowColor)
+				if (!rowColor)
 					return;
-				var style = this.getStyle(feature.getGeometry().getType(), rowColor.color);
-				feature.setStyle(style);
+				var configuration = this.getConfiguration();
+				var style = undefined;
+				if (configuration.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS) {
+					style = this.getGraduateStyle(card);
+					feature.setStyle(style);
+					feature.getGeometry().setRadius(card.value);
+				} else {
+					style = this.getStyle(feature.getGeometry().getType(), rowColor.color);
+					feature.setStyle(style);
+				}
 				this.layer.getSource().addFeature(feature);
 			}, this);
 		},
@@ -224,11 +247,11 @@
 		 * 
 		 */
 		loadCard : function(id, className, callback, callbackScope) {
-			var colorsTable = this.thematicColors.tableToExa(this.thematism.configuration.layoutConfiguration.colorsTable)
+			var colorsTable = this.thematicColors
+					.tableToExa(this.thematism.configuration.layoutConfiguration.colorsTable)
 			for (var i = 0; i < colorsTable.length; i++) {
 				for (var j = 0; j < colorsTable[i].cards.length; j++) {
-					if (id == colorsTable[i].cards[j].Id) {// Id! no constants
-															// for me
+					if (id == colorsTable[i].cards[j].Id) {
 						callback.apply(callbackScope, [ colorsTable[i], colorsTable[i].cards[j] ]);
 						return;
 					}
@@ -279,9 +302,16 @@
 			case 'Point':
 			case 'Circle':
 			default:
-				var radius = (configuration.firstValue) ? parseInt(configuration.firstValue) : CMDBuild.gis.constants.layers.DEFAULT_RADIUS;
+				var radius = (configuration.firstValue) ? parseInt(configuration.firstValue)
+						: CMDBuild.gis.constants.layers.DEFAULT_RADIUS;
 				return point(color, radius);
 			}
+		},
+		getGraduateStyle : function(card) {
+			var configuration = this.getConfiguration();
+			var color = configuration.layoutConfiguration.gradeColor;
+			var radius = card.value;
+			return point("#" + color, radius);
 		}
 	});
 
@@ -309,27 +339,27 @@
 	function point(color, radius) {
 		var point = new ol.style.Style({
 			fill : new ol.style.Fill({
-				color : 'rgba(255, 100, 50, 0.3)'
+				color : color,
+				opacity : 0.5
 			}),
 			stroke : new ol.style.Stroke({
-				width : 2,
-				color : 'rgba(255, 100, 50, 0.8)'
-			}),
-			image : new ol.style.Circle({
-				fill : new ol.style.Fill({
-					color : color,
-					 opacity: 0.5,
-				}),
-				stroke : new ol.style.Stroke({
-					width : 1,
-					color : color,
-					 opacity: 0.5,
-				}),
-				radius : radius
-
-			}),
+				width : 1,
+				color : color
+			})
 		});
 		return point;
+	}
+
+	function toCMDBuildType(type) {
+		switch (type) {
+		case 'LineString':
+			return "LINESTRING";
+		case 'Polygon':
+			return "POLYGON";
+		case 'Point':
+		case 'Circle':
+			return "POINT";
+		}
 	}
 
 })();

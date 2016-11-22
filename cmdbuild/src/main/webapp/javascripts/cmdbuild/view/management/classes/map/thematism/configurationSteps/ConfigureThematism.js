@@ -4,6 +4,7 @@
 		itemId : "configureThematism",
 		xtype : "form",
 		layout : "anchor",
+		bodyCls: 'cmdb-blue-panel',
 
 		layersStore : undefined,
 		parentWindow : undefined,
@@ -30,14 +31,16 @@
 				valueField : "name",
 				allowBlank : false,
 				editable : false,
-				triggerAction : "all"
+				triggerAction : "all",
+				maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 			});
 			Ext.apply(this, {
 				items : [ {
 					xtype : "textfield",
 					fieldLabel : CMDBuild.Translation.name,
 					name : 'layerName',
-					allowBlank : false
+					allowBlank : false,
+					maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 				}, {
 					xtype : "radiogroup",
 					name : "analysis",
@@ -115,11 +118,11 @@
 			name : "analysis",
 			inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
 			checked : true
-		}/*, { //TODO
-			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
+		}, { 
+			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS),
 			name : "analysis",
-			inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
-		}*/ ];
+			inputValue : CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS
+		} ];
 	}
 	function getSourceItems() {
 		return [ {

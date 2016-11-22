@@ -26,7 +26,9 @@
 				displayField : "description",
 				name : "currentStrategy",
 				valueField : "value",
-				allowBlank : false
+				allowBlank : false,
+				maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
+
 			});
 			Ext.apply(this, {
 				items : [ this.comboStrategies ]

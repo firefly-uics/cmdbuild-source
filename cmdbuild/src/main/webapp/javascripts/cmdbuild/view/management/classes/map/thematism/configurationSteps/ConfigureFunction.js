@@ -7,6 +7,7 @@
 						itemId : "configureFunction",
 						xtype : "form",
 						layout : "anchor",
+						bodyCls: 'cmdb-blue-panel',
 
 						defaults : {
 							anchor : "100%"
@@ -22,7 +23,9 @@
 						 */
 						initComponent : function() {
 							this.configurationPanel = Ext.create("Ext.panel.Panel", {
-								html : ""
+								html : "",
+								bodyCls: 'cmdb-blue-panel',
+								border: false
 							});
 							Ext.apply(this, {
 								items : [ this.configurationPanel ].concat(this.items),
