@@ -7,6 +7,8 @@
 						requires : [ 'CMDBuild.view.management.classes.map.proxy.Cards' ],
 						itemId : "configureRows",
 						layout : "anchor",
+						bodyCls: 'cmdb-blue-panel',
+						border: false,
 
 						defaults : {
 							anchor : "100%"
@@ -53,7 +55,7 @@
 							};
 							var analysis = {
 								type : this.parentWindow.getCurrentAnalysisType(),
-								segments : layoutConfiguration.segmentsConfiguration,
+								layoutConfiguration : layoutConfiguration,
 								strategy : currentStrategy
 							};
 							var groups = thematicDocument.groupData(field, analysis, this.parentWindow
@@ -92,6 +94,7 @@
 												editable : false,
 												allowBlank : false,
 												triggerAction : "all",
+												maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 
 												listeners : {
 													scope : this,

@@ -3,8 +3,13 @@
 	Ext.define('CMDBuild.view.management.classes.map.thematism.Legend', {
 		extends : [ Ext.Object ],
 		parentDiv : undefined,
+		interactionDocument : undefined,
+		thematicView : undefined,
 		constructor : function(parameters) {
-			this.parentDiv = parameters.parentDiv
+			this.interactionDocument = parameters.interactionDocument;
+			this.parentDiv = parameters.parentDiv;
+			this.thematicView = parameters.thematicView;
+
 			var div = "<div id='CMDBUILD_THEMATHICLEGEND' style='position: absolute;'></div>";
 			this.parentDiv.innerHTML = div;
 		},
@@ -12,21 +17,24 @@
 			this.grid = Ext.create("CMDBuild.view.management.classes.map.thematism.LegendPanel", {
 				renderTo : "CMDBUILD_THEMATHICLEGEND",
 				value : 100,
-				listeners : {}
+				listeners : {},
+				interactionDocument : this.interactionDocument,
+				thematicView : this.thematicView
+
 			});
-		},
-		refreshResults : function(layers) {
-			this.grid.show();
-			this.grid.refreshResults(layers);
 		},
 		hide : function() {
 			this.grid.hide();
+		},
+		show : function() {
+			this.grid.show();
 		}
+
 	});
 	Ext.define("CMDBuild.view.management.classes.map.thematism.LegendPanel", {
 		extend : "Ext.panel.Panel",
-		width : 200,
-		height : 150,
+		width : CMDBuild.gis.constants.legend.START_WIDTH,
+		height : CMDBuild.gis.constants.legend.START_HEIGHT,
 		layout : 'fit',
 		resizable : true,
 		initComponent : function() {
@@ -35,11 +43,17 @@
 			this.createControls();
 			Ext.apply(this, {
 				items : [ this.grid ],
-				hidden: true,
+				hidden : true,
 			});
+			this.interactionDocument.observeThematicDocument(this);
 			this.callParent(arguments);
 		},
 		createControls : function() {
+			var me = this;
+			var layersStore = Ext.create('Ext.data.Store', {
+				fields : [ 'name' ],
+				data : []
+			});
 			this.colorsStore = Ext.create("Ext.data.Store", {
 				fields : [ "value", "cardinality", "color" ],
 				data : []
@@ -63,7 +77,7 @@
 				}, {
 					text : CMDBuild.Translation.thematicColor,
 					dataIndex : "color",
-					disabled: true,
+					disabled : true,
 					renderer : function(value, metaData) {
 						metaData.style = "background-color:" + value + ";font-size:" + 0;
 						return value;
@@ -82,15 +96,41 @@
 				});
 			}
 		},
-		refreshResults : function(layers) {
+		getCurrentThematicLayer : function(className) {
+			var currentThematicLayerName = this.interactionDocument.getCurrentThematicLayer(className);
+			return currentThematicLayerName
+		},
+		refresh : function() {
+			this.isLoading = true;
+			var currentLayersStore = Ext.create("Ext.data.Store", {
+				fields : [ "name" ],
+				autoLoad : false,
+				data : []
+			});
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var currentThematicLayerName = this.getCurrentThematicLayer(currentCard.className);
+			var mapPanel = this.interactionDocument.getMapPanel();
+			var mapThematicLayer = mapPanel.getLayerByClassAndName(currentCard.className, currentThematicLayerName);
+			if (!mapThematicLayer) {
+				mapThematicLayer = mapPanel.refreshThematicLayer(currentCard.className, currentCard.cardId);
+			}
+			if (mapThematicLayer === null) {
+				mapPanel.removeThematicsNotVisibleLayers(currentThematicLayerName);
+				this.hide();
+				return;
+			}
 			var currentResultsStore = Ext.create("Ext.data.Store", {
 				fields : [ "value", "cardinality", "color" ],
 				autoLoad : false,
 				data : []
 			});
-			var colorsTable = layers[0].get("adapter").getColorsTable();//N.B.
+			var colorsTable = mapThematicLayer.get("adapter").getColorsTable();// N.B.
 			this.chargeStore(currentResultsStore, colorsTable);
 			this.grid.getStore().loadData(currentResultsStore.getRange(), false);
+			this.isLoading = false;
+			if (mapPanel.getOpenLegend()) {
+				this.show();
+			}
 		}
 	});
 
