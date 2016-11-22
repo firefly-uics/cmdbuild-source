@@ -34,7 +34,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		getParamsObject: function () {
+		getSubmitData: function () {
 			var data = this.getData();
 
 			return {

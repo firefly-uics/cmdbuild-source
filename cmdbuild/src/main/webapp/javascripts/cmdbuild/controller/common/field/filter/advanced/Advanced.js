@@ -282,7 +282,12 @@
 		},
 
 		onFieldFilterAdvancedFilterSetButtonClick: function() {
-			this.controllerFilterWindow.show();
+			this.controllerFilterWindow.cmfg('fieldFilterAdvancedWindowConfigureAndShow', {
+				className: this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME),
+				classDescription: this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.TEXT),
+				filter: this.cmfg('fieldFilterAdvancedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION),
+				mode: 'field'
+			});
 		},
 
 		onFieldFilterAdvancedReset: function() {

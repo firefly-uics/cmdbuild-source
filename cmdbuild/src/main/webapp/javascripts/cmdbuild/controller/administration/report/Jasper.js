@@ -10,7 +10,7 @@
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -258,8 +258,6 @@
 						this.form.reset();
 						this.form.getLayout().setActiveItem(0);
 
-						CMDBuild.core.Message.success();
-
 						// Reset server session
 						CMDBuild.proxy.report.Jasper.resetSession({
 							scope: this,
@@ -315,9 +313,7 @@
 						this.grid.getSelectionModel().select(rowIndex, true);
 						this.form.setDisabledModify(true);
 
-						CMDBuild.view.common.field.translatable.Utils.commit(this.form.step1Panel);
-
-						CMDBuild.core.Message.success();
+						CMDBuild.controller.common.field.translatable.Utils.commit(this.form.step1Panel);
 					}
 				}
 			});

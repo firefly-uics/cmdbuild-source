@@ -29,6 +29,7 @@
 		form: undefined,
 
 		closeAction: 'hide',
+		dimensionsMode: 'percentage',
 		layout: 'border',
 		title: CMDBuild.Translation.viewEmail,
 

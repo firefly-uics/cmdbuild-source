@@ -382,7 +382,7 @@
 
 			componentToolbar.removeAll();
 			componentToolbar.add(
-				!Ext.isEmpty(items) ? items : Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+				!Ext.isEmpty(items) ? items : Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 					text: CMDBuild.Translation.modifyNote,
 					disablePanelFunctions: true,
 					disabled: true

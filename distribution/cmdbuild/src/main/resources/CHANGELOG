@@ -1,3 +1,21 @@
+CMDBuild 2.5.0 (released YYYY/MM/DD)
+
+
+NEW FEATURES
+
+
+FIXES
+
+ * Console errors while start/stop task
+
+ * Client libraries update
+
+ * Resizable Textarea fields have some problems when inside wrappers
+
+
+
+
+
 CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 

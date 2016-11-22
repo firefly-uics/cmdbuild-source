@@ -17,8 +17,13 @@
 
 		autoHeight: true,
 		border: false,
-		defaultSizeW: 0.90,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.import,
+
+		dimensions: {
+			height: 'auto',
+			width: 0.70,
+		},
 
 		/**
 		 * @returns {Void}
@@ -63,9 +68,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Resize window, smaller than default size
-			this.width = this.width * this.defaultSizeW;
 		}
 	});
 

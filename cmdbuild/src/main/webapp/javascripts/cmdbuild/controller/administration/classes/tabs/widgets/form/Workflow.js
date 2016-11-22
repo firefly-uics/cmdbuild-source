@@ -62,7 +62,7 @@
 
 			switch (widgetDefinition[CMDBuild.core.constants.Proxy.FILTER_TYPE]) {
 				case CMDBuild.core.constants.Proxy.NAME: {
-					widgetDefinition[CMDBuild.core.constants.Proxy.PRESET] = this.view.presetGrid.getData(CMDBuild.core.constants.Proxy.DATA);
+					widgetDefinition[CMDBuild.core.constants.Proxy.PRESET] = this.view.presetGrid.getValue(CMDBuild.core.constants.Proxy.DATA);
 				}
 			}
 
@@ -86,7 +86,7 @@
 
 				case CMDBuild.core.constants.Proxy.NAME: {
 					this.view.workflow.setValue(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_NAME));
-					this.view.presetGrid.setData(record.get(CMDBuild.core.constants.Proxy.PRESET));
+					this.view.presetGrid.setValue(record.get(CMDBuild.core.constants.Proxy.PRESET));
 				} break;
 			}
 		},
@@ -134,7 +134,7 @@
 									data[valueObject[CMDBuild.core.constants.Proxy.NAME]] = '';
 							}, this);
 
-						this.view.presetGrid.setData(data);
+						this.view.presetGrid.setValue(data);
 					}
 				});
 			}

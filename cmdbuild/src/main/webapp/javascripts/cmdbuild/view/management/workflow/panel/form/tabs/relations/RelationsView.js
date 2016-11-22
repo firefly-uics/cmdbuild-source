@@ -27,6 +27,8 @@
 	Ext.define("CMDBuild.view.management.workflow.panel.form.tabs.relations.RelationsView", {
 		extend: "Ext.tree.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		/**
 		 * @cfg {CMDBuild.controller.management.workflow.panel.form.tabs.Relations}
 		 */
@@ -151,7 +153,7 @@
 
 			this.tbar = [];
 
-			this.addRelationButton = Ext.create('CMDBuild.core.buttons.iconized.add.Relation');
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Relation');
 
 			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
@@ -161,7 +163,7 @@
 				this.tbar.push(this.addRelationButton);
 
 			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 					scope: this,
 
 					handler: function(button, e) {
@@ -342,7 +344,7 @@
 		var domainObj = _CMCache.getDomainById(record.get('dom_id'));
 		var table = _CMCache.getClassById(tableId);
 		var entryType = _CMCache.getEntryTypeById(tableId);
-		var privileges =  _CMUtils.getEntryTypePrivileges(entryType);
+		var privileges =  CMDBuild.core.Utils.getEntryTypePrivileges(entryType);
 
 		if (this.cmWithEditRelationIcons && domainObj.get('writePrivileges'))
 			actionsHtml += '<img style="cursor:pointer" title="' + CMDBuild.Translation.management.modcard.edit_relation + '" class="action-relation-edit" src="images/icons/link_edit.png"/>'

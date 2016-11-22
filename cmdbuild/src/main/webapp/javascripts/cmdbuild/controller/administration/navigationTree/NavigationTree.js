@@ -177,7 +177,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.navigationTree.accordion.Administration} node
+		 * @param {CMDBuild.model.administration.navigationTree.Accordion} node
 		 *
 		 * @returns {Void}
 		 *

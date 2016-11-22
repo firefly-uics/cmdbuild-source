@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.widget.grid.Grid',
 			'CMDBuild.model.widget.grid.Grid'
 		],
@@ -170,7 +171,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+						Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.editRow,
 							scope: this,
@@ -185,7 +186,7 @@
 								this.cmfg('onEditRowButtonClick', record);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+						Ext.create('CMDBuild.core.buttons.icon.Remove', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.deleteRow,
 							scope: this,
@@ -216,7 +217,9 @@
 			var columns = [];
 			var classId = this.classType.get(CMDBuild.core.constants.Proxy.ID);
 
-			if (_CMUtils.isSuperclass(classId))
+			var c = _CMCache.getEntryTypeById(classId);
+
+			if (c && c.get('superclass'))
 				columns.push(this.buildClassColumn());
 
 			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
@@ -230,7 +233,7 @@
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
 					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-						var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+						var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, 'system.template.');
 						xaVars['_SystemFieldFilter'] = attribute.filter;
 
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
@@ -249,7 +252,7 @@
 					editor.hideLabel = true;
 
 					if (!Ext.isEmpty(header)) {
-						editor.disabled = attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == CMDBuild.core.constants.Proxy.READ;
+						editor.disabled = attribute['fieldmode'] == CMDBuild.core.constants.Proxy.READ;
 
 						if (attribute['isnotnull']) {
 							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
@@ -266,12 +269,10 @@
 							header.editor = editor;
 
 							this.addRendererToHeader(header, attribute);
-						} else {
-							header.cmReadOnly = false;
 						}
 
 						// Read only attributes header setup
-						header.disabled = attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == CMDBuild.core.constants.Proxy.READ;
+						header.disabled = attribute['fieldmode'] == CMDBuild.core.constants.Proxy.READ;
 
 						columns.push(header);
 					}

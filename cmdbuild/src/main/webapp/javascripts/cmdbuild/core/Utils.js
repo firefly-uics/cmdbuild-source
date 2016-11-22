@@ -10,7 +10,7 @@
 		singleton: true,
 
 		/**
-		 * Decode variable as boolean ("true", "on", "false", "off") case unsensitive
+		 * Decode variable as boolean ('true', 'on', 'false', 'off') case unsensitive
 		 *
 		 * @param {Mixed} variable
 		 *
@@ -34,46 +34,79 @@
 		},
 
 		/**
-		 * Clones a ExtJs store
+		 * @param {Object} meta
+		 * @param {String} ns
 		 *
-		 * @param {Ext.data.Store} sourceStore
+		 * @returns {Object} xaVars
 		 *
-		 * @returns {Ext.data.Store} clonedStore
+		 * @deprecated
 		 */
-		deepCloneStore: function (sourceStore) {
-			var clonedStore = Ext.create('Ext.data.Store', { model: sourceStore.model });
+		extractMetadataByNamespace: function (meta, ns) {
+			var xaVars = {};
 
-			sourceStore.each(function (record) {
-				var newRecordData = Ext.clone(record.copy().data);
-				var model = new sourceStore.model(newRecordData, newRecordData.id);
+			for (var metaItem in meta) {
+				if (metaItem.indexOf(ns)==0) {
+					var tmplName = metaItem.substr(ns.length);
 
-				clonedStore.add(model);
-			}, this);
+					xaVars[tmplName] = meta[metaItem];
+				}
+			};
 
-			return clonedStore;
+			return xaVars;
 		},
 
 		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 * @param {Object} wrapper
+		 * @param {Object} target
+		 * @param {Array} methods
 		 *
 		 * @returns {Array} out
 		 *
 		 * @deprecated
-		 *
-		 * FIXME: parseInt will be useless when model will be refactored
-		 * FIXME: to avoid to use cache just wrap this function in readAllClasses server call
 		 */
-		getEntryTypeAncestorsId: function (entryType) {
+		forwardMethods: function (wrapper, target, methods) {
+			if (!Ext.isArray(methods))
+				methods = [methods];
+
+			for (var i = 0, l = methods.length; i < l; ++i) {
+				var m = methods[i];
+
+				if (typeof m == 'string' && typeof target[m] == 'function') {
+					var fn = function () {
+						return target[arguments.callee.$name].apply(target, arguments);
+					};
+
+					fn.$name = m;
+					wrapper[m] = fn;
+				}
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel or Number} entryTypeId
+		 *
+		 * @returns {Array} out
+		 *
+		 * @deprecated
+		 */
+		getAncestorsId: function (entryTypeId) {
+			var et = null;
 			var out = [];
 
-			if (!Ext.Object.isEmpty(entryType)) {
-				out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
+			if (Ext.getClassName(entryTypeId) == 'CMDBuild.cache.CMEntryTypeModel') {
+				et = entryTypeId;
+			} else {
+				et = _CMCache.getEntryTypeById(entryTypeId);
+			}
 
-				while (!Ext.isEmpty(entryType) && !Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
-					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.constants.Proxy.PARENT));
+			if (et) {
+				out.push(et.get('id'));
 
-					if (!Ext.isEmpty(entryType))
-						out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
+				while (!Ext.isEmpty(et) && et.get('parent') != '') {
+					et = _CMCache.getEntryTypeById(et.get('parent'));
+
+					if (!Ext.isEmpty(et))
+						out.push(et.get('id'));
 				}
 			}
 
@@ -81,16 +114,31 @@
 		},
 
 		/**
-		 * @param {String} className
+		 * @param {Ext.data.Model} et
 		 *
 		 * @returns {Object}
 		 *
 		 * @deprecated
 		 */
-		getEntryTypePrivilegesByName: function (className) {
-			return _CMUtils.getEntryTypePrivileges(
-				_CMCache.getEntryTypeByName(className || '')
-			);
+		getEntryTypePrivileges: function (et) {
+			var privileges = {
+				write: false,
+				create: false,
+				crudDisabled: {}
+			};
+
+			if (Ext.isObject(et) && !Ext.Object.isEmpty(et)) {
+				var strUiCrud = et.get('ui_card_edit_mode'),
+					objUiCrud = Ext.decode(strUiCrud);
+
+				privileges = {
+					write: et.get('priv_write'),
+					create: et.isProcess() ? et.isStartable() : et.get('priv_create'),
+					crudDisabled: objUiCrud
+				};
+			}
+
+			return privileges;
 		},
 
 		/**
@@ -158,21 +206,22 @@
 			attributesNamesToFilter = Ext.isArray(attributesNamesToFilter) ? attributesNamesToFilter : [];
 			attributesNamesToFilter.push('Notes');
 
-			var groups = {};
-			var withoutGroup = [];
+			var groups = {},
+				withoutGroup = [];
 
 			Ext.Array.forEach(attributes, function (attribute, i, allAttributes) {
-				if (
-					!Ext.isEmpty(attribute)
-					&& !Ext.Array.contains(attributesNamesToFilter, attribute[CMDBuild.core.constants.Proxy.NAME])
-				) {
-					if (Ext.isEmpty(attribute[CMDBuild.core.constants.Proxy.GROUP])) {
-						withoutGroup.push(attribute);
-					} else {
-						if (Ext.isEmpty(groups[attribute[CMDBuild.core.constants.Proxy.GROUP]]))
-							groups[attribute[CMDBuild.core.constants.Proxy.GROUP]] = [];
+				if (Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)) {
+					var attributeData = Ext.isFunction(attribute.getData) ? attribute.getData() : attribute; // Model and simple object support
 
-						groups[attribute[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+					if (!Ext.Array.contains(attributesNamesToFilter, attributeData[CMDBuild.core.constants.Proxy.NAME])) {
+						if (Ext.isEmpty(attributeData[CMDBuild.core.constants.Proxy.GROUP])) {
+							withoutGroup.push(attribute);
+						} else {
+							if (Ext.isEmpty(groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]]))
+								groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]] = [];
+
+							groups[attributeData[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+						}
 					}
 				}
 			}, this);
@@ -325,315 +374,9 @@
 		}
 	});
 
-	CMDBuild.Utils = (function () {
-		var idCounter = 0;
-
-		return {
-			mergeCardsData: function (cardData1, cardData2) {
-				var out = {};
-
-				for (var prop in cardData1)
-					out[prop] = cardData1[prop];
-
-				for (var prop in cardData2) {
-					if (out[prop]) {
-						if (typeof out[prop] == "object") {
-							out[prop] = CMDBuild.Utils.mergeCardsData(cardData1[prop], cardData2[prop]);
-						} else {
-							continue;
-						}
-					} else {
-						out[prop] = cardData2[prop];
-					}
-				}
-
-				return out;
-			},
-
-			/*
-			 * Used to trace a change in the type of the selection parameter between two minor ExtJS releases
-			 */
-			getFirstSelection: function (selection) {
-				if (Ext.isArray(selection)) {
-					return selection[0];
-				} else {
-					return selection;
-				}
-			},
-
-			nextId: function () {
-				return ++idCounter;
-			},
-
-			Metadata: {
-				extractMetaByNS: function (meta, ns) {
-					var xaVars = {};
-
-					for (var metaItem in meta) {
-						if (metaItem.indexOf(ns)==0) {
-							var tmplName = metaItem.substr(ns.length);
-
-							xaVars[tmplName] = meta[metaItem];
-						}
-					};
-
-					return xaVars;
-				}
-			},
-
-			Format: {
-				htmlEntityEncode : function (value) {
-					return !value ? value : String(value).replace(/&/g, "&amp;");
-				}
-			},
-
-			// FIXME: Should be getEntryTypePrivileges
-			getClassPrivileges: function (classId) {
-				var entryType = _CMCache.getEntryTypeById(classId);
-
-				return _CMUtils.getEntryTypePrivileges(entryType);
-			},
-
-			getEntryTypePrivileges: function (et) {
-				var privileges = {
-					write: false,
-					create: false,
-					crudDisabled: {}
-				};
-
-				if (et) {
-					var strUiCrud = et.get("ui_card_edit_mode");
-					var objUiCrud = Ext.JSON.decode(strUiCrud);
-					privileges = {
-						write: et.get("priv_write"),
-						create: et.isProcess() ? et.isStartable() : et.get("priv_create"),
-						crudDisabled: objUiCrud
-					};
-				}
-
-				return privileges;
-			},
-
-			getEntryTypePrivilegesByCard: function (card) {
-				var privileges = {
-					write: false,
-					create: false,
-					crudDisabled: {}
-				};
-
-				if (card) {
-					var entryTypeId = card.get("IdClass");
-					var entryType = _CMCache.getEntryTypeById(entryTypeId);
-
-					privileges = _CMUtils.getEntryTypePrivileges(entryType);
-				}
-
-				return privileges;
-			},
-
-			isSimpleTable: function (id) {
-				var table = _CMCache.getEntryTypeById(id);
-
-				if (table) {
-					return table.data.tableType == 'simpletable';
-				} else {
-					return false;
-				}
-			},
-
-			isProcess: function (id) {
-				return (!!_CMCache.getProcessById(id));
-			},
-
-			groupAttributes: function (attributes, allowNoteFiled) {
-				var groups = {};
-				var fieldsWithoutGroup = [];
-
-				for (var i = 0; i < attributes.length; i++) {
-					var attribute = attributes[i];
-
-					if (!attribute)
-						continue;
-
-					if (!allowNoteFiled && attribute.name == "Notes") {
-						continue;
-					} else {
-						var attrGroup = attribute.group;
-						if (attrGroup) {
-							if (!groups[attrGroup])
-								groups[attrGroup] = [];
-
-							groups[attrGroup].push(attribute);
-						} else {
-							fieldsWithoutGroup.push(attribute);
-						}
-					}
-				}
-
-				if (fieldsWithoutGroup.length > 0)
-					groups[CMDBuild.Translation.management.modcard.other_fields] = fieldsWithoutGroup;
-
-				return groups;
-			},
-
-			/**
-			 * for each element call the passed fn,
-			 * with scope the element
-			 **/
-			foreach: function (array, fn, params) {
-				if (array) {
-					for (var i = 0, l = array.length; i < l; ++i) {
-						var element = array[i];
-						fn.call(element,params);
-					}
-				}
-			},
-
-			/**
-			 *
-			 * @param {array} array an array in which search something
-			 * @param {function} fn a function that is called one time for each
-			 * element in the array. The function must return true if the
-			 * item is the searched
-			 *
-			 * @returns an object of the array if the passed function return true, or null
-			 */
-			arraySearchByFunction: function (array, fn) {
-				if (!Ext.isArray(array) || !Ext.isFunction(fn))
-					return null;
-
-				for (var i = 0, l = array.length; i < l; ++i) {
-					var el = array[i];
-
-					if (fn(el))
-						return el;
-				}
-
-				return null;
-			},
-
-			isSuperclass: function (idClass) {
-				var c =  _CMCache.getEntryTypeById(idClass);
-
-				if (c) {
-					return c.get("superclass");
-				} else {
-					// TODO maybe is not the right thing to do...
-					return false;
-				}
-			},
-
-			/**
-			 * @deprecated (CMDBuild.core.Utils.getEntryTypeAncestorsId())
-			 */
-			getAncestorsId: function (entryTypeId) {
-				var et = null;
-				var out = [];
-
-				if (Ext.getClassName(entryTypeId) == "CMDBuild.cache.CMEntryTypeModel") {
-					et = entryTypeId;
-				} else {
-					et = _CMCache.getEntryTypeById(entryTypeId);
-				}
-
-				if (et) {
-					out.push(et.get("id"));
-
-					while (!Ext.isEmpty(et) && et.get("parent") != "") {
-						et = _CMCache.getEntryTypeById(et.get("parent"));
-
-						if (!Ext.isEmpty(et))
-							out.push(et.get("id"));
-					}
-				}
-
-				return out;
-			},
-
-			getDescendantsById: function (entryTypeId) {
-				var children = this.getChildrenById(entryTypeId);
-				var et = _CMCache.getEntryTypeById(entryTypeId);
-				var out = [et];
-
-				for (var i = 0; i < children.length; ++i) {
-					var c = children[i];
-					var leaves = this.getDescendantsById(c.get("id"));
-
-					out = out.concat(leaves);
-				}
-
-				return out;
-			},
-
-			forwardMethods: function (wrapper, target, methods) {
-				if (!Ext.isArray(methods))
-					methods = [methods];
-
-				for (var i = 0, l = methods.length; i < l; ++i) {
-					var m = methods[i];
-
-					if (typeof m == "string" && typeof target[m] == "function") {
-						var fn = function () {
-							return target[arguments.callee.$name].apply(target, arguments);
-						};
-
-						fn.$name = m;
-						wrapper[m] = fn;
-					}
-				}
-			},
-
-			getChildrenById: function (entryTypeId) {
-				var ett = _CMCache.getEntryTypes();
-				var out = [];
-
-				for (var et in ett) {
-					et = ett[et];
-
-					if (et.get("parent") == entryTypeId)
-						out.push(et);
-				}
-
-				return out;
-			},
-
-			PollingFunction: function (conf) {
-				var DEFAULT_DELAY = 500;
-				var DEFAULT_MAX_TIMES = 60;
-
-				this.success =  conf.success || Ext.emptyFn;
-				this.failure = conf.failure || Ext.emptyFn;
-				this.checkFn = conf.checkFn || function () { return true; };
-				this.cbScope = conf.cbScope || this;
-				this.delay = conf.delay || DEFAULT_DELAY;
-				this.maxTimes = conf.maxTimes || DEFAULT_MAX_TIMES;
-				this.checkFnScope = conf.checkFnScope || this.cbScope;
-
-				this.run = function () {
-					if (this.maxTimes == DEFAULT_MAX_TIMES)
-						CMDBuild.core.LoadMask.show();
-
-					if (this.maxTimes > 0) {
-						if (this.checkFn.call(this.checkFnScope)) {
-							_debug("End polling with success");
-							CMDBuild.core.LoadMask.hide();
-							this.success.call(this.cbScope);
-						} else {
-							this.maxTimes--;
-							Ext.Function.defer(this.run, this.delay, this);
-						}
-					} else {
-						_debug("End polling with failure");
-						CMDBuild.core.LoadMask.hide();
-						this.failure.call();
-					}
-				};
-			}
-		};
-	})();
-
-	_CMUtils = CMDBuild.Utils;
-
+	/**
+	 * @deprecated
+	 */
 	CMDBuild.extend = function (subClass, superClass) {
 		var ob = function () {};
 
@@ -646,6 +389,9 @@
 			superClass.prototype.constructor = superClass;
 	};
 
+	/**
+	 * @deprecated
+	 */
 	CMDBuild.isMixedWith = function (obj, mixinName) {
 		var m = obj.mixins || {};
 
@@ -659,6 +405,9 @@
 		return false;
 	};
 
+	/**
+	 * @deprecated
+	 */
 	CMDBuild.instanceOf = function (obj, className) {
 		while (obj) {
 			if (Ext.getClassName(obj) == className)
@@ -670,12 +419,18 @@
 		return false;
 	};
 
+	/**
+	 * @deprecated
+	 */
 	CMDBuild.checkInterface = function (obj, interfaceName) {
 		return CMDBuild.isMixedWith(obj, interfaceName) || CMDBuild.instanceOf(obj, interfaceName);
 	};
 
+	/**
+	 * @deprecated
+	 */
 	CMDBuild.validateInterface = function (obj, interfaceName) {
-		CMDBuild.IS_NOT_CONFORM_TO_INTERFACE = "The object {0} must implement the interface: {1}";
+		CMDBuild.IS_NOT_CONFORM_TO_INTERFACE = 'The object {0} must implement the interface: {1}';
 
 		if (!CMDBuild.checkInterface(obj, interfaceName))
 			throw Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, obj.toString(), interfaceName);

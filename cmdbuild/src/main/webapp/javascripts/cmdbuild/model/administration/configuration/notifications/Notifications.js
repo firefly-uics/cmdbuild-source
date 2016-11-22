@@ -8,9 +8,9 @@
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.DESTINATION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TIME_INTERVAL, type: 'int', defaultValue: 0 }
+			{ name: CMDBuild.core.constants.Proxy.TIME_INTERVAL, type: 'int' }
 		],
 
 		/**
@@ -34,7 +34,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		getParamsObject: function () {
+		getSubmitData: function () {
 			var data = this.getData();
 
 			return {

@@ -7,7 +7,9 @@ CMDBuild.Management.ForeignKeyField = (function() {
 			var store = _CMCache.getForeignKeyStore(attribute);
 
 			var field = new CMDBuild.view.common.field.SearchableCombo({
-				plugins: new CMDBuild.SetValueOnLoadPlugin(),
+				plugins: [
+					Ext.create('CMDBuild.core.plugin.SetValueOnLoad')
+				],
 				fieldLabel: attribute.description,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: attribute.name,

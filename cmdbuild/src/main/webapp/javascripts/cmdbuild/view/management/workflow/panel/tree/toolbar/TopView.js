@@ -30,7 +30,7 @@
 			Ext.apply(this, {
 				itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 				items: [
-					Ext.create('CMDBuild.core.buttons.iconized.add.Workflow', { // Placeholder
+					Ext.create('CMDBuild.core.buttons.icon.add.Workflow', { // Placeholder
 						text: CMDBuild.Translation.start,
 						itemId: 'addButton',
 						disabled: true

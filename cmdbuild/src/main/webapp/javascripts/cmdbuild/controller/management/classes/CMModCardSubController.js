@@ -20,6 +20,9 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		this.entryType = null;
 
 		this.buildCardModuleStateDelegate();
+
+		// Build sub-controllers
+		this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
 	},
 
 	onEntryTypeSelected : function(entryType) {
@@ -47,8 +50,7 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 	},
 
 	onShowGraphClick: function() {
-		Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-			parentDelegate: this,
+		this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 			classId: this.card.get("IdClass"),
 			cardId: this.card.get("Id")
 		});

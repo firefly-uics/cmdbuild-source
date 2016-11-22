@@ -12,11 +12,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskEventAsynchronousStep1EntryTypeSelected',
+			'onTaskManagerFormTaskEventAsynchronousStep1Show'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.event.asynchronous.Step1}
+		 * @property {CMDBuild.view.administration.taskManager.task.event.asynchronous.Step1View}
 		 */
 		view: undefined,
 
@@ -31,62 +32,22 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.asynchronous.Step1', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.asynchronous.Step1View', { delegate: this });
 		},
-
-		// GETters functions
-			/**
-			 * @return {String}
-			 */
-			getValueId: function () {
-				return this.view.idField.getValue();
-			},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Void}
 		 */
-		isEmptyClass: function () {
-			return Ext.isEmpty(this.view.classNameCombo.getValue());
+		onTaskManagerFormTaskEventAsynchronousStep1EntryTypeSelected: function () {
+			this.cmfg('taskManagerFormNavigationSetDisableNextButton', false);
 		},
 
-		// SETters functions
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledTypeField: function (state) {
-				this.view.typeField.setDisabled(state);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueActive: function (state) {
-				this.view.activeField.setValue(state);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueClassName: function (value) {
-				this.view.classNameCombo.setValue(value);
-
-				// Manually select event fire
-				this.cmfg('onTaskManagerFormTaskEventAsynchronousClassSelected', value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueDescription: function (value) {
-				this.view.descriptionField.setValue(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueId: function (value) {
-				this.view.idField.setValue(value);
-			}
+		/**
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskEventAsynchronousStep1Show: function () {
+			this.cmfg('taskManagerFormNavigationSetDisableNextButton', Ext.isEmpty(this.view.fieldEntryType.getValue()));
+		}
 	});
 
 })();

@@ -38,7 +38,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyNavigationTree,
 								scope: this,
 
@@ -46,7 +46,7 @@
 									this.delegate.cmfg('onNavigationTreeModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeNavigationTree,
 								scope: this,
 

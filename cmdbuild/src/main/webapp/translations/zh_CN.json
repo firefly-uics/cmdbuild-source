@@ -1,6 +1,6 @@
 {
 	"description": "中文",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "管理模块",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "发生一个错误",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "属性级的映射表必须准确填写。",
 		"busyVisualControls": "可视控件忙, 在重试前请检查服务器状态。",
-		"classLevelMappingTableMustBeCorrectlyFilled": "类级的映射表必须准确填写。",
 		"copyAttachmentFailure": "以名称\"{0}\"拷贝附件失败",
 		"csvUploadOrDecodeFailure": "CSV上传或解码失败",
 		"detail": "细节",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "信息发送错误. 可能的原因: 1) 服务未被安装; 2) webservice服务端的URL或端口号不正确",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "请核实webservice的名字空间，API的名字或输入参数"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "引用级的映射表必须准确填写。",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "此字段是必须的",
@@ -999,6 +996,7 @@
 	"initialLatitude": "初始纬度",
 	"initialLongitude": "初始经度",
 	"initialZoomLevel": "初使变焦等级",
+	"inputParameter": "输入参数",
 	"instance": "实例",
 	"instanceName": "实例名称",
 	"inverseDescription": "<em>Inverse description</em>",
@@ -1116,6 +1114,7 @@
 	"open_3d_viewer": "打开3D浏览器",
 	"openRelationGraph": "打开关系图表",
 	"operativeInstructions": "操作说明",
+	"or": "<em>or</em>",
 	"origin": "起源",
 	"otherOptions": "<em>Other options</em>",
 	"others": "<em>Others</em>",
@@ -1236,7 +1235,6 @@
 	"set": "设置",
 	"setAsDefault": "设置为缺省",
 	"setFilter": "设置过滤器",
-	"setLater": "输入参数",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "安装",
 	"showDetails": "<em>Show details</em>",
@@ -1356,6 +1354,7 @@
 	"workflowAttributes" : "工作流属性",
 	"workflowEngine": "工作流引擎",
 	"write": "<em>Write</em>",
+	"xml": "XML",
 	"xpdlFile": "XPDL文件",
 	"xpdlFileUploaded": "XPDL文件上传",
 	"yes": "<em>Yes</em>",

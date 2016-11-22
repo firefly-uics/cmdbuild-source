@@ -1,9 +1,10 @@
-(function() {
+(function () {
+
 	Ext.define("CMDBuild.core.buttons.CMClassesMenuButtonDelegate", {
 		/**
-		 * 
+		 *
 		 * @param {Ext.menu.Menu} menu
-		 * @param {CMDBUild EntryType} entryType 
+		 * @param {CMDBuild EntryType} entryType
 		 */
 		onCMClassesMenuButtonItemClick: function(menu, entryType){}
 	});
@@ -29,7 +30,7 @@
 			keys = Ext.Array.sort(keys);
 			for (var i=0, l=keys.length; i<l; ++i) {
 				var entryType = entryTypes[keys[i]];
-				if (entryType 
+				if (entryType
 						&& !entryType.isProcess()
 						&& entryType.get("name") != "Class") { // ugly condition
 
@@ -48,4 +49,5 @@
 		var et = item.entryType;
 		this.callDelegates("onCMClassesMenuButtonItemClick", [this, et]);
 	}
+
 })();

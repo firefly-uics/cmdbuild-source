@@ -1,6 +1,6 @@
 {
 	"description": "Srpski",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Administracioni modul",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Došlo je do greške",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Tabela mapiranja atributa mora biti korektno popunjena",
 		"busyVisualControls": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Tabela mapiranja klasa mora biti korektno popunjena",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Detalji",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Slanje poruke nije uspelo. Mogući uzroci: 1) Servis nije implementiran; 2) URL i/ili broj porta nije tačan",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Proverite da li su prostor imena, naziv metode i parametri web service-a tačni."
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Tabela mapiranja referenci mora biti korektno popunjena",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Obavezno polje",
@@ -999,6 +996,7 @@
 	"initialLatitude": "Početna geografska širina",
 	"initialLongitude": "Početna geografska dužina",
 	"initialZoomLevel": "Početno uvećanje",
+	"inputParameter": "Ulazni parametar",
 	"instance": "Instanca",
 	"instanceName": "Naziv instance",
 	"inverseDescription": "Inverzni opis",
@@ -1116,6 +1114,7 @@
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Otvori graf relacija",
 	"operativeInstructions": "Dokumentacija o izvršenim aktivnostima",
+	"or": "<em>or</em>",
 	"origin": "Polazna klasa",
 	"otherOptions": "Ostale opcije",
 	"others": "<em>Others</em>",
@@ -1236,7 +1235,6 @@
 	"set": "Postavi",
 	"setAsDefault": "Postavi kao podrazumevani",
 	"setFilter": "Postavi filter",
-	"setLater": "Ulazni parametar",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Opšta podešavanja",
 	"showDetails": "Prikaži detalje",
@@ -1356,6 +1354,7 @@
 	"workflowAttributes": "Atributi radnog procesa",
 	"workflowEngine": "Radni procesi (Workflow)",
 	"write": "Pisanje",
+	"xml": "XML",
 	"xpdlFile": "XPDL datoteka",
 	"xpdlFileUploaded": "XPDL datoteka postavljena na server",
 	"yes": "<em>Yes</em>",

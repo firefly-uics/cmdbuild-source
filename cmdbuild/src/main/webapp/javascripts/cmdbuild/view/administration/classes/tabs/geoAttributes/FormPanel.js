@@ -193,7 +193,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyAttribute,
 								scope: this,
 
@@ -201,7 +201,7 @@
 									this.delegate.cmfg('onClassesTabGeoAttributesModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeAttribute,
 								scope: this,
 

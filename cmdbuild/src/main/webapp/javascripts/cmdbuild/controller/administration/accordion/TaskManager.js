@@ -92,7 +92,7 @@
 									iconCls: 'cmdb-tree-tasks-icon',
 									text: CMDBuild.Translation.asynchronous,
 									description: CMDBuild.Translation.asynchronous,
-									id: this.cmfg('accordionBuildId', 'event_asynchronous'),
+									id: this.cmfg('accordionBuildId', ['event', 'asynchronous']),
 									sectionHierarchy: ['event', 'asynchronous'],
 									leaf: true
 								},
@@ -101,7 +101,7 @@
 									iconCls: 'cmdb-tree-tasks-icon',
 									text: CMDBuild.Translation.synchronous,
 									description: CMDBuild.Translation.synchronous,
-									id: this.cmfg('accordionBuildId', 'event_synchronous'),
+									id: this.cmfg('accordionBuildId', ['event', 'synchronous']),
 									sectionHierarchy: ['event', 'synchronous'],
 									leaf: true
 								}

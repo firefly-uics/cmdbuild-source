@@ -31,6 +31,76 @@
 		remove: "images/icons/cross.png"
 	};
 
+	Ext.define("CMDBuild.delegate.common.filter.CMFilterMenuButtonDelegate", {
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to the clear button
+		 *
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonClearActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to the new button
+		 *
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonNewActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the apply icon on a row of the picker
+		 *
+		 * @param {object} filter, the filter to apply
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonApplyActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the modify icon on a row of the picker
+		 *
+		 * @param {object} filter, the filter to modify
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonModifyActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the save icon on a row of the picker
+		 *
+		 * @param {object} filter, the filter to save
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonSaveActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the modify icon on a row of the picker
+		 *
+		 * @param {object} filter, the filter to modify
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonCloneActionClick: Ext.emptyFn,
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the remove icon on a row of the picker
+		 *
+		 * @param {object} filter, the filter to remove
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonRemoveActionClick: Ext.emptyFn
+	});
+
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterMenuButton", {
 		extend: "Ext.container.ButtonGroup",
 
@@ -213,6 +283,18 @@
 	var HTML_FIELD_HEIGHT = 200;
 	var SIMPLE_FIELD_HEIGHT = 50;
 
+	Ext.define("CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate", {
+		/**
+		 * Called by the CMRuntimeParameter when click
+		 * to on the save button
+		 *
+		 * @param {CMDBuild.view.management.common.filter.CMRuntimeParameterWindow} the
+		 * window that calls this method
+		 * @param {object} filter, the filter used to configure the CMRuntimeParameterWindow
+		 */
+		onRuntimeParameterWindowSaveButtonClick: function(runtimeParameterWindow, filter) {}
+	});
+
 	/**
 	 * @deprecated CMDBuild.controller.common.field.filter.runtimeParameters.RuntimeParameters
 	 */
@@ -227,8 +309,7 @@
 		border: false,
 
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this,
-					"CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate");
 
 			this.callParent(arguments);
 		},
@@ -407,7 +488,22 @@
 			this.cls = "filterMenuButtonGrid";
 
 			var me = this;
-			var store = CMDBuild.proxy.Filter.newUserStore();
+			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				autoLoad: false,
+				model: 'CMDBuild.model.CMFilterModel',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.filter.user.readAll,
+					reader: {
+						type: 'json',
+						idProperty: CMDBuild.core.constants.Proxy.ID,
+						root: CMDBuild.core.constants.Proxy.FILTERS
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 
 			this.grid = new Ext.grid.Panel({
 				width: 300,

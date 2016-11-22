@@ -66,6 +66,11 @@
 		},
 
 		/**
+		 * @abstract
+		 */
+		buildFilterCondition: Ext.emptyFn,
+
+		/**
 		 * @returns {Object}
 		 */
 		buildStoreField: function () {

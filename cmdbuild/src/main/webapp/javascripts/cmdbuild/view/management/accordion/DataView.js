@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.accordion.DataView', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.model.dataView.accordion.Management'],
+		requires: ['CMDBuild.model.management.dataView.Accordion'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.accordion.DataView}
@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.dataView.accordion.Management',
+		storeModelName: 'CMDBuild.model.management.dataView.Accordion',
 
 		title: CMDBuild.Translation.views
 	});

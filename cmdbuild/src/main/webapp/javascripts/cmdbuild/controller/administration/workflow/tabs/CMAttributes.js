@@ -9,7 +9,7 @@
 		'CMDBuild.core.Message',
 		'CMDBuild.proxy.common.tabs.attribute.Attribute',
 		'CMDBuild.proxy.common.tabs.attribute.Order',
-		'CMDBuild.view.common.field.translatable.Utils'
+		'CMDBuild.controller.common.field.translatable.Utils'
 	]);
 
 	Ext.define("CMDBuild.controller.administration.workflow.tabs.CMAttributes", {
@@ -139,7 +139,7 @@
 			success : function(form, action, decoded) {
 				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index, me.currentClassName);
 
-				CMDBuild.view.common.field.translatable.Utils.commit(me.view.formPanel);
+				CMDBuild.controller.common.field.translatable.Utils.commit(me.view.formPanel);
 			},
 			callback: function() {
 				CMDBuild.core.LoadMask.hide();

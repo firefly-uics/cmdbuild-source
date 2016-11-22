@@ -345,7 +345,7 @@
 			failure: function() {
 				CMDBuild.core.Message.error( //
 						CMDBuild.Translation.error, //
-						CMDBUild.Translation.error_bimserver_connection, //
+						CMDBuild.Translation.error_bimserver_connection, //
 						true //
 					);
 			}

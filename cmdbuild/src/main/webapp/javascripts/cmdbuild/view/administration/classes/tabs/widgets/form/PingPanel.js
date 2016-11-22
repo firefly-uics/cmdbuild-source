@@ -52,6 +52,7 @@
 							minValue: 1
 						}),
 						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+							considerAsFieldToDisable: true,
 							enableRowAdd: true,
 							enableRowDelete: true,
 							enableCellEditing: true,

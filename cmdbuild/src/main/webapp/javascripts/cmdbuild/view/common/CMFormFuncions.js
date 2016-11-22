@@ -5,7 +5,7 @@
 	 *
 	 * @deprecated (CMDBuild.view.common.PanelFunctions)
 	 */
-	Ext.define("CMDBUild.view.common.CMFormFunctions", {
+	Ext.define("CMDBuild.view.common.CMFormFunctions", {
 
 		enableCMButtons: function() {
 			this.iterateOverCMButtons(function(item) {
@@ -136,7 +136,6 @@
 						&& (
 							(item instanceof Ext.form.Field)
 							|| (item instanceof Ext.form.field.Base)
-							|| (item instanceof Ext.form.field.HtmlEditor)
 						)
 					) {
 						data[item.name] = item.getValue();
