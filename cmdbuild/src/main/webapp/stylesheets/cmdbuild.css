@@ -358,16 +358,22 @@ em { font-style: oblique !important; }
 	.map_cloud_item span{ padding-left: 0.4em; }
 
 /* OpenLayer override */
-	.olControlMousePosition {
-		font-size: 1em;
-		font-weight: bold;
-		padding: 0.3em;
+	div.ol-mouse-position {
+	    bottom: 8px;
+	    right: 8px;
+	    top: inherit;
+	    background: rgba(0,60,136,.3);
+	    border-radius: 4px;
+	    padding: 2px;
+	    color: #fff;
+	}
+	div.ol-mouse-position:hover {
+	    background-color: rgba(0,60,136,.7);
+	}
+	div.ol-scale-line:hover {
+	    background-color: rgba(0,60,136,.7);
 	}
 
-	.olControlScaleLine {
-		left: 0.3em !important;
-		bottom: 0.3em !important;
-	}
 /*******************************/
 
 .importcsv-empty-cell { background-color: #dddddd; }

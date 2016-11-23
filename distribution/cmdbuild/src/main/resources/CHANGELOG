@@ -3,6 +3,8 @@ CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ * Controls on Gis map: zoom, position, scale line
+
  * Graduate thematic layer on quantity values
 
  * Menu on thematism for control the layers layout
