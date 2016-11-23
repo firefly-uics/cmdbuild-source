@@ -47,16 +47,16 @@
 				POLYGON_LINE : 'blue',
 				LINE_LINE : 'green',
 			},
-			legend: {
+			legend : {
 				START_WIDTH : 500,
 				START_HEIGHT : 120
 			},
-			thematic_commands: {
-				CHANGE_LAYER:'CHANGE_LAYER',
-				HIDE_LEGEND:'HIDE_LEGEND',
-				HIDE_CURRENT:'HIDE_CURRENT',
-				MODIFY:'MODIFY',
-				NEW:'NEW',
+			thematic_commands : {
+				CHANGE_LAYER : 'CHANGE_LAYER',
+				HIDE_LEGEND : 'HIDE_LEGEND',
+				HIDE_CURRENT : 'HIDE_CURRENT',
+				MODIFY : 'MODIFY',
+				NEW : 'NEW',
 			}
 		}
 	};
@@ -102,12 +102,13 @@
 		initComponent : function() {
 			this.configure();
 			var configuration = this.interactionDocument.getConfigurationMap();
-			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857')
+			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857');
+			this.mapDiv = Ext.create('Ext.container.Container', {
+				region : 'center',
+				html : "<div id='" + configuration.mapDivId + "'></div>"
+			});
 			Ext.apply(this, {
-				items : [ Ext.create('Ext.container.Container', {
-					region : 'center',
-					html : "<div id='" + configuration.mapDivId + "'></div>"
-				}) ]
+				items : [ this.mapDiv ]
 			});
 			this.geoExtension.setMap(this);
 			this.miniCardGridWindowController = Ext
@@ -135,12 +136,26 @@
 					extent : extent
 
 				});
-				this.map = new ol.Map({
-					target : configuration.mapDivId,
-					renderer : 'canvas',
-					layers : [],
-					view : this.view
+				var template = CMDBuild.Translation.position + ': {x}, {y}';
+				var zoomControl = new ol.control.Zoom();
+				var me = this;
+				var mousePositionControl = new ol.control.MousePosition({
+					coordinateFormat : function(coord) {
+						var zoom = me.interactionDocument.getZoom();
+						return CMDBuild.Translation.zoom + " " + zoom + " " + ol.coordinate.format(coord, template, 2);
+					},
+					projection : 'EPSG:4326',
+					undefinedHTML : '&nbsp;'
 				});
+				var scaleLineControl = new ol.control.ScaleLine();
+				this.map = new ol.Map(
+						{
+							controls : /* ol.control.defaults().extend( */[ zoomControl, scaleLineControl,
+									mousePositionControl ],// ),
+							target : configuration.mapDivId,
+							layers : [],
+							view : this.view
+						});
 				me = this;
 				this.map.getView().on('propertychange', function(e) {
 					switch (e.key) {
@@ -150,9 +165,6 @@
 						break;
 					}
 				});
-				var size = [ document.getElementById(this.id + "-body").offsetWidth,
-						document.getElementById(this.id + "-body").offsetHeight ];
-				this.map.setSize(size);
 				this.setLongPress();
 				this.createLegend();
 
