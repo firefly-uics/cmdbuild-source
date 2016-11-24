@@ -52,6 +52,8 @@ FIXES
 
  * Error on runtime filter apply on a process
 
+ * Relation filter configuration not displayed on class and process grid's advanced filter
+
 
 
 
