@@ -7,6 +7,7 @@
 						itemId : "configureLayout",
 						xtype : "form",
 						layout : "anchor",
+						bodyCls: 'cmdb-blue-panel',
 						requires : [
 								// 'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape',
 								'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments',
@@ -27,6 +28,9 @@
 						},
 						getLayoutConfiguration : function() {
 							return this.parentWindow.getLayoutConfiguration();
+						},
+						getThematismConfiguration : function() {
+							return this.parentWindow.getThematismConfiguration();
 						},
 						getCurrentLayer : function() {
 							return this.parentWindow.getCurrentLayer();
@@ -99,6 +103,7 @@
 									var form = this.up('form').getForm();
 									var configurationObject = form.getValues();
 									configurationObject.colorsTable = me.getColorsTable();
+									configurationObject.gradeColor = me.controlSegments.getGradeColor();
 									parentWindow.showOnMap(configurationObject);
 								}
 							} ];
@@ -117,7 +122,9 @@
 						initComponent : function() {
 							var me = this;
 							this.configurationPanel = Ext.create("Ext.panel.Panel", {
-								html : ""
+								html : "",
+								bodyCls: 'cmdb-blue-panel',
+								border: false
 							});
 							this.initControls();
 							Ext.apply(this, {
@@ -149,13 +156,11 @@
 						},
 						loadComponents : function(callback, callbackScope) {
 							this.configurationPanel.update(this.getHtmlTitle());
-							// this.controlShape.loadComponents(function() {
 							this.controlSegments.loadComponents(function() {
 								this.controlRows.loadComponents(function() {
 									callback.apply(callbackScope, []);
 								}, this);
 							}, this);
-							// }, this);
 						}
 					});
 

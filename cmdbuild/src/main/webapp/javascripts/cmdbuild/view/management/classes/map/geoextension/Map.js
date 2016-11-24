@@ -10,10 +10,12 @@
 			CENTER_LATITUDE : 'centerLatitude',
 			ICON_SIZE : .7,
 			DEFAULT_SEGMENTS : 10,
+			MAX_GRADE_RADIUS : 40,
+			MIN_GRADE_RADIUS : 5,
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",
-				DENSITY_ANALYSIS : "density_analysis",
+				GRADUATE_ANALYSIS : "graduate_analysis",
 				TABLE_SOURCE : "table_source",
 				FUNCTION_SOURCE : "function_source",
 				DEFAULT_RADIUS : 8,
@@ -21,7 +23,8 @@
 				GEO_MIN_ZINDEX : 1000,
 				GIS_MIN_ZINDEX : 10000,
 				THEMATIC_MIN_ZINDEX : 100000,
-				GEOSERVER_LAYER : "_Geoserver"
+				GEOSERVER_LAYER : "_Geoserver",
+				THEMATISM_LAYER : "_Thematism"
 			},
 
 			navigationTree : {
@@ -43,8 +46,18 @@
 				POLYGON_FILL : 'rgba(0, 0, 255, 0.1)',
 				POLYGON_LINE : 'blue',
 				LINE_LINE : 'green',
+			},
+			legend : {
+				START_WIDTH : 500,
+				START_HEIGHT : 120
+			},
+			thematic_commands : {
+				CHANGE_LAYER : 'CHANGE_LAYER',
+				HIDE_LEGEND : 'HIDE_LEGEND',
+				HIDE_CURRENT : 'HIDE_CURRENT',
+				MODIFY : 'MODIFY',
+				NEW : 'NEW',
 			}
-
 		}
 	};
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Map', {
@@ -65,6 +78,7 @@
 		frame : false,
 		layout : 'border',
 		baseLayer : undefined,
+		legendIsOpen : true,
 
 		/**
 		 * @property {"CMDBuild.view.management.classes.map.thematism.Legend"}
@@ -88,12 +102,13 @@
 		initComponent : function() {
 			this.configure();
 			var configuration = this.interactionDocument.getConfigurationMap();
-			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857')
+			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857');
+			this.mapDiv = Ext.create('Ext.container.Container', {
+				region : 'center',
+				html : "<div id='" + configuration.mapDivId + "'></div>"
+			});
 			Ext.apply(this, {
-				items : [ Ext.create('Ext.container.Container', {
-					region : 'center',
-					html : "<div id='" + configuration.mapDivId + "'></div>"
-				}) ]
+				items : [ this.mapDiv ]
 			});
 			this.geoExtension.setMap(this);
 			this.miniCardGridWindowController = Ext
@@ -121,12 +136,26 @@
 					extent : extent
 
 				});
-				this.map = new ol.Map({
-					target : configuration.mapDivId,
-					renderer : 'canvas',
-					layers : [],
-					view : this.view
+				var template = CMDBuild.Translation.position + ': {x}, {y}';
+				var zoomControl = new ol.control.Zoom();
+				var me = this;
+				var mousePositionControl = new ol.control.MousePosition({
+					coordinateFormat : function(coord) {
+						var zoom = me.interactionDocument.getZoom();
+						return CMDBuild.Translation.zoom + " " + zoom + " " + ol.coordinate.format(coord, template, 2);
+					},
+					projection : 'EPSG:4326',
+					undefinedHTML : '&nbsp;'
 				});
+				var scaleLineControl = new ol.control.ScaleLine();
+				this.map = new ol.Map(
+						{
+							controls : /* ol.control.defaults().extend( */[ zoomControl, scaleLineControl,
+									mousePositionControl ],// ),
+							target : configuration.mapDivId,
+							layers : [],
+							view : this.view
+						});
 				me = this;
 				this.map.getView().on('propertychange', function(e) {
 					switch (e.key) {
@@ -136,9 +165,6 @@
 						break;
 					}
 				});
-				var size = [ document.getElementById(this.id + "-body").offsetWidth,
-						document.getElementById(this.id + "-body").offsetHeight ];
-				this.map.setSize(size);
 				this.setLongPress();
 				this.createLegend();
 
@@ -172,9 +198,17 @@
 			var divContainerControl = document.createElement('div');
 			document.getElementById(this.id + "-body").appendChild(divContainerControl);
 			this.legend = Ext.create("CMDBuild.view.management.classes.map.thematism.Legend", {
-				parentDiv : divContainerControl
+				parentDiv : divContainerControl,
+				interactionDocument : this.interactionDocument,
+				thematicView : this.thematicView
 			});
 			this.legend.compose();
+		},
+		setOpenLegend : function(value) {
+			this.legendIsOpen = value;
+		},
+		getOpenLegend : function(value) {
+			return this.legendIsOpen;
 		},
 		refreshLegend : function() {
 			var arrLayers = this.interactionDocument.getThematicLayers();
@@ -246,8 +280,9 @@
 		 */
 		removeLayerByName : function(className, layerName) {
 			var layer = this.getLayerByClassAndName(className, layerName);
-
-			this.map.removeLayer(layer);
+			if (layer) {
+				this.map.removeLayer(layer);
+			}
 		},
 
 		/**
@@ -272,7 +307,7 @@
 					configuration.zoom = layers[0].minZoom
 				}
 				me.view.setZoom(configuration.zoom);
-			}) ;
+			});
 		},
 		getZoom : function() {
 			return this.view.getZoom();

@@ -7,6 +7,8 @@
 						requires : [ 'CMDBuild.view.management.classes.map.proxy.Cards' ],
 						itemId : "configureRows",
 						layout : "anchor",
+						bodyCls : 'cmdb-blue-panel',
+						border : false,
 
 						defaults : {
 							anchor : "100%"
@@ -44,6 +46,7 @@
 						chargeStore : function(cardsStore, cardsArray, callback, callbackScope) {
 							var layoutConfiguration = this.getLayoutConfiguration();
 							var functionConfiguration = this.getFunctionConfiguration();
+							var thematismConfiguration = this.getThematismConfiguration();
 							var thematicDocument = this.interactionDocument.getThematicDocument();
 							var attributeName = this.parentWindow.getCurrentAttribute();
 							var currentStrategy = this.parentWindow.getCurrentStrategy();
@@ -53,19 +56,23 @@
 							};
 							var analysis = {
 								type : this.parentWindow.getCurrentAnalysisType(),
-								segments : layoutConfiguration.segmentsConfiguration,
+								layoutConfiguration : layoutConfiguration,
 								strategy : currentStrategy
 							};
 							var groups = thematicDocument.groupData(field, analysis, this.parentWindow
 									.getCurrentSourceType(), cardsArray, attributeName);
 							var index = 0;
 							for ( var key in groups) {
+								var color = "ffffff";
+								if (CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS !== thematismConfiguration.analysis) {
+									color = thematicDocument.getColor(key, layoutConfiguration.colorsTable, analysis.type,
+											index++);
+								}
 								cardsStore.add({
 									value : key,
 									cardinality : groups[key].count,
 									cards : groups[key].cards,
-									color : thematicDocument.getColor(key, layoutConfiguration.colorsTable,
-											analysis.type, index++)
+									color : color
 								});
 							}
 							callback.apply(callbackScope, []);
@@ -92,6 +99,7 @@
 												editable : false,
 												allowBlank : false,
 												triggerAction : "all",
+												maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 
 												listeners : {
 													scope : this,
@@ -152,6 +160,9 @@
 						},
 						getFunctionConfiguration : function() {
 							return this.parentWindow.getFunctionConfiguration();
+						},
+						getThematismConfiguration : function() {
+							return this.parentWindow.getThematismConfiguration();
 						},
 						init : function() {
 							var layoutConfiguration = this.getLayoutConfiguration();
@@ -239,7 +250,7 @@
 								});
 							}
 						},
-						refreshGridColors : function () {
+						refreshGridColors : function() {
 							this.refreshResults(this.grid, function() {
 							}, this);
 						}

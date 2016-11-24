@@ -88,7 +88,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {Ext.data.Model} filter
 		 *
 		 * @returns {Void}
 		 */
@@ -97,8 +97,8 @@
 
 			if (
 				Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
-				&& Ext.getClassName(filter) == 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter'
-				&& !Ext.isEmpty(this.view)
+				&& Ext.isBoolean(filter.isFilterAdvancedCompatible) && filter.isFilterAdvancedCompatible
+				&& Ext.isObject(this.view) && !Ext.Object.isEmpty(this.view)
 			) {
 				var runtimeParameters = filter.getEmptyRuntimeParameters();
 				var runtimeParametersNames = [];

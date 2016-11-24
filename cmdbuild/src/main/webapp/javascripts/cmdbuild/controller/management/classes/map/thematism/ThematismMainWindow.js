@@ -79,6 +79,10 @@
 			} else {
 				thematicDocument.addThematism(thematism);
 			}
+			var className = thematism.configuration.originalLayer.className;
+			this.interactionDocument.setCurrentThematicLayer(className, thematism.name);
+			this.interactionDocument.changedThematicDocument();
+
 		}
 	});
 

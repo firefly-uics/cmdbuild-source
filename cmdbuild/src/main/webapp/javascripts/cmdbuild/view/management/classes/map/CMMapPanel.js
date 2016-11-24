@@ -111,12 +111,18 @@
 			thematicDocument.setThematismButton(this.thematismButton);
 			this.interactionDocument = Ext
 					.create('CMDBuild.view.management.classes.map.geoextension.InteractionDocument');
+			this.thematismButton.interactionDocument = this.interactionDocument;
 			var thematicColors = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicColors');
 			thematicDocument.init(this.interactionDocument, thematicColors)
 			this.interactionDocument.setThematicDocument(thematicDocument);
+			this.thematicView = Ext.create(
+					'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
+						interactionDocument : this.interactionDocument
+					});
 			this.mapPanel = Ext.create('CMDBuild.Management.CMMap', {
 				geoExtension : this.geoExtension,
-				interactionDocument : this.interactionDocument
+				interactionDocument : this.interactionDocument,
+				thematicView : this.thematicView
 			});
 			//_CMMap = this.mapPanel; can be forget?
 
@@ -136,10 +142,6 @@
 				tabs.push(this.cardBrowser);
 
 			}
-			this.thematicView = Ext.create(
-					'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
-						interactionDocument : this.interactionDocument
-					});
 			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
 				owner : this,
 				interactionDocument : this.interactionDocument
@@ -179,8 +181,35 @@
 
 			this.callParent(arguments);
 		},
-		initThematism : function(layerName) {
-			this.thematicView.show(layerName);
+		executeThematism : function(command, data) {
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var className = currentCard.className;
+			switch (command) {
+			case CMDBuild.gis.constants.thematic_commands.NEW:
+				this.thematicView.show();
+				break;
+			case CMDBuild.gis.constants.thematic_commands.MODIFY:
+				var currentLayerName = this.interactionDocument.getCurrentThematicLayer(className);
+				this.thematicView.show(currentLayerName);
+				break;
+			case CMDBuild.gis.constants.thematic_commands.HIDE_CURRENT:
+				this.interactionDocument.setCursorActive(!data.checked);
+				this.interactionDocument.changed();
+				break;
+			case CMDBuild.gis.constants.thematic_commands.HIDE_LEGEND:
+				var mapPanel = this.interactionDocument.getMapPanel();
+				if (data.checked) {
+					mapPanel.legend.hide();
+				}
+				else {
+					mapPanel.legend.show();
+				}
+				break;
+			case CMDBuild.gis.constants.thematic_commands.CHANGE_LAYER:
+				this.interactionDocument.setCurrentThematicLayer(className, data.text);
+				this.interactionDocument.changedThematicDocument();
+				break;
+			}
 		},
 		updateSize : function() {
 		},
