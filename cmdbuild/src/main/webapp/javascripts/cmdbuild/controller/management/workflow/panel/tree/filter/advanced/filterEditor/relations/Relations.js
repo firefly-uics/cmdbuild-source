@@ -79,30 +79,29 @@
 		 * @private
 		 */
 		decodeFilterConfigurationObject: function (filterConfigurationObject) {
-			filterConfigurationObject = Ext.isArray(filterConfigurationObject) && !Ext.isEmpty(filterConfigurationObject) ? filterConfigurationObject[0] : filterConfigurationObject;
-
-			if (Ext.isObject(filterConfigurationObject) && !Ext.Object.isEmpty(filterConfigurationObject)) {
+			if (Ext.isArray(filterConfigurationObject) && !Ext.isEmpty(filterConfigurationObject))
 				Ext.Array.each(filterConfigurationObject, function (configurationObject, i, allConfigurationObjects) {
-					var domainRecord = null;
+					if (Ext.isObject(configurationObject) && !Ext.Object.isEmpty(configurationObject)) {
+						var domainRecord = null;
 
-					var recordIndex = this.controllerGridDomain.getView().getStore().findBy(function (record) {
-						return (
-							record.get([CMDBuild.core.constants.Proxy.DOMAIN, CMDBuild.core.constants.Proxy.NAME]) == configurationObject[CMDBuild.core.constants.Proxy.DOMAIN]
-							&& record.get(CMDBuild.core.constants.Proxy.DIRECTION) == configurationObject[CMDBuild.core.constants.Proxy.DIRECTION]
-						);
-					});
+						var recordIndex = this.controllerGridDomain.getView().getStore().findBy(function (record) {
+							return (
+								record.get([CMDBuild.core.constants.Proxy.DOMAIN, CMDBuild.core.constants.Proxy.NAME]) == configurationObject[CMDBuild.core.constants.Proxy.DOMAIN]
+								&& record.get(CMDBuild.core.constants.Proxy.DIRECTION) == configurationObject[CMDBuild.core.constants.Proxy.DIRECTION]
+							);
+						});
 
-					if (recordIndex >= 0)
-						domainRecord = this.controllerGridDomain.getView().getStore().getAt(recordIndex);
+						if (recordIndex >= 0)
+							domainRecord = this.controllerGridDomain.getView().getStore().getAt(recordIndex);
 
-					if (!Ext.isEmpty(domainRecord)) {
-						domainRecord.setType(configurationObject[CMDBuild.core.constants.Proxy.TYPE]);
+						if (!Ext.isEmpty(domainRecord)) {
+							domainRecord.setType(configurationObject[CMDBuild.core.constants.Proxy.TYPE]);
 
-						if (Ext.isArray(configurationObject[CMDBuild.core.constants.Proxy.CARDS]) && !Ext.isEmpty(configurationObject[CMDBuild.core.constants.Proxy.CARDS]))
-							domainRecord.set(CMDBuild.core.constants.Proxy.CHECKED_CARDS, configurationObject[CMDBuild.core.constants.Proxy.CARDS]);
+							if (Ext.isArray(configurationObject[CMDBuild.core.constants.Proxy.CARDS]) && !Ext.isEmpty(configurationObject[CMDBuild.core.constants.Proxy.CARDS]))
+								domainRecord.set(CMDBuild.core.constants.Proxy.CHECKED_CARDS, configurationObject[CMDBuild.core.constants.Proxy.CARDS]);
+						}
 					}
 				}, this);
-			}
 		},
 
 		/**
@@ -210,19 +209,18 @@
 		 * @returns {Void}
 		 */
 		workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage: function () {
-			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
+			// Error handling
+				if (this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty'))
+					return _error('workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage(): selected filter is empty', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
+			// END: Error handling
 
-				if (
-					!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
-					&& !this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
-				) {
-					this.decodeFilterConfigurationObject(
-						this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
-					);
-				}
-			} else {
-				_error('workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage(): selected filter is empty', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
+			if (
+				!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
+				&& !this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
+			) {
+				this.decodeFilterConfigurationObject(
+					this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
+				);
 			}
 		},
 
