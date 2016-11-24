@@ -46,7 +46,7 @@
 			case CMDBuild.gis.constants.layers.RANGES_ANALYSIS:
 			case CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS:
 				var rangeControl = Ext.create("Ext.form.field.Number", {
-					fieldLabel : "@@ Radius *",
+					fieldLabel : CMDBuild.Translation.radius,
 					name : "firstValue",
 					value : 10,
 					allowDecimals : false,
@@ -54,9 +54,9 @@
 				});
 				this.add(rangeControl);
 				break;
-			case CMDBuild.gis.constants.layers.DENSITY_ANALYSIS:
+			case CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS:
 				var minRangeControl = Ext.create("Ext.form.field.Number", {
-					fieldLabel : "@@ Min. Radius *",
+					fieldLabel : CMDBuild.Translation.minRadius,
 					name : "firstValue",
 					value : 10,
 					allowDecimals : false,
@@ -64,7 +64,7 @@
 				});
 				this.add(minRangeControl);
 				var maxRangeControl = Ext.create("Ext.form.field.Number", {
-					fieldLabel : "@@ Max. Radius *",
+					fieldLabel : CMDBuild.Translation.maxRadius,
 					name : "secondValue",
 					allowDecimals : false,
 					value : 20,

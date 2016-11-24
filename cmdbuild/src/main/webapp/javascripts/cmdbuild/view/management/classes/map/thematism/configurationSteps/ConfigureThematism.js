@@ -4,6 +4,7 @@
 		itemId : "configureThematism",
 		xtype : "form",
 		layout : "anchor",
+		bodyCls: 'cmdb-blue-panel',
 
 		layersStore : undefined,
 		parentWindow : undefined,
@@ -30,21 +31,28 @@
 				valueField : "name",
 				allowBlank : false,
 				editable : false,
-				triggerAction : "all"
+				triggerAction : "all",
+				maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 			});
 			Ext.apply(this, {
 				items : [ {
 					xtype : "textfield",
 					fieldLabel : CMDBuild.Translation.name,
 					name : 'layerName',
-					allowBlank : false
+					allowBlank : false,
+					maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 				}, {
 					xtype : "radiogroup",
 					name : "analysis",
 					fieldLabel : CMDBuild.Translation.thematicAnalysis,
 					vertical : true,
 					border : true,
-					items : getAnalysisItems(this.parentWindow)
+					items : getAnalysisItems(this.parentWindow),
+					listeners : {
+						change : function() {
+							me.eraseColorsTable();
+						}
+					}
 				}, {
 					xtype : "radiogroup",
 					name : "source",
@@ -74,6 +82,10 @@
 		init : function() {
 			var thematismConfiguration = this.parentWindow.getThematismConfiguration();
 			this.parentWindow.initForm(this, thematismConfiguration);
+		},
+		eraseColorsTable:function() {
+			var configuration = this.parentWindow.getLayoutConfiguration();
+			configuration.colorsTable = [];
 		},
 		loadLayers : function(callback, callbackScope) {
 			var card = this.interactionDocument.getCurrentCard();
@@ -115,11 +127,11 @@
 			name : "analysis",
 			inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
 			checked : true
-		}/*, { //TODO
-			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
+		}, { 
+			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS),
 			name : "analysis",
-			inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
-		}*/ ];
+			inputValue : CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS
+		} ];
 	}
 	function getSourceItems() {
 		return [ {

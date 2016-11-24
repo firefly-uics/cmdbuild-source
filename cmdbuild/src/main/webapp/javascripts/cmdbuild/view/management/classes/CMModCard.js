@@ -58,7 +58,6 @@
 					this.theMap.updateSize();
 
 					this.theMap.setCmVisible(true);
-//					this.cardGrid.setCmVisible(false);
 					this.cardGrid.setCmVisible(true);
 				}
 			});
@@ -306,8 +305,8 @@
 			}, this);
 			var me = this;
 			var thematismButton = Ext.create('CMDBuild.core.buttons.gis.Thematism', {
-				handler : function() {
-					me.theMap.initThematism(null);
+				handler : function(command, data) {
+				this.showMenu();
 				}
 			});
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
@@ -317,10 +316,10 @@
 				mainGrid : this.cardGrid,
 				thematismButton : thematismButton
 			});
-			this.initThematism = function(name) {
-				this.theMap.initThematism(name);
+			this.executeThematism = function(command, data) {
+				this.theMap.executeThematism(command, data);
 			}
-			thematismButton.callback = this.initThematism;
+			thematismButton.callback = this.executeThematism;
 			thematismButton.theMap = this.theMap;
 			this.centralPanelItems.push(this.theMap);
 

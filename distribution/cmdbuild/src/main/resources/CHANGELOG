@@ -21,6 +21,12 @@ CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ * Controls on Gis map: zoom, position, scale line
+
+ * Graduate thematic layer on quantity values
+
+ * Menu on thematism for control the layers layout
+
  * Gis: remove feature in editing
 
  * Print dialog on Relations Graph: current card and relations report
@@ -63,6 +69,8 @@ FIXES
  * Classes tab notes doesn't display data
 
  * Error on runtime filter apply on a process
+
+ * Relation filter configuration not displayed on class and process grid's advanced filter
 
 
 

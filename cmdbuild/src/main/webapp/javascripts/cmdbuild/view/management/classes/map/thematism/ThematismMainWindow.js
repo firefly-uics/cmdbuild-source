@@ -25,7 +25,8 @@
 		border : true,
 		closeAction : "hide",
 		frame : true,
-		layout : "fit",
+		bodyCls: 'cmdb-blue-panel',
+		layout: "fit",
 
 		thematismConfiguration : undefined,
 		functionConfiguration : undefined,
@@ -80,6 +81,7 @@
 				itemId : "wizard",
 				width : "100%",
 				height : "100%",
+				bodyCls: 'cmdb-blue-panel',
 				layout : "card",
 				defaults : {
 					border : false,
@@ -129,8 +131,8 @@
 				return CMDBuild.Translation.thematismRanges;
 			case CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS:
 				return CMDBuild.Translation.thematismPuntual;
-			case CMDBuild.gis.constants.layers.DENSITY_ANALYSIS:
-				return CMDBuild.Translation.thematismDensity;
+			case CMDBuild.gis.constants.layers.GRADUATE_ANALYSIS:
+				return CMDBuild.Translation.thematismGraduate;
 			}
 			return CMDBuild.Translation.thematismPuntual;
 		},

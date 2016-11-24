@@ -110,6 +110,11 @@
 					return false;
 				}
 				var selectedId = event.selected[0].get("master_card");
+				if (!me.interactionDocument.getCursorActive()) {
+					me.interactionDocument.setCursorActive(true);
+					me.interactionDocument.changedThematicDocument();
+				}
+
 				var currentId = (_CMCardModuleState.card) ? _CMCardModuleState.card.get("Id") : -1;
 				if (selectedId == currentId) {
 					return false;
@@ -581,7 +586,6 @@
 		clearSelections : function() {
 			var features = this.select.getFeatures();
 			features.clear();
-			this.clearFeatures(features);
 		},
 		clearAllFeatures : function() {
 			this.clearSelections();

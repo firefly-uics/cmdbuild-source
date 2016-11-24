@@ -105,6 +105,9 @@
 				this.interactionDocument.changed();
 
 			}
+			if (this.mapPanel.cmVisible && (!oldCard || className !== oldCard.className)) {
+				this.interactionDocument.changedThematicDocument();
+			}
 			this.interactionDocument.setNoZoom(false);
 		},
 
