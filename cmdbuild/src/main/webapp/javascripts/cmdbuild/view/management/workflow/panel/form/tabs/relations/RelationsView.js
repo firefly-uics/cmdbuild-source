@@ -36,9 +36,6 @@
 		frame: false,
 		title: CMDBuild.Translation.relations,
 
-		cmWithAddButton: false,
-		cmWithEditRelationIcons: false,
-
 		initComponent: function() {
 			this.buildTBar();
 
@@ -150,15 +147,6 @@
 			var me = this;
 
 			this.tbar = [];
-
-			this.addRelationButton = Ext.create('CMDBuild.core.buttons.iconized.add.Relation');
-
-			this.mon(this.addRelationButton, 'cmClick', function(d) {
-				me.fireEvent(me.CMEVENTS.addButtonClick, d);
-			});
-
-			if (this.cmWithAddButton)
-				this.tbar.push(this.addRelationButton);
 
 			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
@@ -339,14 +327,9 @@
 		var tr = CMDBuild.Translation.management.modcard;
 		var actionsHtml = '<img style="cursor:pointer" title="' + CMDBuild.Translation.management.modcard.open_relation + '" class="action-relation-go" src="images/icons/bullet_go.png"/>';
 		var tableId = record.get("dst_cid");
-		var domainObj = _CMCache.getDomainById(record.get('dom_id'));
 		var table = _CMCache.getClassById(tableId);
 		var entryType = _CMCache.getEntryTypeById(tableId);
 		var privileges =  _CMUtils.getEntryTypePrivileges(entryType);
-
-		if (this.cmWithEditRelationIcons && domainObj.get('writePrivileges'))
-			actionsHtml += '<img style="cursor:pointer" title="' + CMDBuild.Translation.management.modcard.edit_relation + '" class="action-relation-edit" src="images/icons/link_edit.png"/>'
-				+ '<img style="cursor:pointer" title="' + CMDBuild.Translation.management.modcard.delete_relation + '" class="action-relation-delete" src="images/icons/link_delete.png"/>';
 
 		if (table && table.get('priv_write') && ! privileges.crudDisabled.modify) {
 			actionsHtml += '<img style="cursor:pointer" title="' + CMDBuild.Translation.management.modcard.modify_card + '" class="action-relation-editcard" src="images/icons/modify.png"/>';
