@@ -54,6 +54,8 @@ FIXES
 
  * Relation filter configuration not displayed on class and process grid's advanced filter
 
+ * ReferenceFields not corretly managed inside widget workflow window
+
 
 
 

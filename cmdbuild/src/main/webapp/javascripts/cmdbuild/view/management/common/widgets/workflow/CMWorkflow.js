@@ -106,7 +106,8 @@
 		},
 		fillFormValues : function(parameters) {
 			for ( var i = 0; i < this.formFields.length; i++) {
-				var field = this.formFields[i], value = parameters[field.name]
+				var field = this.formFields[i],
+					value = parameters[field.name];
 
 				if (value) {
 					if (Ext.getClassName(field) == "Ext.form.field.Date") {
