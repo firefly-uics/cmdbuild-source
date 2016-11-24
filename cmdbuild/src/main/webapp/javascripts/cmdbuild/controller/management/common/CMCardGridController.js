@@ -207,7 +207,7 @@
 					CMDBuild.proxy.Card.read({
 						params: {
 							cardId: selected.get('Id'),
-							className: selected.get('IdClass_value')
+							className: _CMCache.getEntryTypeNameById(selected.get('IdClass'))
 						},
 						loadMask: false,
 						scope: this,

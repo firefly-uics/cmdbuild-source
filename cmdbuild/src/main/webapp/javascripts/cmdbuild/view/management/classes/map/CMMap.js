@@ -6,7 +6,9 @@
 						extend : 'CMDBuild.view.management.classes.map.geoextension.Map',
 						requires : [ 'CMDBuild.view.management.classes.map.geoextension.Map' ],
 
+						geoExtension : undefined,
 						interactionDocument : undefined,
+						thematicView : undefined,
 
 						iconCache : {},
 
@@ -21,7 +23,7 @@
 							this.current = this.makePointSelect();
 							this.current.setActive(false);
 						},
-						baseLayer: false,
+						baseLayer : false,
 						/**
 						 * @returns {Void}
 						 * 
@@ -65,14 +67,14 @@
 								this.completeStyle(layers, 0, function() {
 									this.clearSelections();
 									this.refreshAllLayers(layers, currentClassName, currentCardId);
-									this.refreshThematicLayers(currentClassName, currentCardId);
-									this.selectCard({
-										cardId : currentCardId,
-										className : currentClassName
-									});
-									this.showCurrent(card);
-									this.refreshLegend();
-
+									this.refreshThematicLayer(currentClassName, currentCardId);
+									if (this.interactionDocument.getCursorActive()) {
+										this.selectCard({
+											cardId : currentCardId,
+											className : currentClassName
+										});
+										this.showCurrent(card);
+									}
 								}, this);
 							}, this);
 						},
@@ -152,36 +154,45 @@
 						 * 
 						 * @returns {Void}
 						 */
-						refreshThematicLayers : function(currentClassName, currentCardId) {
-							var thematicLayers = this.interactionDocument.getThematicLayers();
-							var visibleLayers = [];
-							for (var i = 0; i < thematicLayers.length; i++) {
-								var layer = thematicLayers[i];
-								var mapThematicLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
-								var hide = !this.interactionDocument.getLayerVisibility(layer);
-								if (hide) {
-									continue;
-								}
-								if (!mapThematicLayer) {
-									this.map.addLayer(layer);
-									mapThematicLayer = layer;
-								}
-								mapThematicLayer.setZIndex(CMDBuild.gis.constants.layers.THEMATIC_MIN_ZINDEX + i);
-								var adapter = mapThematicLayer.get("adapter");
-								if (adapter && adapter.refresh) {
-									var thematism = adapter.getThematism();
-									var originalLayer = thematism.configuration.originalLayer;
-									var className = originalLayer.className;
-									var name = originalLayer.name;
-									thematism.layer = this.getLayerByClassAndName(className, name);
-									adapter.refresh({
-										cardId : currentCardId,
-										className : currentClassName
-									});
-								}
-								visibleLayers.push(layer);
+						refreshThematicLayer : function(currentClassName, currentCardId) {
+							var currentThematicLayerName = this.interactionDocument
+									.getCurrentThematicLayer(currentClassName);
+							this.removeThematicsNotVisibleLayers(currentThematicLayerName);
+							if (this.interactionDocument.getThematismActive() === false) {
+								return null;
 							}
-							this.removeThematicsNotVisibleLayers(visibleLayers);
+							var thematicLayers = this.interactionDocument.getThematicLayers();
+							if (!currentThematicLayerName) {
+								return null;
+							}
+							var mapThematicLayer = this.getLayerByClassAndName(CMDBuild.gis.constants.layers.THEMATISM_LAYER, currentThematicLayerName);
+							if (!mapThematicLayer) {
+								for (var i = 0; i < thematicLayers.length; i++) {
+									var layer = thematicLayers[i];
+									if (layer.name === currentThematicLayerName) {
+										this.map.addLayer(layer);
+										mapThematicLayer = layer;
+										break;
+									}
+								}
+							}
+							if (!mapThematicLayer) {
+								return null;
+							}
+							mapThematicLayer.setZIndex(CMDBuild.gis.constants.layers.THEMATIC_MIN_ZINDEX/* + i */);
+							var adapter = mapThematicLayer.get("adapter");
+							if (adapter && adapter.refresh) {
+								var thematism = adapter.getThematism();
+								var originalLayer = thematism.configuration.originalLayer;
+								var className = originalLayer.className;
+								var name = originalLayer.name;
+								thematism.layer = this.getLayerByClassAndName(className, name);
+								adapter.refresh({
+									cardId : currentCardId,
+									className : currentClassName
+								});
+							}
+							return mapThematicLayer;
 						},
 
 						/**
@@ -221,7 +232,8 @@
 										.isVisible(layer, currentClassName, currentCardId);
 								var hide = !this.interactionDocument.getLayerVisibility(layer);
 								var navigable = this.interactionDocument.isANavigableLayer(layer);
-								if (this.interactionDocument.isGeoServerLayer(layer) && ! this.interactionDocument.isGeoServerEnabled()) {
+								if (this.interactionDocument.isGeoServerLayer(layer)
+										&& !this.interactionDocument.isGeoServerEnabled()) {
 									this.clearHideLayer(layer.masterTableName, layer.name);
 									continue;
 								}
@@ -291,7 +303,7 @@
 							for ( var key in gisLayers) {
 								var namedAdapters = gisLayers[key];
 								for (var i = 0; i < namedAdapters.length; i++) {
-									namedAdapters[i].adapter.refresh();
+									namedAdapters[i].adapter.clearSelections();
 								}
 							}
 
@@ -355,11 +367,12 @@
 						 * 
 						 * @returns {Void}
 						 */
-						removeThematicsNotVisibleLayers : function(visibles) {
+						removeThematicsNotVisibleLayers : function(currentThematicLayerName) {
 							var allLayers = this.interactionDocument.getAllThematicLayers();
 							var me = this;
+							var active = this.interactionDocument.getThematismActive();
 							allLayers.forEach(function(layer) {
-								if (!isVisible(visibles, layer)) {
+								if (layer.name !== currentThematicLayerName || !active) {
 									me.removeLayerByName(layer.masterTableName, layer.name);
 
 								}

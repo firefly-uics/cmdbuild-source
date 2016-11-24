@@ -62,7 +62,7 @@
 		},
 		listeners : {
 			checkchange : function(node, checked, eOpts) {
-				this.checkNode(node, checked);
+					this.checkNode(node, checked);
 			}
 		},
 
@@ -110,13 +110,6 @@
 						node.remove();
 					}
 				}
-				var thematicLayers = me.interactionDocument.getThematicLayers();
-				for (var i = 0; i < thematicLayers.length; i++) {
-					var node = nodeByLayerName(root, thematicLayers[i].name);
-					if (!node) {
-						me.addLayerItem(thematicLayers[i]);
-					}
-				}
 			});
 		},
 		inZoom : function(layer) {
@@ -147,7 +140,10 @@
 		 * @returns {Void}
 		 */
 		addLayerItem : function(layer) {
-			var targetFolder = retrieveTargetFolder(layer, this.getRootNode());
+			var targetFolder = this.retrieveTargetFolder(layer, this.getRootNode());
+			if (layer.masterTableName === CMDBuild.gis.constants.layers.THEMATISM_LAYER) {
+				return;
+			}
 			var currentClassName = (Ext.isEmpty(_CMCardModuleState.entryType)) ? undefined
 					: _CMCardModuleState.entryType.getName();
 			var currentCardId = (Ext.isEmpty(_CMCardModuleState.card)) ? undefined : _CMCardModuleState.card.raw.Id;
@@ -172,11 +168,27 @@
 				console.log("Fail to add layer", layer);
 			}
 			this.expandNode(targetFolder);
+		},
+		retrieveTargetFolder:function(layer, root) {
+			var targetFolder = null;
+
+			if (layer.isBaseLayer) {
+				targetFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
+			} else if (layer.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER) {
+				targetFolder = retrieveGeoserverFolder(root);
+			} else if (layer.masterTableName === CMDBuild.gis.constants.layers.THEMATISM_LAYER) {
+				//NOP
+			} else {
+				targetFolder = nodeByLayerName(root, CMDBUILD_LAYERS_FOLDER_NAME);
+			}
+
+			return targetFolder;
 		}
+
 
 	});
 	function toShow(currentClassName, onLayerClassName) {
-		if ("_Thematism" === onLayerClassName) {
+		if (CMDBuild.gis.constants.layers.THEMATISM_LAYER === onLayerClassName) {
 			return "";
 		}
 		if (CMDBuild.gis.constants.layers.GEOSERVER_LAYER === onLayerClassName) {
@@ -194,40 +206,9 @@
 	}
 	function clearTree(root) {
 		var externalLayersFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
-		var thematismFolder = retrieveThematismFolder(root);
 		var gisServerFolder = nodeByLayerName(root, CMDBUILD_LAYERS_FOLDER_NAME);
 		clearNode(externalLayersFolder);
-		clearNode(thematismFolder);
 		clearNode(gisServerFolder);
-	}
-	function retrieveTargetFolder(layer, root) {
-		var targetFolder = null;
-
-		if (layer.isBaseLayer) {
-			targetFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
-		} else if (layer.masterTableName === CMDBuild.gis.constants.layers.GEOSERVER_LAYER) {
-			targetFolder = retrieveGeoserverFolder(root);
-		} else if (layer.masterTableName === "_Thematism") {
-			targetFolder = retrieveThematismFolder(root);
-		} else {
-			targetFolder = nodeByLayerName(root, CMDBUILD_LAYERS_FOLDER_NAME);
-		}
-
-		return targetFolder;
-	}
-
-	function retrieveThematismFolder(root) {
-		var thematismFolder = nodeByLayerName(root, THEMATISM_LAYERS_FOLDER_NAME);
-
-		if (!thematismFolder) {
-			thematismFolder = root.appendChild({
-				text : CMDBuild.Translation.thematismTitle,
-				layerName : THEMATISM_LAYERS_FOLDER_NAME,
-				checked : true
-			});
-		}
-
-		return thematismFolder;
 	}
 	function retrieveGeoserverFolder(root) {
 		var externalServicesFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);

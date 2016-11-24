@@ -8,6 +8,8 @@
 		feature : undefined,
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
+		cursorActive: true,
+		thematismActive : true,
 		gisAdapters : {},
 		/**
 		 * @property {Boolean} wait if there is a navigation tree
@@ -129,6 +131,12 @@
 				callback.apply(callbackScope, [ strategies ]);
 			}, this);
 		},
+		getCurrentThematicLayer : function(className) {
+			return this.thematicDocument.getCurrentThematicLayer(className);
+		},
+		setCurrentThematicLayer : function(className, layerName) {
+			this.thematicDocument.setCurrentThematicLayer(className, layerName);
+		},
 		getStrategyByDescription : function(description) {
 			return this.thematicDocument.getStrategyByDescription(description);
 		},
@@ -161,6 +169,18 @@
 		forceRefreshThematism : function() {
 			this.thematicDocument.forceRefreshThematism();
 		},
+		getCursorActive:function() {
+			return this.cursorActive;
+		},
+		setCursorActive:function(active) {
+			this.cursorActive = active;
+		},
+		setThematismActive:function(active) {
+			this.thematismActive = active;
+		},
+		getThematismActive:function() {
+			return this.thematismActive;
+		},
 		observe : function(view) {
 			if (this.observers.indexOf(view) === -1) {
 				this.observers.push(view);
@@ -175,6 +195,9 @@
 			if (this.navigablesObservers.indexOf(view) === -1) {
 				this.navigablesObservers.push(view);
 			}
+		},
+		observeThematicDocument : function(observer) {
+			this.thematicDocument.observe(observer);
 		},
 		getGisAdapters : function() {
 			return this.gisAdapters;
@@ -202,6 +225,9 @@
 				this.observers[i].refresh();
 			}
 		},
+		changedThematicDocument : function() {
+			this.thematicDocument.changed();
+		},
 		changedNavigables : function() {
 			for (var i = 0; i < this.navigablesObservers.length; i++) {
 				this.navigablesObservers[i].refreshNavigables();
@@ -221,7 +247,9 @@
 			if (this.thematicDocument) {
 				this.thematicDocument.refreshFeatures(layerName, features);
 			}
+			if (this.getCursorActive()) {
 			this.getMapPanel().selectCard(this.getCurrentCard());
+			}
 		},
 		changedFeature : function() {
 			for (var i = 0; i < this.featureObservers.length; i++) {
@@ -267,7 +295,7 @@
 					callback.apply(callbackScope, [ undefined ]);
 					return;
 				}
-				var center = getCenter(feature.geometry);
+				var center = me.getCenter(feature.geometry);
 				callback.apply(callbackScope, [ center ]);
 			}
 			var cardId = card.cardId;
@@ -439,6 +467,17 @@
 				var type = classes[idSub];
 				idSub = type.get("parent");
 			}
+		},
+		getCenter : function(geometry) {
+			switch (geometry.type) {
+			case "LINESTRING":
+				return getLineCenter(geometry);
+			case "POLYGON":
+				return getPolygonCenter(geometry);
+			case "POINT":
+				return getPointCenter(geometry);
+			}
+
 		}
 	});
 
@@ -500,17 +539,6 @@
 			maxY = Math.max(maxY, coordinate[1]);
 		}
 		return getCenterOfExtent([ minX, minY, maxX, maxY ]);
-	}
-	function getCenter(geometry) {
-		switch (geometry.type) {
-		case "LINESTRING":
-			return getLineCenter(geometry);
-		case "POLYGON":
-			return getPolygonCenter(geometry);
-		case "POINT":
-			return getPointCenter(geometry);
-		}
-
 	}
 
 })();

@@ -196,8 +196,6 @@
 					var adapter = layer.get("adapter");
 					adapter.setStatus("None");
 					this.removeButton.disable();
-					this.addButton.enable();
-					
 				},
 				onAddMenuitemSelect : function(item) {
 					this.geoAttrMenuButton.setText(item.text);
