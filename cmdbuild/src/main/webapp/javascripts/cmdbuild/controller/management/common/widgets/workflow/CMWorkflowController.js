@@ -168,6 +168,13 @@
 				me.view.getWidgetButtonsPanel().editMode();
 				me.view.setLoading(false);
 				me.configured = true;
+
+				// Resolve templates if field have a related function and internal templateResolver
+				if (Ext.isArray(this.view.formFields) && !Ext.isEmpty(this.view.formFields))
+					Ext.Array.forEach(this.view.formFields, function (field, i, allFields) {
+						if (Ext.isObject(field) && !Ext.Object.isEmpty(field) && Ext.isFunction(field.resolveTemplate))
+							field.resolveTemplate();
+					}, this);
 			}
 		});
 	}
