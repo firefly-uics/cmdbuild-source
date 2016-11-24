@@ -4,7 +4,7 @@
 		'CMDBuild.controller.management.common.widgets.workflow.StaticsController',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.proxy.widget.Workflow'
+		'CMDBuild.proxy.management.widget.Workflow'
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
@@ -73,7 +73,7 @@
 						CQL: callParams.CQL
 					});
 
-					CMDBuild.proxy.widget.Workflow.readWorkflowByFilter({
+					CMDBuild.proxy.management.widget.Workflow.readWorkflowByFilter({
 						params: {
 							className: CMDBuild.core.constants.Global.getRootNameWorkflows(),
 							limit: 1000,
@@ -149,25 +149,25 @@
 		var name = me.widgetReader.getCode(me.typedWidgetConf);
 		var card = _CMCache.getEntryTypeByName(name);
 
-		CMDBuild.proxy.widget.Workflow.readStartActivity({
+		CMDBuild.proxy.management.widget.Workflow.readStartActivity({
 			params: {
 				classId: card.data.id
 			},
 			scope: me,
 			success: function (response, options, decodedResponse) {
-				me.attributes = CMDBuild.controller.management.common.widgets.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, decodedResponse.response.variables);
-				me.view.configureForm(me.attributes);
-				me.templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: me.clientForm,
-					xaVars: me.presets,
-					serverVars: me.getTemplateResolverServerVars()
+				this.attributes = CMDBuild.controller.management.common.widgets.workflow.StaticsController.filterAttributesInStep(this.cardAttributes, decodedResponse.response.variables);
+				this.view.configureForm(this.attributes);
+				this.templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: this.presets,
+					serverVars: this.getTemplateResolverServerVars()
 				});
 
 				resolveTemplate(me);
-				me.widgetControllerManager.buildControllers(decodedResponse.response.widgets, card);
-				me.view.getWidgetButtonsPanel().editMode();
-				me.view.setLoading(false);
-				me.configured = true;
+				this.widgetControllerManager.buildControllers(decodedResponse.response.widgets, card);
+				this.view.getWidgetButtonsPanel().editMode();
+				this.view.setLoading(false);
+				this.configured = true;
 
 				// Resolve templates if field have a related function and internal templateResolver
 				if (Ext.isArray(this.view.formFields) && !Ext.isEmpty(this.view.formFields))
@@ -209,7 +209,7 @@
 			requestParams.advance = advance;
 			requestParams.activityInstanceId = undefined;
 			requestParams.ww = Ext.JSON.encode(me.widgetControllerManager.getData(advance));
-			CMDBuild.proxy.widget.Workflow.updateActivity({
+			CMDBuild.proxy.management.widget.Workflow.updateActivity({
 				params: requestParams,
 				scope : me,
 				clientValidation: true, //to force the save request
