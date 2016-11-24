@@ -31,8 +31,7 @@
 			'onFieldFilterAdvancedWindowConfirmButtonClick',
 			'onFieldFilterAdvancedWindowPresetGridSelect',
 			'onFieldFilterAdvancedWindowPresetGridStoreLoad',
-			'onFieldFilterAdvancedWindowSetData -> controllerTabAttributes, controllerTabFunctions, controllerTabRelations',
-			'onFieldFilterAdvancedWindowShow'
+			'onFieldFilterAdvancedWindowSetData -> controllerTabAttributes, controllerTabFunctions, controllerTabRelations'
 		],
 
 		/**
@@ -106,7 +105,7 @@
 			this.view.fieldFilter.configure({
 				className: this.cmfg('fieldFilterAdvancedWindowConfigurationGet', CMDBuild.core.constants.Proxy.CLASS_NAME),
 				disabledFeatures: this.cmfg('fieldFilterAdvancedWindowConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_FEATURES),
-				disabledPanels: ['relations'],
+				disabledPanels: this.cmfg('fieldFilterAdvancedWindowConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_PANELS),
 				scope: this,
 				callback: function () {
 					this.view.fieldFilter.setValue(configuration.filter);

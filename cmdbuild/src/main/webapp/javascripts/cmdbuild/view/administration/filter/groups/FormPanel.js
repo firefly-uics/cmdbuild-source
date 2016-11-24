@@ -135,8 +135,8 @@
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						fieldConfiguration: {
-							targetClassField: this.targetClassCombobox,
-							enabledPanels: ['attribute', 'relation']
+							disabledPanels: ['functions', 'columnPrivileges'],
+							targetClassField: this.targetClassCombobox
 						}
 					}),
 					this.defaultForGroupsField = Ext.create('CMDBuild.view.common.field.multiselect.Group', {

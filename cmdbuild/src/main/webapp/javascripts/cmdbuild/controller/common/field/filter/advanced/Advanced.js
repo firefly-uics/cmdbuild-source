@@ -119,7 +119,7 @@
 			 */
 			fieldFilterAdvancedConfigurationIsPanelEnabled: function(panelIdentifier) {
 				if (!Ext.isEmpty(panelIdentifier) && Ext.isString(panelIdentifier))
-					return Ext.Array.contains(this.fieldFilterAdvancedConfigurationGet(CMDBuild.core.constants.Proxy.ENABLED_PANELS), panelIdentifier);
+					return !Ext.Array.contains(this.fieldFilterAdvancedConfigurationGet(CMDBuild.core.constants.Proxy.DISABLED_PANELS), panelIdentifier);
 
 				return false;
 			},
@@ -283,8 +283,9 @@
 
 		onFieldFilterAdvancedFilterSetButtonClick: function() {
 			this.controllerFilterWindow.cmfg('fieldFilterAdvancedWindowConfigureAndShow', {
-				className: this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME),
 				classDescription: this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.TEXT),
+				className: this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME),
+				disabledPanels: this.cmfg('fieldFilterAdvancedConfigurationGet', CMDBuild.core.constants.Proxy.DISABLED_PANELS),
 				filter: this.cmfg('fieldFilterAdvancedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION),
 				mode: 'field'
 			});

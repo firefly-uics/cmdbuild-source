@@ -132,8 +132,8 @@
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						fieldConfiguration: {
-							targetClassField: classesCombobox,
-							enabledPanels: ['attribute', 'relation']
+							disabledPanels: ['functions', 'columnPrivileges'],
+							targetClassField: classesCombobox
 						}
 					}),
 					{
