@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.Workflow', {
+	Ext.define('CMDBuild.proxy.management.widget.Workflow', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
@@ -20,7 +20,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readStart });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ACTIVITY, parameters);
 		},
 
 		/**
@@ -46,7 +46,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ACTIVITY, parameters, true);
 		}
 	});
 
