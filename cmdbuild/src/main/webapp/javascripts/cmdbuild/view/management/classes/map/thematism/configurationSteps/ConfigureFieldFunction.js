@@ -35,7 +35,8 @@
 				displayField : "description",
 				valueField : "value",
 				editable : false,
-				allowBlank : false
+				allowBlank : false,
+				maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
 				fieldLabel : CMDBuild.Translation.thematicField,
@@ -46,7 +47,9 @@
 				valueField : "value",
 				editable : false,
 				allowBlank : false,
-				triggerAction : "all"
+				triggerAction : "all",
+				maxWidth : CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
+
 			});
 			Ext.apply(this, {
 				items : [ this.comboAttributes, this.comboStrategies ],
