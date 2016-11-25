@@ -42,14 +42,13 @@
 		},
 
 		/**
-		 * @returns {Array}
+		 * @returns {Array} parameters
 		 */
 		getEmptyRuntimeParameters: function () {
-			var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
 			var parameters = [];
 
 			this.findParameters(
-				configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {},
+				this.get(CMDBuild.core.constants.Proxy.CONFIGURATION)[CMDBuild.core.constants.Proxy.ATTRIBUTE],
 				CMDBuild.core.constants.Proxy.RUNTIME,
 				parameters,
 				true
@@ -96,6 +95,27 @@
 						}, this);
 				}
 			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		resetRuntimeParametersValue: function () {
+			var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION),
+				parameters = [];
+
+			this.findParameters(
+				configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE],
+				CMDBuild.core.constants.Proxy.RUNTIME,
+				parameters
+			);
+
+			Ext.Array.each(parameters, function (parameterObject, i, allParameterObjects) {
+				if (Ext.isObject(parameterObject) && !Ext.Object.isEmpty(parameterObject))
+					parameterObject[CMDBuild.core.constants.Proxy.VALUE] = [];
+			}, this);
+
+			this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 		},
 
 		/**
@@ -149,32 +169,31 @@
 		 * @returns {Void}
 		 */
 		setRuntimeParameterValue: function (valuesObject) {
-			if (Ext.isObject(valuesObject) && !Ext.Object.isEmpty(valuesObject)) {
-				var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
-				var parameters = [];
+			// Error handling
+				if (!Ext.isObject(valuesObject) || Ext.Object.isEmpty(valuesObject))
+					return _error('setRuntimeParameterValue(): unmanaged parameter', this, valuesObject);
+			// END: Error handling
 
-				this.findParameters(
-					configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {},
-					CMDBuild.core.constants.Proxy.RUNTIME,
-					parameters,
-					true
-				);
+			var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION),
+				parameters = [];
 
-				Ext.Array.each(parameters, function (parameterObject, i, allParameterObjects) {
-					var valueObject = valuesObject[parameterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE]];
+			this.findParameters(
+				configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE],
+				CMDBuild.core.constants.Proxy.RUNTIME,
+				parameters,
+				true
+			);
 
-					if (
-						Ext.isObject(parameterObject) && !Ext.Object.isEmpty(parameterObject)
-						&& !Ext.isEmpty(valueObject)
-					) {
-						parameterObject[CMDBuild.core.constants.Proxy.VALUE] = [valueObject];
-					}
-				}, this);
+			Ext.Array.each(parameters, function (parameterObject, i, allParameterObjects) {
+				if (Ext.isObject(parameterObject) && !Ext.Object.isEmpty(parameterObject)) {
+					var value = valuesObject[parameterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE]];
 
-				this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
-			} else {
-				_error('setRuntimeParameterValue(): unmanaged parameter', this, valuesObject);
-			}
+					if (!Ext.isEmpty(value))
+						parameterObject[CMDBuild.core.constants.Proxy.VALUE] = [value];
+				}
+			}, this);
+
+			this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 		}
 	});
 

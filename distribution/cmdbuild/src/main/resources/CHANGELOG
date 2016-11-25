@@ -56,6 +56,8 @@ FIXES
 
  * ReferenceFields not corretly managed inside widget workflow window
 
+ * Advanced filter runtime with parameter not correctly managed
+
 
 
 

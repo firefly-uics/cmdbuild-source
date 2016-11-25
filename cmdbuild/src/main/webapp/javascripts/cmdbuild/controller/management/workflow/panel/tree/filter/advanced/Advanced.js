@@ -124,6 +124,8 @@
 				Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
 				&& Ext.getClassName(filter) == 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter'
 			) {
+				filter.resetRuntimeParametersValue();
+
 				this.cmfg('workflowTreeFilterAdvancedManageToggleButtonLabelSet', filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 				this.cmfg('workflowTreeFilterApply', {
 					filter: filter,
@@ -184,10 +186,10 @@
 			},
 
 			/**
-			 * @returns {Array}
+			 * @returns {Array} localFilterModels
 			 */
 			workflowTreeFilterAdvancedLocalFilterGet: function () {
-				var localFilterModels = Ext.Object.getValues(this.localFilterCache)
+				var localFilterModels = Ext.Object.getValues(this.localFilterCache),
 					selectedEntryTypeName = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
 				// Remove filter models not related with selected entrytype
