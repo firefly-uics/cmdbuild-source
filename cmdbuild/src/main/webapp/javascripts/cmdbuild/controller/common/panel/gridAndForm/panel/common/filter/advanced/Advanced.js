@@ -250,7 +250,7 @@
 			 * @returns {Array}
 			 */
 			panelGridAndFormFilterAdvancedLocalFilterGet: function () {
-				var localFilterModels = Ext.Object.getValues(this.localFilterCache)
+				var localFilterModels = Ext.Object.getValues(this.localFilterCache),
 					selectedEntryTypeName = this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
 
 				// Remove filter models not related with selected entrytype
@@ -286,8 +286,8 @@
 
 					// Search for filter
 					Ext.Object.each(this.localFilterCache, function (id, object, myself) {
-						var filterModelObject = filterModel.getData();
-						var localFilterObject = object.getData();
+						var filterModelObject = filterModel.getData(),
+							localFilterObject = object.getData();
 
 						if (Ext.Object.equals(filterModelObject, localFilterObject))
 							identifierToDelete = id;
@@ -368,6 +368,8 @@
 
 			if (!Ext.isEmpty(masterGrid)) {
 				this.controllerManager.cmfg('panelGridAndFormFilterAdvancedManagerViewClose');
+
+				filter.resetRuntimeParametersValue();
 
 				this.cmfg('panelGridAndFormFilterAdvancedAppliedFilterSet', { value: filter });
 				this.cmfg(
