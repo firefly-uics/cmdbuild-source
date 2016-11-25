@@ -282,10 +282,14 @@
 
 			editRelationWindow.show();
 
+			// Disable already related cards
 			editRelationWindow.grid.getStore().on('load', function (store, records, successful, eOpts) {
+				editRelationWindow.setLoading(true); // Manual loadMask manage
+
 				Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
 					var cardsIdArray = [];
-					editRelationWindow.grid.getStore().each(function(record) {
+
+					editRelationWindow.grid.getStore().each(function (record) {
 						cardsIdArray.push(record.get(CMDBuild.core.constants.Proxy.ID));
 					});
 
@@ -299,85 +303,90 @@
 						params: parameters,
 						loadMask: false,
 						scope: this,
-						success: function(result, options, decodedResult) {
-							var alreadyRelatedCardsIds = [];
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							// Create ids array to use as filter
-							Ext.Array.forEach(decodedResult.response, function(alreadyRelatedItem, index, allItems) {
-								if (alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID]) {
+							if (Ext.isArray(decodedResponse)) {
+								var filterAlreadyRelatedCardsIds = [];
+
+								Ext.Array.forEach(decodedResponse, function (alreadyRelatedCard, index, allAlreadyRelatedCards) {
+									if (Ext.isObject(alreadyRelatedCard) && !Ext.Object.isEmpty(alreadyRelatedCard)) {
+										var id = alreadyRelatedCard[CMDBuild.core.constants.Proxy.ID];
+
+										if (Ext.isNumber(id) && !Ext.isEmpty(id))
+											filterAlreadyRelatedCardsIds.push(id);
+									}
+								}, this);
+
+								if (Ext.isArray(filterAlreadyRelatedCardsIds) && !Ext.isEmpty(filterAlreadyRelatedCardsIds)) {
 									var parameters = {};
-									parameters[CMDBuild.core.constants.Proxy.CARD_ID] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID];
-									parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.CLASS_NAME];
-									parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
+									parameters[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+									parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = classData.get(CMDBuild.core.constants.Proxy.NAME);
+									parameters[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({
+										"attribute": {
+											"simple": {
+												"attribute": "Id",
+												"operator": "in",
+												"value": filterAlreadyRelatedCardsIds,
+												"parameterType": "fixed"
+											}
+										},
+										"relation": [
+											{
+												"destination": _CMCache.getEntryTypeNameById(this.getClassId()), // This class name
+												"direction": destination,
+												"domain": domain.get(CMDBuild.core.constants.Proxy.NAME),
+												"source": classData.get(CMDBuild.core.constants.Proxy.NAME), // Other class of domain
+												"type": "any"
+											}
+										]
+									});
 
-									// Get all domains of grid-card to check if it have relation with current-card
-									CMDBuild.proxy.Relation.readAll({
+									CMDBuild.proxy.Relation.getCards({
 										params: parameters,
 										loadMask: false,
 										scope: this,
-										success: function(result, options, decodedResult) {
-											// Loop through domains array
-											Ext.Array.forEach(decodedResult[CMDBuild.core.constants.Proxy.DOMAINS], function(domainItem, index, allItems) {
-												if (domainItem[CMDBuild.core.constants.Proxy.ID] == domain.get(CMDBuild.core.constants.Proxy.ID)) {
-													// Loop through domain (witch i'm creating a relation) relations array
-													Ext.Array.forEach(domainItem[CMDBuild.core.constants.Proxy.RELATIONS], function(domainRelationItem, index, allItems) {
-														if (!Ext.Object.isEmpty(classData)) {
-															if (domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1') {
-																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
-															} else if (
-																(
-																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
-																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_1' // Direct
-																)
-																|| (
-																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
-																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_2' // Inverse
-																)
-															) {
-																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
-															} else if (
-																(
-																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
-																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_1' // Direct
-																)
-																|| (
-																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
-																	&& model[CMDBuild.core.constants.Proxy.SRC] == '_2' // Inverse
-																)
-															) {
-																// Here should never enter because you'll be blocked from button pop-up
-															} else if (
-																domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:N'
-																&& domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.constants.Proxy.ID)
-															) {
-																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
-															} else {
-																_warning('onAddRelationButtonClick, domain valutation not catch', this);
-															}
-														} else {
-															_warning('onAddRelationButtonClick, empty class data object', this);
-														}
-													});
-												}
-											});
+										success: function (response, options, decodedResponse) {
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
-											// Add class to disable rows as user feedback
-											editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
-												return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : null;
-											};
-											editRelationWindow.grid.getView().refresh();
+											if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+												var alreadyRelatedCardsIds = [];
 
-											// Disable row selection
-											editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
-												return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
-											});
+												Ext.Array.forEach(decodedResponse, function (cardObject, index, allCardObjects) {
+													if (Ext.isObject(cardObject) && !Ext.Object.isEmpty(cardObject)) {
+														var id = cardObject['Id'];
+
+														if (Ext.isNumber(id) && !Ext.isEmpty(id))
+															alreadyRelatedCardsIds.push(id);
+													}
+												}, this);
+
+												// Add class to disable rows as user feedback
+												editRelationWindow.grid.getView().getRowClass = function (record, rowIndex, rowParams, store) {
+													return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : null;
+												};
+												editRelationWindow.grid.getView().refresh();
+
+												// Disable row selection
+												editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
+													return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
+												});
+											}
+
+											editRelationWindow.setLoading(false); // Manual loadMask manage
 										}
 									});
+								} else {
+									editRelationWindow.setLoading(false); // Manual loadMask manage
 								}
-							});
+							} else {
+								editRelationWindow.setLoading(false); // Manual loadMask manage
+
+								_error('onAddRelationButtonClick(): unmanaged response', this, decodedResult);
+							}
 						}
 					});
-				}, 100)();
+				}, 100, this)();
 			}, this);
 		},
 

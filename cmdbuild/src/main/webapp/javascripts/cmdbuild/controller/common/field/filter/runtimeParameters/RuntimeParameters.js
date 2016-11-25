@@ -155,6 +155,8 @@
 		 * @returns {Void}
 		 */
 		onFieldFilterRuntimeParametersAbortButtonClick: function () {
+			this.cmfg('workflowTreeFilterClear');
+
 			this.view.close();
 		},
 
@@ -165,11 +167,12 @@
 			if (this.form.getForm().isValid()) {
 				this.filter.setRuntimeParameterValue(this.form.getValues());
 
-				this.cmfg('onFieldFilterRuntimeParametersAbortButtonClick');
 				this.cmfg('workflowTreeFilterApply', {
 					filter: this.filter,
 					type: 'advanced'
 				});
+
+				this.view.close();
 			}
 		}
 	});

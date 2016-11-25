@@ -67,9 +67,7 @@
 				this.cmfg('workflowTreeFilterAdvancedLocalFilterAdd', this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 
 			this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
-
 			this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
-
 			this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet')); // Apply filter to store
 		},
 

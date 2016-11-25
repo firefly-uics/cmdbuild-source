@@ -1053,22 +1053,49 @@
 
 		// Filter management methods
 			/**
+			 * @param {Object} parameters
+			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} parameters.filter
+			 * @param {Boolean} parameters.type
+			 *
+			 * @returns {Void}
+			 */
+			workflowTreeFilterApply: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				// Error handling
+					if (!Ext.isObject(parameters.filter) || Ext.Object.isEmpty(parameters.filter))
+						return _error('workflowTreeFilterApply(): unmanaged filter object parameter', this, parameters.filter);
+				// END: Error handling
+
+				switch (parameters.type) {
+					case 'advanced':
+						return this.workflowTreeFilterApplyAdvanced(parameters.filter);
+
+					case 'basic':
+						return this.workflowTreeFilterApplyBasic(parameters.filter);
+
+					default:
+						return _error('workflowTreeFilterApply(): unmanaged type parameter', this, parameters.type);
+				}
+			},
+
+			/**
 			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 			 *
 			 * @returns {Void}
 			 *
 			 * @private
 			 */
-			workflowTreeFilterAdvancedApply: function (filter) {
+			workflowTreeFilterApplyAdvanced: function (filter) {
 				// Error handling
 					if (!Ext.isObject(filter) || Ext.Object.isEmpty(filter) || !Ext.isFunction(filter.get) || !Ext.isFunction(filter.set))
-						return _error('workflowTreeFilterAdvancedApply(): unmanaged filter object parameter', this, filter);
+						return _error('workflowTreeFilterApplyAdvanced(): unmanaged filter object parameter', this, filter);
 
 					if (!Ext.isFunction(filter.getEmptyRuntimeParameters) || !Ext.isFunction(filter.resolveCalculatedParameters))
-						return _error('workflowTreeFilterAdvancedApply(): unsupported filter object functions', this, filter);
+						return _error('workflowTreeFilterApplyAdvanced(): unsupported filter object functions', this, filter);
 				// END: Error handling
 
-				var emptyRuntimeParameters = filter.getEmptyRuntimeParameters()
+				var emptyRuntimeParameters = filter.getEmptyRuntimeParameters(),
 					filterConfigurationObject = filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
 
 				if (Ext.isArray(emptyRuntimeParameters) && !Ext.isEmpty(emptyRuntimeParameters))
@@ -1087,35 +1114,6 @@
 				}
 
 				this.workflowTreeAppliedFilterSet({ value: filter.getData() });
-			},
-
-			/**
-			 * @param {Object} parameters
-			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} parameters.filter
-			 * @param {Boolean} parameters.type
-			 *
-			 * @returns {Void}
-			 */
-			workflowTreeFilterApply: function (parameters) {
-				parameters = Ext.isObject(parameters) ? parameters : {};
-
-				// Error handling
-					if (!Ext.isObject(parameters.filter) || Ext.Object.isEmpty(parameters.filter))
-						return _error('workflowTreeFilterApply(): unmanaged filter object parameter', this, parameters.filter);
-				// END: Error handling
-
-				switch (parameters.type) {
-					case 'advanced': {
-						this.workflowTreeFilterAdvancedApply(parameters.filter);
-					} break;
-
-					case 'basic': {
-						this.workflowTreeFilterBasicApply(parameters.filter);
-					} break;
-
-					default:
-						return _error('workflowTreeFilterApply(): unmanaged type parameter', this, parameters.type);
-				}
 
 				this.cmfg('workflowTreeStoreLoad');
 			},
@@ -1127,10 +1125,10 @@
 			 *
 			 * @private
 			 */
-			workflowTreeFilterBasicApply: function (filter) {
+			workflowTreeFilterApplyBasic: function (filter) {
 				// Error handling
 					if (!Ext.isObject(filter) || Ext.Object.isEmpty(filter) || !Ext.isFunction(filter.get) || !Ext.isFunction(filter.set))
-						return _error('workflowTreeFilterBasicApply(): unmanaged filter object parameter', this, filter);
+						return _error('workflowTreeFilterApplyBasic(): unmanaged filter object parameter', this, filter);
 				// END: Error handling
 
 				var newConfigurationObject = {},
@@ -1151,6 +1149,8 @@
 						value: newConfigurationObject
 					});
 				}
+
+				this.cmfg('workflowTreeStoreLoad');
 			},
 
 			/**
