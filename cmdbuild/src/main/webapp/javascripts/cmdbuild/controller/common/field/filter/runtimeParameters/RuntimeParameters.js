@@ -1,5 +1,10 @@
 (function () {
 
+	/**
+	 * Required managed functions from upper structure:
+	 * 	- panelGridAndFormGridFilterApply
+	 * 	- panelGridAndFormGridFilterClear
+	 */
 	Ext.define('CMDBuild.controller.common.field.filter.runtimeParameters.RuntimeParameters', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -59,32 +64,33 @@
 		buildFields: function (runtimeParameters) {
 			this.form.removeAll();
 
-			if (Ext.isArray(runtimeParameters) && !Ext.isEmpty(runtimeParameters)) {
-				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+			// Error handling
+				if (!Ext.isArray(runtimeParameters) || Ext.isEmpty(runtimeParameters))
+					return _error('buildFields(): unmanaged runtimeParameters parameter', this, runtimeParameters);
+			// END: Error handling
 
-				Ext.Array.each(runtimeParameters, function (runtimeParameter, i, allRuntimeParameters) {
-					if (fieldManager.isAttributeManaged(runtimeParameter[CMDBuild.core.constants.Proxy.TYPE])) {
-						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', runtimeParameter);
-						attributeCustom.setAdaptedData(runtimeParameter);
+			var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-						fieldManager.attributeModelSet(attributeCustom);
-						fieldManager.add(this.form, fieldManager.buildField());
-					} else { // @deprecated - Old field manager
-						var field = CMDBuild.Management.FieldManager.getFieldForAttr(runtimeParameter, false, false);
+			Ext.Array.each(runtimeParameters, function (runtimeParameter, i, allRuntimeParameters) {
+				if (fieldManager.isAttributeManaged(runtimeParameter[CMDBuild.core.constants.Proxy.TYPE])) {
+					var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', runtimeParameter);
+					attributeCustom.setAdaptedData(runtimeParameter);
 
-						if (!Ext.isEmpty(field)) {
-							field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM;
+					fieldManager.attributeModelSet(attributeCustom);
+					fieldManager.add(this.form, fieldManager.buildField());
+				} else { /** @deprecated - Old field manager */
+					var field = CMDBuild.Management.FieldManager.getFieldForAttr(runtimeParameter, false, false);
 
-							if (runtimeParameter.defaultvalue)
-								field.setValue(runtimeParameter.defaultvalue);
+					if (!Ext.isEmpty(field)) {
+						field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM;
 
-							this.form.add(field);
-						}
+						if (runtimeParameter.defaultvalue)
+							field.setValue(runtimeParameter.defaultvalue);
+
+						this.form.add(field);
 					}
-				}, this);
-			} else {
-				_error('buildFields(): unmanaged runtime parameters property', this, runtimeParameters);
-			}
+				}
+			}, this);
 		},
 
 		/**
@@ -95,67 +101,68 @@
 		fieldFilterRuntimeParametersShow: function (filter) {
 			this.filter = undefined;
 
-			if (
-				Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
-				&& Ext.isBoolean(filter.isFilterAdvancedCompatible) && filter.isFilterAdvancedCompatible
-				&& Ext.isObject(this.view) && !Ext.Object.isEmpty(this.view)
-			) {
-				var runtimeParameters = filter.getEmptyRuntimeParameters();
-				var runtimeParametersNames = [];
+			// Error handling
+				if (!Ext.isObject(filter) || Ext.Object.isEmpty(filter))
+					return _error('fieldFilterRuntimeParametersShow(): unmanaged filter parameter', this, filter);
 
-				Ext.Array.each(runtimeParameters, function (runtimeParameter, i, allRuntimeParameters) {
-					if (
-						Ext.isObject(runtimeParameter) && !Ext.Object.isEmpty(runtimeParameter)
-						&& !Ext.isEmpty(runtimeParameter[CMDBuild.core.constants.Proxy.ATTRIBUTE])
-					) {
-						runtimeParametersNames.push(runtimeParameter[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
-					}
-				}, this);
+				if (!Ext.isBoolean(filter.isFilterAdvancedCompatible) || filter.isFilterAdvancedCompatible)
+					return _error('fieldFilterRuntimeParametersShow(): filter parameter not compatible', this, filter);
+			// END: Error handling
 
-				if (Ext.isArray(runtimeParameters) && !Ext.isEmpty(runtimeParameters)) {
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
+			var runtimeParameters = filter.getEmptyRuntimeParameters(),
+				runtimeParametersNames = [];
 
-					CMDBuild.proxy.common.field.filter.RuntimeParameters.readAllAttributes({
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
-
-							var runtimeParametersAttributes = [];
-
-							if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								Ext.Array.each(decodedResponse, function (attributeObject, i, allAttributeObjects) {
-									if (
-										Ext.isObject(attributeObject) && !Ext.Object.isEmpty(attributeObject)
-										&& Ext.Array.contains(runtimeParametersNames, attributeObject[CMDBuild.core.constants.Proxy.NAME])
-									) {
-										runtimeParametersAttributes.push(Ext.apply(attributeObject, { fieldmode: 'write' })); // Force writable to be editable by user
-									}
-								}, this);
-
-								this.buildFields(runtimeParametersAttributes);
-								this.setViewTitle(filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
-
-								this.filter = filter;
-
-								this.view.show();
-							}
-						}
-					});
-				} else {
-					_error('fieldFilterRuntimeParametersShow(): no runtime parameters found in filter object', this, filter);
+			Ext.Array.each(runtimeParameters, function (runtimeParameter, i, allRuntimeParameters) {
+				if (
+					Ext.isObject(runtimeParameter) && !Ext.Object.isEmpty(runtimeParameter)
+					&& !Ext.isEmpty(runtimeParameter[CMDBuild.core.constants.Proxy.ATTRIBUTE])
+				) {
+					runtimeParametersNames.push(runtimeParameter[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 				}
-			} else {
-				_error('fieldFilterRuntimeParametersShow(): unmanaged filter object', this, filter);
-			}
+			}, this);
+
+			// Error handling
+				if (!Ext.isArray(runtimeParameters) || Ext.isEmpty(runtimeParameters))
+					return _error('fieldFilterRuntimeParametersShow(): no runtime parameters found in filter object', this, filter);
+			// END: Error handling
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
+
+			CMDBuild.proxy.common.field.filter.RuntimeParameters.readAllAttributes({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+					var runtimeParametersAttributes = [];
+
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						Ext.Array.each(decodedResponse, function (attributeObject, i, allAttributeObjects) {
+							if (
+								Ext.isObject(attributeObject) && !Ext.Object.isEmpty(attributeObject)
+								&& Ext.Array.contains(runtimeParametersNames, attributeObject[CMDBuild.core.constants.Proxy.NAME])
+							) {
+								runtimeParametersAttributes.push(Ext.apply(attributeObject, { fieldmode: 'write' })); // Force writable to be editable by user
+							}
+						}, this);
+
+						this.buildFields(runtimeParametersAttributes);
+						this.setViewTitle(filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+						this.filter = filter;
+
+						this.view.show();
+					}
+				}
+			});
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onFieldFilterRuntimeParametersAbortButtonClick: function () {
-			this.cmfg('workflowTreeFilterClear');
+			this.cmfg('panelGridAndFormGridFilterClear');
 
 			this.view.close();
 		},
@@ -167,7 +174,7 @@
 			if (this.form.getForm().isValid()) {
 				this.filter.setRuntimeParameterValue(this.form.getValues());
 
-				this.cmfg('workflowTreeFilterApply', {
+				this.cmfg('panelGridAndFormGridFilterApply', {
 					filter: this.filter,
 					type: 'advanced'
 				});
