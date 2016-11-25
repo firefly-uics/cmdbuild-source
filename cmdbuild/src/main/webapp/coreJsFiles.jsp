@@ -45,7 +45,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
