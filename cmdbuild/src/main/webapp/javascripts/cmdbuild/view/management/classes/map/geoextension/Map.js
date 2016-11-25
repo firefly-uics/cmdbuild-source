@@ -148,14 +148,12 @@
 					undefinedHTML : '&nbsp;'
 				});
 				var scaleLineControl = new ol.control.ScaleLine();
-				this.map = new ol.Map(
-						{
-							controls : /* ol.control.defaults().extend( */[ zoomControl, scaleLineControl,
-									mousePositionControl ],// ),
-							target : configuration.mapDivId,
-							layers : [],
-							view : this.view
-						});
+				this.map = new ol.Map({
+					controls : [ zoomControl, scaleLineControl,	mousePositionControl ],
+					target : configuration.mapDivId,
+					layers : [],
+					view : this.view
+				});
 				me = this;
 				this.map.getView().on('propertychange', function(e) {
 					switch (e.key) {
@@ -262,10 +260,13 @@
 			var layers = this.getLayers();
 			var geoAttributes = {};
 			this.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.getGeometries) {
-					var layerName = layer.get("name");
-					geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+				var geoAttribute = layer.get("geoAttribute");
+				if (geoAttribute && geoAttribute.masterTableName === className) {
+					var adapter = layer.get("adapter");
+					if (adapter && adapter.getGeometries) {
+						var layerName = layer.get("name");
+						geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+					}
 				}
 			});
 			return geoAttributes;
