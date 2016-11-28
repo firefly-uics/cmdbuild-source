@@ -101,21 +101,19 @@
 
 			Ext.apply(this, parameters);
 
-			var translationsModel = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TRANSLATIONS);
-
 			// Error handling
 				if (this.cmfg('fieldTranslatableConfigurationIsEmpty') || !this.cmfg('fieldTranslatableConfigurationGet').isValid())
 					return _error('constructor(): unmanaged configuration property', this, this.cmfg('fieldTranslatableConfigurationGet'));
-
-				if (!Ext.isObject(translationsModel) || Ext.Object.isEmpty(translationsModel) || !Ext.isFunction(translationsModel.getData))
-					return _error('constructor(): unmanaged configuration property', this, translationsModel);
 			// END: Error handling
+
+			var translationsModel = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TRANSLATIONS);
 
 			this.setViewTitle(this.cmfg('fieldTranslatableFieldLabelGet'));
 
 			this.buildTranslationsFields();
 
-			this.form.loadRecord(translationsModel);
+			if (Ext.isObject(translationsModel) && !Ext.Object.isEmpty(translationsModel) && Ext.isFunction(translationsModel.getData))
+				this.form.loadRecord(translationsModel);
 
 			// Show window
 			if (!Ext.isEmpty(this.view))
