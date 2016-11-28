@@ -65,7 +65,7 @@
 
 		listeners: {
 			enable: function(field, eOpts) {
-				this.delegate.cmfg('fieldTranslatableConfigurationReadTranslations'); // Read field's translations
+				this.delegate.cmfg('onFieldTranslatableEnable'); // Setup translations configuration property
 			}
 		},
 
