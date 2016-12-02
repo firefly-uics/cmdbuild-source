@@ -111,6 +111,7 @@
 			}
 			this.store.proxy.setExtraParam("className", currentClassName);
 			if (!this.oldCard || this.oldCard.className !== currentClassName) {
+				updateTitle(currentClassName, this);
 				var cl = _CMCache.getEntryTypeByName(currentClassName);
 				var me = this;
 				me.store.proxy.setExtraParam("className", currentClassName);
@@ -377,4 +378,9 @@
 		}
 		return (oldCard.cardId == newCard.cardId && oldCard.className == newCard.className);
 	}
+	function updateTitle(className, grid) {
+		var prefix = CMDBuild.Translation.management.modcard.title;
+		grid.setTitle(prefix + className);
+	}
+
 })();
