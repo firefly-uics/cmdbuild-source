@@ -22,6 +22,8 @@ NEW FEATURES
 
 FIXES
 
+ * Error on map zoom when the user changes class
+
  * Error on save Postgis features with more then one Gis layer active
 
  * Gis: Fault on Geo Server Layers

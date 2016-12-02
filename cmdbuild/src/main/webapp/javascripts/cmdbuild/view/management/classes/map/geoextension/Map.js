@@ -303,9 +303,18 @@
 			var configuration = this.interactionDocument.getConfigurationMap();
 			var currentCard = this.interactionDocument.getCurrentCard();
 			var me = this;
+			var isVisible = this.interactionDocument.getVisible();
+			var currentZoom = this.getZoom();
 			this.interactionDocument.getLayersForCard(currentCard, function(layers) {
-				if (layers.length > 0 && layers[0].minZoom > 0) {
-					configuration.zoom = layers[0].minZoom
+				if (layers.length > 0 && layers[0].minZoom >= 0) {
+					if (! isVisible) {
+						configuration.zoom = layers[0].minZoom;
+					} else if (currentZoom < layers[0].minZoom) {
+						configuration.zoom = layers[0].minZoom;
+					}
+					else {
+						configuration.zoom = currentZoom;
+					}
 				}
 				me.view.setZoom(configuration.zoom);
 			});
