@@ -22,6 +22,8 @@ NEW FEATURES
 
 FIXES
 
+ * Map cards list does not select the current element
+
  * Navigation tree error on layers selection
 
  * Error on map zoom when the user changes class
