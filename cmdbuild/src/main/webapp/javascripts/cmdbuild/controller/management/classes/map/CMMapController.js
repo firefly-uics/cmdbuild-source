@@ -94,7 +94,6 @@
 						var mapPanel = this.interactionDocument.getMapPanel();
 						mapPanel.center(this.interactionDocument.configurationMap);
 					}
-					this.interactionDocument.changed();
 				}, this);
 			} else {
 				if (!oldCard || className !== oldCard.className) {
@@ -103,7 +102,6 @@
 
 				}
 				this.interactionDocument.changed();
-
 			}
 			if (this.mapPanel.cmVisible && (!oldCard || className !== oldCard.className)) {
 				this.interactionDocument.changedThematicDocument();
