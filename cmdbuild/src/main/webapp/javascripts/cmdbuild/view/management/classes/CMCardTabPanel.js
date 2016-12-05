@@ -27,7 +27,7 @@
 								},
 								item: {
 									description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-									id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+									id: _CMCardModuleState.card.get('Id'),
 									object: _CMCardModuleState.card
 								},
 								section: {
@@ -57,7 +57,7 @@
 									},
 									item: {
 										description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-										id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+										id: _CMCardModuleState.card.get('Id'),
 										object: _CMCardModuleState.card
 									},
 									section: {
@@ -89,7 +89,7 @@
 									},
 									item: {
 										description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-										id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+										id: _CMCardModuleState.card.get('Id'),
 										object: _CMCardModuleState.card
 									},
 									section: {
@@ -120,7 +120,7 @@
 									},
 									item: {
 										description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-										id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+										id: _CMCardModuleState.card.get('Id'),
 										object: _CMCardModuleState.card
 									},
 									section: {
@@ -151,7 +151,7 @@
 									},
 									item: {
 										description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-										id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+										id: _CMCardModuleState.card.get('Id'),
 										object: _CMCardModuleState.card
 									},
 									section: {

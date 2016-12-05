@@ -99,7 +99,7 @@
 			});
 
 			// History record save
-			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(card))
+			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 					moduleId: 'class',
 					entryType: {
@@ -108,9 +108,9 @@
 						object: _CMCardModuleState.entryType
 					},
 					item: {
-						description: card.get('Description') || card.raw['Description'] || card.get('Code') || card.raw['Code'],
-						id: card.get(CMDBuild.core.constants.Proxy.ID),
-						object: card
+						description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+						id: _CMCardModuleState.card.get('Id'),
+						object: _CMCardModuleState.card
 					}
 				});
 		},
