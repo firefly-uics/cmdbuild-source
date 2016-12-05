@@ -72,9 +72,7 @@
 					})
 				],
 				tools: [
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
-						style: {} // Reset margin setup
-					})
+					Ext.create('CMDBuild.controller.common.panel.gridAndForm.tools.properties.Properties', { withSpacer: false }).getView()
 				]
 			});
 

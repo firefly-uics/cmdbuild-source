@@ -2,17 +2,17 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.navigation.chronology.RecordProperty', {
+	Ext.define('CMDBuild.model.navigation.chronology.PropertyString', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' }, // Accordion item's IDs are strings
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.OBJECT, type: 'auto', defaultValue: {} }
 		],
 
 		/**
-		 * @param {CMDBuild.model.navigation.chronology.RecordProperty} record
+		 * @param {CMDBuild.model.navigation.chronology.PropertyString} record
 		 *
 		 * @returns {Boolean}
 		 */
