@@ -1,9 +1,10 @@
 (function() {
 
 	Ext.require([
+		'CMDBuild.controller.management.classes.StaticsController',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.controller.management.classes.StaticsController'
+		'CMDBuild.core.Utils'
 	]);
 
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
@@ -98,7 +99,7 @@
 			});
 
 			// History record save
-			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(card))
+			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 					moduleId: 'class',
 					entryType: {
@@ -107,9 +108,9 @@
 						object: _CMCardModuleState.entryType
 					},
 					item: {
-						description: card.get('Description') || card.raw['Description'] || card.get('Code') || card.raw['Code'],
-						id: card.get(CMDBuild.core.constants.Proxy.ID),
-						object: card
+						description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+						id: _CMCardModuleState.card.get('Id'),
+						object: _CMCardModuleState.card
 					}
 				});
 		},
@@ -279,7 +280,11 @@
 		},
 
 		isEditable: function(card) {
-			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			if (!card)
+				return false;
+
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(card.get('IdClass')));
+
 			return (privileges.create);
 		},
 

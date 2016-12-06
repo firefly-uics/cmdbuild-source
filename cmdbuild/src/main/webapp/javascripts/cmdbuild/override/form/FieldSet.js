@@ -4,7 +4,12 @@
 		override: 'Ext.form.FieldSet',
 
 		/**
-		 * @cfg {String}
+		 * @cfg {Mixed}
+		 */
+		checkboxUncheckedValue: undefined,
+
+		/**
+		 * @cfg {Mixed}
 		 */
 		checkboxValue: undefined,
 
@@ -24,21 +29,21 @@
 		 * @override
 		 */
 		createCheckboxCmp: function () {
-			var me = this;
 			var suffix = '-checkbox';
 
 			this.checkboxCmp = Ext.widget({
 				xtype: this.controllerxType,
 				hideEmptyLabel: true,
-				name: me.checkboxName || me.id + suffix,
-				cls: me.baseCls + '-header' + suffix,
-				id: me.id + '-legendChk',
-				checked: this.collapsible && !me.collapsed,
-				inputValue: me.checkboxValue || 'on',
+				name: this.checkboxName || this.id + suffix,
+				cls: this.baseCls + '-header' + suffix,
+				id: this.id + '-legendChk',
+				checked: this.collapsible && !this.collapsed,
+				inputValue: Ext.isEmpty(this.checkboxValue) ? 'on' : this.checkboxValue,
+				uncheckedValue: Ext.isEmpty(this.checkboxUncheckedValue) ? 'off' : this.checkboxUncheckedValue,
 
 				listeners: {
-					change: me.onCheckChange,
-					scope: me
+					scope: this,
+					change: this.onCheckChange
 				}
 			});
 
@@ -46,17 +51,31 @@
 		},
 
 		/**
-		 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
+		 * Disable also toglecheckbox - 18/10/2016
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
-		fieldWidthsFix: function () {
-			this.cascade(function (item) {
-				if (Ext.isEmpty(item.checkboxToggle) && item instanceof Ext.form.Field) {
-					item.labelWidth = item.labelWidth - 10;
-					item.width = item.width - 10;
-				}
-			});
+		disable: function() {
+			this.callParent(arguments);
+
+			if (!Ext.isEmpty(this.checkboxCmp) && Ext.isFunction(this.checkboxCmp.disable))
+				this.checkboxCmp.disable();
+		},
+
+		/**
+		 * Enable also toglecheckbox - 18/10/2016
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		enable: function() {
+			this.callParent(arguments);
+
+			if (!Ext.isEmpty(this.checkboxCmp) && Ext.isFunction(this.checkboxCmp.enable))
+				this.checkboxCmp.enable();
 		},
 
 		/**
@@ -81,7 +100,8 @@
 		 *
 		 * @returns {Void}
 		 */
-		reset: function () { // Resets all items except fieldset toglecheckbox
+		reset: function () {
+			// Resets all items except fieldset toglecheckbox
 			this.cascade(function (item) {
 				if (Ext.isEmpty(item.checkboxToggle))
 					item.reset();
@@ -94,9 +114,9 @@
 		 * @returns {Ext.form.FieldSet}
 		 */
 		setExpanded: function (expanded) {
-			var me = this;
-			var checkboxCmp = me.checkboxCmp;
-			var operation = expanded ? 'expand' : 'collapse';
+			var me = this,
+				checkboxCmp = me.checkboxCmp,
+				operation = expanded ? 'expand' : 'collapse';
 
 			if (
 				this.collapsible // Enable visual collapse/expand actions only if collapsible property is true

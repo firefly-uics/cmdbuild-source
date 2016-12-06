@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.configuration.BimPanel', {
 		extend: 'Ext.form.Panel',
@@ -8,7 +8,7 @@
 			'CMDBuild.core.constants.Proxy'
 		],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions'],
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Bim}
@@ -22,7 +22,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		fieldDefaults: {
@@ -31,7 +31,12 @@
 			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -49,14 +54,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationBimSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationBimAbortButtonClick');
 								}
 							})
@@ -95,7 +100,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationBimTabShow');
 			}
 		}

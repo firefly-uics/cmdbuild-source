@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.multiselect.Multiselect', {
 		extend: 'Ext.ux.form.MultiSelect',
@@ -16,9 +16,14 @@
 		defaultSelection: 'none',
 
 		allowBlank: true,
-		considerAsFieldToDisable: true,
+		considerAsFieldToDisable: true, /** @deprecated */
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				delegate: Ext.create('CMDBuild.controller.common.field.multiselect.Multiselect', { view: this })
 			});
@@ -27,7 +32,7 @@
 		},
 
 		listeners: {
-			afterrender: function(field, eOpts) {
+			afterrender: function (field, eOpts) {
 				this.delegate.cmfg('onFieldMultiselectAfterRender');
 			}
 		},
@@ -35,16 +40,22 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return this.delegate.cmfg('onFieldMultiselectGetStore');
+		getStore: function () {
+			return this.delegate.cmfg('fieldMultiselectGetStore');
 		},
 
-		reset: function() {
-			this.delegate.cmfg('onFieldMultiselectReset');
+		/**
+		 * @returns {Void}
+		 */
+		reset: function () {
+			this.delegate.cmfg('fieldMultiselectReset');
 		},
 
-		selectAll: function() {
-			this.delegate.cmfg('onFieldMultiselectSelectAll');
+		/**
+		 * @returns {Void}
+		 */
+		selectAll: function () {
+			this.delegate.cmfg('fieldMultiselectSelectAll');
 		},
 
 		/**

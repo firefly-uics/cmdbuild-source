@@ -123,6 +123,7 @@
 
 
 							this.failuresWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
+								dimensionsMode: 'percentage',
 								title: CMDBuild.Translation.common.failure,
 
 								dockedItems: [

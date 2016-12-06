@@ -17,9 +17,13 @@
 
 		autoScroll: true,
 		border: false,
-		defaultSizeW: 0.90,
-		defaultSizeH: 0.80,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.editRow,
+
+		dimensions: {
+			height: 0.50,
+			width: 0.70
+		},
 
 		initComponent: function() {
 			this.form = Ext.create('Ext.form.Panel', {
@@ -63,10 +67,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Resize window, smaller than default size
-			this.height = this.height * this.defaultSizeH;
-			this.width = this.width * this.defaultSizeW;
 		}
 	});
 

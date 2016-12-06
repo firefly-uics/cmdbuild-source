@@ -3,6 +3,7 @@
 	Ext.require([
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.index.Json'
 	]);
 
@@ -106,9 +107,12 @@
 	}
 
 	function getIconsToRender(record) {
+		if (!record)
+			return false;
+
 		var icons = ["showDetail"];
 		var entryType = _CMCache.getEntryTypeById(record.get('IdClass'));
-		var privileges = _CMUtils.getEntryTypePrivilegesByCard(record);
+		var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(record.get('IdClass')));
 
 		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
 			icons = ["editDetail", "deleteDetail"];

@@ -216,6 +216,7 @@
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				resizable: true,
 				disabled: true
 			}),
 
@@ -300,7 +301,7 @@
 				hidden: true
 			}),
 
-			me.fgColorField = new CMDBuild.form.HexColorField( {
+			me.fgColorField = Ext.create('CMDBuild.view.administration.dashboard.field.HexColor', {
 				name: "fgcolor",
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
@@ -309,7 +310,7 @@
 				hidden: true
 			}),
 
-			me.bgColorField = new CMDBuild.form.HexColorField( {
+			me.bgColorField = Ext.create('CMDBuild.view.administration.dashboard.field.HexColor', {
 				name: "bgcolor",
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
@@ -410,7 +411,7 @@
 		baseCls: "cmfieldset",
 
 		initComponent: function() {
-			this.valueAxesFields = new CMDBuild.view.common.field.CMGroupSelectionList({
+			this.valueAxesFields = Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
 				fieldLabel: tr.fields.valueField,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -477,7 +478,7 @@
 			item instanceof Ext.form.Field
 			|| item instanceof Ext.form.FieldContainer
 			|| item instanceof Ext.ux.form.MultiSelect
-			|| item instanceof CMDBuild.view.common.field.translatable.Text
+			|| item instanceof CMDBuild.view.common.field.translatable.Translatable
 		);
 	}
 

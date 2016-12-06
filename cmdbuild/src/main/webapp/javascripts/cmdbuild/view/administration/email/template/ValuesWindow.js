@@ -19,6 +19,7 @@
 		grid: undefined,
 
 		autoScroll: true,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.editValues,
 
 		initComponent: function() {
@@ -29,7 +30,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								scope: this,
 
 								handler: function(buttons, e) {
@@ -96,7 +97,7 @@
 								fixed: true,
 
 								items: [
-									Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+									Ext.create('CMDBuild.core.buttons.icon.Remove', {
 										withSpacer: true,
 										tooltip: CMDBuild.Translation.remove,
 										scope: this,

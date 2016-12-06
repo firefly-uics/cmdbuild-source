@@ -29,6 +29,11 @@
 		controllerTaskEventEvent: undefined,
 
 		/**
+		 * @property {String}
+		 */
+		subType: undefined,
+
+		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.taskManager.Form} configurationObject.parentDelegate
 		 * @param {String} configurationObject.subType
@@ -38,12 +43,10 @@
 		 * @override
 		 */
 		constructor: function (configurationObject) {
-			var subType = configurationObject.subType;
-
 			this.callParent(arguments);
 
 			// Build sub controller
-			this.controllerTaskEvent = this.controllerBuilder(subType);
+			this.controllerTaskEvent = this.controllerBuilder(this.subType);
 		},
 
 		/**
@@ -62,7 +65,7 @@
 					return Ext.create('CMDBuild.controller.administration.taskManager.task.event.synchronous.Synchronous', { parentDelegate: this });
 
 				default:
-					_error('constructor(): unmanaged event task subType', this, subType);
+					_error('controllerBuilder(): unmanaged subType parameter', this, subType);
 			}
 		}
 	});

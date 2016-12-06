@@ -1,6 +1,6 @@
 {
 	"description": "Persian",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "ماژول ادمین",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "خطایی رخ داد",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribute level mapping table must be correctly filled",
 		"busyVisualControls": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Class level mapping table must be correctly filled",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "جزئیات",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Reference level mapping table must be correctly filled",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "This field is required",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Initial latitude",
 	"initialLongitude": "Initial longitude",
 	"initialZoomLevel": "Initial zoom level",
+	"inputParameter": "پارامتر ورودی",
 	"instance": "Instance",
 	"instanceName": "نام مورد",
 	"inverseDescription": "توضیحات معکوس",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "باز کردن گراف رابطه",
 	"operativeInstructions": "<em>Operative instructions</em>",
+	"or": "<em>or</em>",
 	"origin": "مبدا",
 	"otherOptions": "انتخابهای دیگر",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Set",
 	"setAsDefault": "تعیین به عنوان پیش فرض",
 	"setFilter": "فیلتر بگذار",
-	"setLater": "پارامتر ورودی",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "General Options",
 	"showDetails": "نمایش جزئیات",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "Workflow attributes",
 	"workflowEngine": "Workflow",
 	"write": "نوشتن",
+	"xml": "XML",
 	"xpdlFile": "XPDL file",
 	"xpdlFileUploaded": "<em>XPDL file uploaded</em>",
 	"yes": "<em>Yes</em>",

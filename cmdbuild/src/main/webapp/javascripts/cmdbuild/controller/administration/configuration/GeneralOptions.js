@@ -47,14 +47,12 @@
 			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.generalOptions.GeneralOptions', this.view.panelFunctionDataGet({ includeDisabled: true }));
 
 			CMDBuild.proxy.administration.configuration.GeneralOptions.update({
-				params: configurationModel.getParamsObject(),
+				params: configurationModel.getSubmitData(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationGeneralOptionsTabShow');
 
-					CMDBuild.view.common.field.translatable.Utils.commit(this.view);
-
-					CMDBuild.core.Message.success();
+					CMDBuild.controller.common.field.translatable.Utils.commit(this.view);
 				}
 			});
 		},
@@ -73,7 +71,7 @@
 
 						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
-						this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
+						this.view.instanceNameField.delegate.cmfg('fieldTranslatableConfigurationReadTranslations'); // Custom function call to read translations data
 
 						Ext.create('CMDBuild.core.configurations.builder.Instance'); // Rebuild configuration model
 					}

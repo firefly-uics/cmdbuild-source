@@ -16,8 +16,8 @@
 		baseTitle: CMDBuild.Translation.report,
 
 		border: true,
+		dimensionsMode: 'percentage',
 		frame: false,
-		layout: 'fit',
 		overflowY: true,
 
 		initComponent: function() {
@@ -29,7 +29,7 @@
 
 						items: [
 							'->',
-							Ext.create('CMDBuild.core.buttons.iconized.Download', {
+							Ext.create('CMDBuild.core.buttons.icon.Download', {
 								scope: this,
 
 								handler: function(button, e) {

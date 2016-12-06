@@ -12,11 +12,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskGenericStep5FieldsetReportExpand',
+			'onTaskManagerFormTaskGenericStep5ValidateSetup = onTaskManagerFormTaskGenericValidateSetup'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.generic.Step5}
+		 * @property {CMDBuild.view.administration.taskManager.task.generic.Step5View}
 		 */
 		view: undefined,
 
@@ -31,63 +32,27 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.generic.Step5', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.generic.Step5View', { delegate: this });
 		},
 
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
-			 */
-			getReportDelegate: function () {
-				return this.view.reportForm.delegate;
-			},
+		/**
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskGenericStep5FieldsetReportExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetReport });
+		},
 
-			/**
-			 * @return {Object}
-			 */
-			getValueReportAttributeGrid: function () {
-				return this.getReportDelegate().getValueGrid();
-			},
+		/**
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskGenericStep5ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-			/**
-			 * @return {Boolean}
-			 */
-			getValueReportFieldsetCheckbox: function () {
-				return this.view.reportFieldset.checkboxCmp.getValue();
-			},
-
-		// SETters functions
-			/**
-			 * @param {Object} value
-			 */
-			setValueReportAttributesGrid: function (value) {
-				this.getReportDelegate().setValueGrid(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueReportCombo: function (value) {
-				this.getReportDelegate().setValueCombo(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueReportExtension: function (value) {
-				this.getReportDelegate().setValueExtension(value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueReportFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.reportFieldset.expand();
-				} else {
-					this.view.reportFieldset.collapse();
-				}
-			}
+			this.view.fieldReport.combo.allowBlank = !(fullValidation && this.view.fieldsetReport.checkboxCmp.getValue());
+			this.view.fieldReport.extension.allowBlank = !(fullValidation && this.view.fieldsetReport.checkboxCmp.getValue());
+		}
 	});
 
 })();

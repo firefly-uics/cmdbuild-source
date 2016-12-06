@@ -34,6 +34,7 @@
 			'onWorkflowSaveFailure',
 			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
+			'panelGridAndFormToolsArrayBuild',
 			'workflowFormReset -> controllerForm',
 			'workflowIsStartActivityGet',
 			'workflowLocalCacheWorkflowGetAll',

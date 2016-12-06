@@ -1,7 +1,9 @@
 (function () {
 
 	/**
-	 * NOTE: "form" and "grid" (or "tree") pointers are required to work with UI state module
+	 * NOTES:
+	 * 	- "form" and "grid" (or "tree") pointers are required to work with UI state module
+	 * 	- to implementate tools in panel header is required to be managed "panelGridAndFormToolsArrayBuild"
 	 *
 	 * @abstract
 	 */
@@ -41,6 +43,18 @@
 
 			if (!Ext.isEmpty(_CMUIState))
 				_CMUIState.addDelegate(this);
+		},
+
+		/**
+		 * @returns {Array}
+		 */
+		panelGridAndFormToolsArrayBuild: function () {
+			return [
+				Ext.create('CMDBuild.controller.common.panel.gridAndForm.tools.properties.Properties', { parentDelegate: this }).getView(),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+			];
 		},
 
 		// _CMUIState methods

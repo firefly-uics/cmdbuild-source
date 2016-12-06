@@ -36,7 +36,7 @@
 				cls: "x-panel-body-default-framed"
 			});
 
-			this.addAttachmentButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+			this.addAttachmentButton = Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 				text: CMDBuild.Translation.management.modcard.add_attachment
 			});
 

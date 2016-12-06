@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.common.field.comboBox.Searchable', {
 		extend: 'Ext.form.field.ComboBox',
 
+		requires: ['CMDBuild.proxy.common.field.comboBox.Searchable'],
+
 		/**
 		 * @cfg {CMDBuild.controller.common.field.comboBox.Searchable}
 		 */
@@ -18,6 +20,7 @@
 		 */
 		configuration: {},
 
+		displayField: 'Description',
 		hideTrigger1: false,
 		hideTrigger2: false,
 		hideTrigger3: false,
@@ -25,6 +28,7 @@
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+		valueField: 'Id',
 
 		/**
 		 * @returns {Void}
@@ -32,7 +36,9 @@
 		 * @override
 		 */
 		initComponent: function () {
-			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this });
+			Ext.apply(this, {
+				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this })
+			});
 
 			this.callParent(arguments);
 		},
@@ -113,24 +119,14 @@
 		/**
 		 * Adds values in store if not already inside
 		 *
-		 * @param {String} value
+		 * @param {Mixed} value
 		 *
 		 * @returns {CMDBuild.view.common.field.comboBox.Searchable}
 		 *
 		 * @override
 		 */
 		setValue: function (value) {
-			value = this.delegate.cmfg('fieldComboBoxSearchableNormalizeValue', value);
-
-			if (Ext.isEmpty(value))
-				return this.callParent();
-
-			// Value in store
-			if (this.getStore().find(this.valueField, value) >= 0)
-				return this.callParent([value]);
-
-			// Value not in store
-			return this.delegate.cmfg('onFieldComboBoxSearchableValueSet', value);
+			return this.callParent(this.delegate.cmfg('fieldComboBoxSearchableValueSet', value));
 		}
 	});
 

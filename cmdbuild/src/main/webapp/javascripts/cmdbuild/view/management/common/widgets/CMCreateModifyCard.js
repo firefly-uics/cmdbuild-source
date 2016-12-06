@@ -6,7 +6,7 @@
 		withButtons: false,
 
 		initComponent: function() {
-			this.addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
+			this.addCardButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Card', {
 				classId: undefined
 			});
 

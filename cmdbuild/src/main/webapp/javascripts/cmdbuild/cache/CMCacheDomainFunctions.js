@@ -6,7 +6,7 @@
 		ID_CLASS_1 = "idClass1",
 		ID_CLASS_2 = "idClass2";
 
-	Ext.define("CMDBUild.cache.CMCacheDomainFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheDomainFunctions", {
 
 		addDomains: function(dd) {
 			for (var i=0, l=dd.length; i<l; ++i) {
@@ -96,7 +96,7 @@
 					IS_NOT_NULL: 'isnotnull',
 					IS_INHERITED: "inherited",
 					IS_ACTIVE: CMDBuild.core.constants.Proxy.ACTIVE,
-					FIELD_MODE: CMDBuild.core.constants.Proxy.FIELD_MODE,
+					FIELD_MODE: 'fieldmode',
 					GROUP: CMDBuild.core.constants.Proxy.GROUP,
 					ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
 					CLASS_ORDER_SIGN: "classOrderSign",
@@ -144,7 +144,7 @@
 
 		getDirectedDomainForEntryType: function(et, domainName) {
 			var domain = _CMCache.getDomainByName(domainName);
-			var anchestorsId = _CMUtils.getAncestorsId(et);
+			var anchestorsId = CMDBuild.core.Utils.getAncestorsId(et);
 			var cid1 = domain.get(ID_CLASS_1);
 			var cid2 = domain.get(ID_CLASS_2);
 
@@ -179,7 +179,7 @@
 			}
 
 			var out = [],
-				anchestorsId = _CMUtils.getAncestorsId(et);
+				anchestorsId = CMDBuild.core.Utils.getAncestorsId(et);
 
 			for (var domain in domains) {
 				domain = domains[domain];
@@ -287,7 +287,7 @@
 		var cardinality = domain.get("cardinality"),
 			idClass1 = domain.get(ID_CLASS_1),
 			idClass2 = domain.get(ID_CLASS_2),
-			ancestors = _CMUtils.getAncestorsId(id);
+			ancestors = CMDBuild.core.Utils.getAncestorsId(id);
 
 		if (cardinality == "1:N") {
 			return Ext.Array.contains(ancestors, idClass1);

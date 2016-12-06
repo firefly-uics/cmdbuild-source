@@ -49,7 +49,7 @@
 
 						items: [
 							'->',
-							this.queueStartButton = Ext.create('CMDBuild.core.buttons.iconized.Start', {
+							this.queueStartButton = Ext.create('CMDBuild.core.buttons.icon.Start', {
 								text: CMDBuild.Translation.start,
 								scope: this,
 
@@ -57,7 +57,7 @@
 									this.delegate.cmfg('onEmailQueueStartButtonClick');
 								}
 							}),
-							this.queueStopButton = Ext.create('CMDBuild.core.buttons.iconized.Stop', {
+							this.queueStopButton = Ext.create('CMDBuild.core.buttons.icon.Stop', {
 								text: CMDBuild.Translation.stop,
 								scope: this,
 

@@ -5,7 +5,7 @@
 
 		fields: [
 			{ name: 'Description', type: 'string' },
-			{ name: 'Id', type: 'int' }
+			{ name: 'Id', type: 'int', useNull: true }
 		]
 	});
 

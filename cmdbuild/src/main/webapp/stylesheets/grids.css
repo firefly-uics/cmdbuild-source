@@ -25,14 +25,6 @@
 		cursor: pointer;
 	}
 
-/* Ext.ux.CheckColumn */
-	.x-grid-checkheader {
-		height: 14px;
-		background: transparent url("../images/checkcolumn/unchecked.gif") no-repeat 50% -2px;
-	}
-	.x-grid-checkheader-checked { background-image: url("../images/checkcolumn/checked.gif"); }
-	.x-grid-checkheader-editor .x-form-cb-wrap { text-align: center; }
-
 /* Activity rows */
 	.x-grid-row-expander { margin: 0px !important; }
 	.cm_activity_row {

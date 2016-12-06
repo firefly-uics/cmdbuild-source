@@ -15,7 +15,7 @@
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.proxy.widget.Widget',
-			'CMDBuild.core.Splash'
+			'CMDBuild.core.interfaces.service.Splash'
 		],
 
 		singleton: true,
@@ -28,7 +28,7 @@
 		 * @public
 		 */
 		init: function () {
-			CMDBuild.core.Splash.show(true);
+			CMDBuild.core.interfaces.service.Splash.show(true);
 
 			CMDBuild.core.Administration.buildConfiguration();
 		},
@@ -229,6 +229,14 @@
 							cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
 							cmName: 'gis-external-services'
 						}),
+						Ext.create('CMDBuild.view.administration.gis.CMUnconfiguredModPanel', {
+							cmControllerType: 'CMDBuild.controller.administration.gis.CMUnconfiguredModPanelController',
+							cmName: 'notconfiguredpanel'
+						}),
+						Ext.create('CMDBuild.view.administration.gis.ModLayerOrder', {
+							cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
+							cmName: 'gis-layers-order'
+						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
 							cmName: 'bim-project'
@@ -237,20 +245,12 @@
 							cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
 							cmName: 'bim-layers'
 						}),
-						new CMDBuild.view.common.CMUnconfiguredModPanel({
-							cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
-							cmName: 'notconfiguredpanel'
-						}),
 						new CMDBuild.Administration.ModIcons({
 							cmName: 'gis-icons'
 						}),
 						new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
 							cmControllerType: CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController,
 							cmName: 'gis-filter-configuration'
-						}),
-						new CMDBuild.Administration.ModLayerOrder({
-							cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
-							cmName: 'gis-layers-order'
 						}),
 						new CMDBuild.view.administration.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController,
@@ -259,7 +259,7 @@
 					],
 					scope: this,
 					callback: function () {
-						CMDBuild.core.Splash.hide(function () {
+						CMDBuild.core.interfaces.service.Splash.hide(function () {
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
 						}, this);

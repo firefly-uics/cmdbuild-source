@@ -21,7 +21,7 @@
 		]
 	});
 
-	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheLookupFunctions", {
 
 		getLookupTypes: function() {
 			return lookupTypes;

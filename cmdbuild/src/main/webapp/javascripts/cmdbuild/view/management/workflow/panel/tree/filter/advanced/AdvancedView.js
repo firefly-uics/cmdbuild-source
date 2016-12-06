@@ -9,12 +9,12 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.filter.SearchClear}
+		 * @property {CMDBuild.core.buttons.icon.filter.SearchClear}
 		 */
 		clearButton: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.filter.SearchSet}
+		 * @property {CMDBuild.core.buttons.icon.filter.SearchSet}
 		 */
 		manageToggleButton: undefined,
 
@@ -30,7 +30,7 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				items: [
-					this.manageToggleButton = Ext.create('CMDBuild.core.buttons.iconized.filter.SearchSet', {
+					this.manageToggleButton = Ext.create('CMDBuild.core.buttons.icon.filter.SearchSet', {
 						enableToggle: true,
 						scope: this,
 
@@ -38,7 +38,7 @@
 							this.delegate.cmfg('onWorkflowTreeFilterAdvancedManageToggleButtonClick', state);
 						}
 					}),
-					this.clearButton = Ext.create('CMDBuild.core.buttons.iconized.filter.SearchClear', {
+					this.clearButton = Ext.create('CMDBuild.core.buttons.icon.filter.SearchClear', {
 						disabled: true,
 						scope: this,
 

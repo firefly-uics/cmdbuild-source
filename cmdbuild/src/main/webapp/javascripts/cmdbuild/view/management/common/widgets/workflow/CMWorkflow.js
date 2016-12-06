@@ -3,6 +3,8 @@
 	Ext.define("CMDBuild.view.management.common.widgets.workflow.CMWorkflow", {
 		extend: "Ext.panel.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		statics: {
 			WIDGET_NAME: ".Workflow"
 		},
@@ -35,7 +37,7 @@
 				_hidden: true,
 				hidden: true
 			});
-			_CMUtils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
+			CMDBuild.core.Utils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
 
 			Ext.apply(this, {
 				layout: 'border',

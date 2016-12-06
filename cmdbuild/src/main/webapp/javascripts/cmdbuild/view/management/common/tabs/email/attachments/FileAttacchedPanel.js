@@ -34,7 +34,7 @@
 						value: this.fileName,
 						flex: 1
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Download', {
+					Ext.create('CMDBuild.core.buttons.icon.Download', {
 						tooltip: CMDBuild.Translation.download,
 						scope: this,
 
@@ -42,7 +42,7 @@
 							this.delegate.cmfg('onTabEmailAttachmentDownloadButtonClick', this);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+					Ext.create('CMDBuild.core.buttons.icon.Remove', {
 						tooltip: CMDBuild.Translation.remove,
 						disabled: this.readOnly,
 						scope: this,

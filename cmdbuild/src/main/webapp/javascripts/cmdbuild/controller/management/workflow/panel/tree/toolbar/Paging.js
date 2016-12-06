@@ -46,7 +46,7 @@
 		enableButtonPrint: false,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.split.Print}
+		 * @property {CMDBuild.core.buttons.icon.split.Print}
 		 */
 		printButton: undefined,
 
@@ -95,7 +95,7 @@
 			if (Ext.isBoolean(this.enableButtonPrint) && this.enableButtonPrint)
 				items: Ext.Array.push(items, [
 					{ xtype: 'tbseparator' },
-					this.printButton = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+					this.printButton = Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 						delegate: this,
 						delegateEventPrefix: 'onWorkflowTree',
 						formatList: [

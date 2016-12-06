@@ -12,29 +12,27 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.BooleanAttribute, CMDBuild.WidgetBuilder
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(attribute) {
 	var headerWidth =  attribute.name.length * 9;
 
-	var h = new Ext.ux.CheckColumn({
-		header : attribute.description,
-		sortable : true,
-		dataIndex : attribute.name,
-		hidden : !attribute.isbasedsp,
-		width : headerWidth,
-		cmReadOnly: true
+	var h = Ext.create('Ext.grid.column.CheckColumn', {
+		dataIndex: attribute.name,
+		text: attribute.description,
+		hidden: !attribute.isbasedsp,
+		width: headerWidth,
+		sortable: true,
+		processEvent: Ext.emptyFn // Makes column readOnly
 	});
 
 	if (
 		!Ext.isEmpty(attribute)
 		&& !Ext.isEmpty(attribute.fieldmode)
 		&& attribute.fieldmode == "read"
-	) { // ReadOnly mode for us CheckColumn with processEvent parameter override
-		h = new Ext.ux.CheckColumn({
-			header : attribute.description,
-			sortable : true,
-			dataIndex : attribute.name,
-			hidden : !attribute.isbasedsp,
-			width : headerWidth,
-			cmReadOnly: true,
-
-			processEvent: Ext.emptyFn
+	) {
+		h = Ext.create('Ext.grid.column.CheckColumn', {
+			dataIndex: attribute.name,
+			text: attribute.description,
+			hidden: !attribute.isbasedsp,
+			width: headerWidth,
+			sortable: true,
+			processEvent: Ext.emptyFn // Makes column readOnly
 		});
 	}
 
@@ -42,10 +40,10 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 };
 /**
  * @override
- * @return Ext.form.BooleanDisplayField
+ * @return CMDBuild.view.common.field.display.Boolean
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function(attribute) {
-	var field = new Ext.form.BooleanDisplayField ({
+	var field = Ext.create('CMDBuild.view.common.field.display.Boolean', {
 		labelAlign: "right",
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description,
@@ -69,13 +67,15 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function
 };
 /**
  * @override
- * @return Ext.ux.form.XCheckbox
+ * @return Ext.form.field.Checkbox
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = function(attribute) {
-	return new Ext.ux.form.XCheckbox({
+	return Ext.create('Ext.form.field.Checkbox', {
 		labelAlign: "right",
 		fieldLabel: attribute.description || attribute.name,
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+		uncheckedValue: false,
+		inputValue: true,
 		name: attribute.name,
 		CMAttribute: attribute
 	});

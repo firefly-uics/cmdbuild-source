@@ -1,6 +1,6 @@
 {
 	"description": "日本語",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "アドミニストレーションモジュール",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "未知のエラーが発生しました",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "属性レベルマッピングテーブルは、正しく入力されている必要があります。",
 		"busyVisualControls": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
-		"classLevelMappingTableMustBeCorrectlyFilled": "クラスレベルマッピングテーブルは、正しく入力されている必要があります。",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "詳細",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "メッセージ送信に失敗しました。考えられる原因：1）サービスが展開されていない、2）URLおよび/またはエンドポイントのポート番号が正しくありません",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "名前空間、メソッド名とWebサービスのパラメータが正しいかどうかをチェックしてください>"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "リファレンスレベルマッピングテーブルは、正しく入力されている必要があります。",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "このフィールドは必須です",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "初期緯度",
 	"initialLongitude": "初期経度",
 	"initialZoomLevel": "初期ズームレベル",
+	"inputParameter": "入力パラメータ",
 	"instance": "インスタンス",
 	"instanceName": "インスタンス名",
 	"inverseDescription": "逆方向の説明",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "3Dビューアを開く",
 	"openRelationGraph": "リレーショングラフを開く",
 	"operativeInstructions": "操作説明",
+	"or": "<em>or</em>",
 	"origin": "ターゲット（起点)",
 	"otherOptions": "他のオプション",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "設定",
 	"setAsDefault": "既定値に設定",
 	"setFilter": "フィルターを設定",
-	"setLater": "入力パラメータ",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "一般オプション",
 	"showDetails": "詳細表示",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "ワークフロー属性",
 	"workflowEngine": "ワークフロー",
 	"write": "書込権限",
+	"xml": "XML",
 	"xpdlFile": "XPDL ファイル",
 	"xpdlFileUploaded": "XPDL ファイルアップロード",
 	"yes": "<em>Yes</em>",

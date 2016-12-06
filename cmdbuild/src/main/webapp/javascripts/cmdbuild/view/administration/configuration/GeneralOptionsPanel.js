@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
 		extend: 'Ext.form.Panel',
@@ -9,7 +9,7 @@
 			'CMDBuild.proxy.administration.configuration.GeneralOptions'
 		],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions'],
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.GeneralOptions}
@@ -17,7 +17,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		instanceNameField: undefined,
 
@@ -28,7 +28,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		fieldDefaults: {
@@ -37,7 +37,12 @@
 			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -55,14 +60,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationGeneralOptionsSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationGeneralOptionsAbortButtonClick');
 								}
 							})
@@ -75,18 +80,18 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
-							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 								name: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 								fieldLabel: CMDBuild.Translation.instanceName,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: true,
 
-								translationFieldConfig: {
+								config: {
 									type: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 									identifier: CMDBuild.core.constants.Proxy.INSTANCE_NAME, // Just for configuration validation
 									field: CMDBuild.core.constants.Proxy.INSTANCE_NAME
@@ -168,7 +173,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -197,7 +202,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -231,7 +236,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationGeneralOptionsTabShow');
 			}
 		}

@@ -79,17 +79,7 @@
 			this.fieldFilterAdvancedConfigurationSet({ enabledPanels: ['attribute', 'function', 'columnPrivileges'] });
 
 			// Build sub controller
-			this.controllerFilterWindow = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.Window', {
-				parentDelegate: this,
-				configuration: {
-					mode: 'grid',
-					tabs: {
-						attributes: {
-							selectAtRuntimeCheckDisabled: true // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
-						}
-					}
-				}
-			});
+			this.controllerFilterWindow = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.Window', { parentDelegate: this });
 			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.privileges.UiConfiguration', { parentDelegate: this });
 		},
 
@@ -189,8 +179,14 @@
 			});
 			this.selectedClass = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.constants.Proxy.NAME)); // Manual setup to avoid filter setup
 
-			this.controllerFilterWindow.fieldFilterAdvancedWindowSelectedRecordSet({ value: record });
-			this.controllerFilterWindow.show();
+			this.controllerFilterWindow.cmfg('fieldFilterAdvancedWindowConfigureAndShow', {
+				attributePrivileges: record.get(CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES),
+				className: record.get(CMDBuild.core.constants.Proxy.NAME),
+				classDescription: record.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+				disabledFeature: ['inputParameter'], // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
+				filter: this.cmfg('fieldFilterAdvancedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION),
+				mode: 'grid'
+			});
 		},
 
 		/**

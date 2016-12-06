@@ -18,6 +18,8 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Column or Object}
+		 *
+		 * @override
 		 */
 		buildColumn: function (parameters) {
 			return this.buildSubFieldClass().buildColumn(parameters);
@@ -25,6 +27,8 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildEditor: function () {
 			return this.buildSubFieldClass().buildEditor();
@@ -32,6 +36,8 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildField: function () {
 			return this.buildSubFieldClass().buildField();
@@ -39,13 +45,26 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildFieldReadOnly: function () {
 			return this.buildSubFieldClass().buildFieldReadOnly();
 		},
 
 		/**
-		 * @returns {Mixed}
+		 * @returns {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView}
+		 *
+		 * @override
+		 */
+		buildFilterCondition: function () {
+			return this.buildSubFieldClass().buildFilterCondition();
+		},
+
+		/**
+		 * @returns {Object}
+		 *
+		 * @private
 		 */
 		buildSubFieldClass: function () {
 			switch (this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {

@@ -1,6 +1,6 @@
 {
 	"description": "Português Portugal",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Módulo de Administração",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Ocorreu um erro",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Tabela de mapeamento de atributos deve ser correctamente preenchida",
 		"busyVisualControls": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Tabela de mapeamento de classes deve ser correctamente preenchida",
 		"copyAttachmentFailure": "Erro ao copiar anexo com o nome \"{0}\"",
 		"csvUploadOrDecodeFailure": "Erro no upload ou leitura do ficheiro CSV",
 		"detail": "Detalhes",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Falha no envio da mensagem. Possíveis causas: 1) O serviço não foi implementado; 2) A URL e/ou o número da porta do endpoint não está correta",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Confira se o nome do serviço, o nome do método e os parâmetros do serviço Web estão corretos"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Tabela de mapeamento de referências deve ser correctamente preenchida",
 		"reportsAnalizeError": "Erro ao analisar relatório",
 		"reportsImportError": "Erro ao importar relatório",
 		"requiredFieldMessage": "Este campo é obrigatório",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Latitude inicial",
 	"initialLongitude": "Longitude inicial",
 	"initialZoomLevel": "Nível de zoom inicial",
+	"inputParameter": "Parâmetro de entrada",
 	"instance": "Instância",
 	"instanceName": "Nome da instância",
 	"inverseDescription": "Descrição inversa",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "Abrir visualizador 3D",
 	"openRelationGraph": "Abrir grafo de relacionamentos",
 	"operativeInstructions": "Instrução operatório",
+	"or": "<em>or</em>",
 	"origin": "Origem",
 	"otherOptions": "Outras opções",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Configurado",
 	"setAsDefault": "Selecionar como padrão",
 	"setFilter": "Selecionar filtro",
-	"setLater": "Parâmetro de entrada",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Opções gerais",
 	"showDetails": "Mostrar detalhes",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "Atributos do processo",
 	"workflowEngine": "Motor de processos",
 	"write": "Escrita",
+	"xml": "XML",
 	"xpdlFile": "Ficheiro XPDL",
 	"xpdlFileUploaded": "Ficheiro XPDL carregado",
 	"yes": "<em>Yes</em>",

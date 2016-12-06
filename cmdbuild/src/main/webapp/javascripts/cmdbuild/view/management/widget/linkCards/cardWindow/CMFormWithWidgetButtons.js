@@ -1,3 +1,5 @@
+Ext.require('CMDBuild.core.Utils');
+
 Ext.define("CMDBuild.view.management.widget.linkCards.cardWindow.CMFormWithWidgetButtons", {
 	extend: "Ext.panel.Panel",
 
@@ -10,7 +12,7 @@ Ext.define("CMDBuild.view.management.widget.linkCards.cardWindow.CMFormWithWidge
 	initComponent: function() {
 		this.form = this.buildForm();
 
-		_CMUtils.forwardMethods(this, this.form, [
+		CMDBuild.core.Utils.forwardMethods(this, this.form, [
 			"loadCard",
 			"getValues",
 			"reset",
@@ -32,7 +34,7 @@ Ext.define("CMDBuild.view.management.widget.linkCards.cardWindow.CMFormWithWidge
 			items: []
 		});
 
-		_CMUtils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
+		CMDBuild.core.Utils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
 		this.widgets.hide();
 
 		Ext.apply(this, {

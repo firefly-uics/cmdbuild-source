@@ -1,6 +1,6 @@
 {
 	"description": "Français",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Module d'administration",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Une erreur est survenue",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "La table de correspondance des niveaux d'attributs doit être correctement renseignée",
 		"busyVisualControls": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "La table de correspondance des niveaux de classes doit être correctement renseignée",
 		"copyAttachmentFailure": "La copie de la pièce jointe \"{0}\" a échoué",
 		"csvUploadOrDecodeFailure": "Erreur lors du téléchargement ou du décodage du fichier CSV",
 		"detail": "Détails",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Erreur lors de l'envoi du message. Les causes possibles: 1) Le service n'est pas déployé; 2) L'URL et/ou le numéro de port ne sont pas corrects",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Vérifier si le nom, la mèthode et les paramètres du service web sont corrects"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "La table de correspondance des niveaux des listes de valeurs doit être correctement renseignée",
 		"reportsAnalizeError": "Erreur lors de l'analyse du rapport",
 		"reportsImportError": "Erreur lors de l'import du rapport",
 		"requiredFieldMessage": "Ce champ est obligatoire",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Latitude Initiale",
 	"initialLongitude": "Longitude Initiale",
 	"initialZoomLevel": "Zoom Initial",
+	"inputParameter": "Paramètre d'entrée",
 	"instance": "Instance",
 	"instanceName": "Nom de l'instance",
 	"inverseDescription": "Libellé, sens inverse",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "Ouvrir la visionneuse 3D",
 	"openRelationGraph": "Ouvrir le graphe de relations",
 	"operativeInstructions": "Instructions",
+	"or": "<em>or</em>",
 	"origin": "Origine",
 	"otherOptions": "Autres options",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Affecté",
 	"setAsDefault": "Choisir comme valeur par défaut",
 	"setFilter": "Configurer le filtre",
-	"setLater": "Paramètre d'entrée",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Options générales",
 	"showDetails": "Voir les détails",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "Attributs de processus",
 	"workflowEngine": "Processus",
 	"write": "Écrire",
+	"xml": "XML",
 	"xpdlFile": "Fichier XPDL",
 	"xpdlFileUploaded": "Fichier XPDL enregistré",
 	"yes": "<em>Yes</em>",
