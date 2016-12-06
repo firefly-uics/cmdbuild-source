@@ -440,6 +440,7 @@
 		OUTPUT: 'output',
 		OUTPUT_FOLDER: 'outputFolder',
 		OWNER: 'owner',
+		PAGE: 'page',
 		PARAMETERS: 'parameters',
 		PARAMS: 'params',
 		PARENT: 'parent',
