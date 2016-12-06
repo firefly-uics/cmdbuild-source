@@ -5,24 +5,11 @@
 
 		// configuration
 		grid : undefined,
-		// configuration
-
-		// override
-		doRefresh : function(value) {
-			if (this.grid) {
-				var sm = this.grid.getSelectionModel();
-				if (sm) {
-					sm.deselectAll();
-				}
-			}
-			return this.callOverridden(arguments);
-		}
+	// configuration
 	});
 
 	Ext.define('CMDBuild.view.management.classes.map.CardGrid', {
 		extend : 'Ext.grid.Panel',
-
-		requires : ['CMDBuild.proxy.gis.Card'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.classes.map.CardGrid}
@@ -35,13 +22,20 @@
 		map : undefined,
 
 		/**
-		 * @property {String}
+		 * @property {Boolean}
 		 */
-		oldClassName : undefined,
+		noSelect : false,
+
+		/**
+		 * @property {Object} oldCard
+		 * @property {Id} oldCard.cardId
+		 * @property {String} oldCard.cardId
+		 */
+		oldCard : undefined,
 
 		/**
 		 * @returns {Void}
-		 *
+		 * 
 		 * @override
 		 */
 		initComponent : function() {
@@ -60,8 +54,11 @@
 
 		listeners : {
 			select : function(row, record, index) {
-				this.interactionDocument.setNoZoom(true);
-				this.navigateOnCard(record);
+				if (!this.noSelect) {
+					this.interactionDocument.setNoZoom(true);
+					this.navigateOnCard(record);
+
+				}
 			}
 		},
 
@@ -72,7 +69,7 @@
 		 *            record.Id
 		 * @param {String}
 		 *            record.IdClass
-		 *
+		 * 
 		 * @returns {Void}
 		 */
 		navigateOnCard : function(record) {
@@ -89,21 +86,22 @@
 		},
 		// protected
 		getStoreExtraParams : function() {
-//			return Ext.isEmpty(this.delegate.cmfg('fieldStoreGet')) ? null : this.delegate.cmfg('fieldStoreGet')
-//					.getProxy().extraParams;
-			return null;
+			return this.store.getProxy().extraParams;
 		},
 		// protected
-		buildClassColumn: function() {
+		buildClassColumn : function() {
 			return {
-				header: CMDBuild.Translation.subClass,
-				width: 100,
-				sortable: false,
-				dataIndex: this.CLASS_COLUMN_DATA_INDEX
+				header : CMDBuild.Translation.subClass,
+				width : 100,
+				sortable : false,
+				dataIndex : this.CLASS_COLUMN_DATA_INDEX
 			};
 		},
 		refresh : function() {
 			var currentCard = this.interactionDocument.getCurrentCard();
+			if (sameCard(currentCard, this.oldCard)) {
+				return;
+			}
 			if (!currentCard) {
 				return;
 			}
@@ -112,24 +110,48 @@
 				return;
 			}
 			this.store.proxy.setExtraParam("className", currentClassName);
-			if (this.oldClassName !== currentClassName) {
+			if (!this.oldCard || this.oldCard.className !== currentClassName) {
+				updateTitle(currentClassName, this);
 				var cl = _CMCache.getEntryTypeByName(currentClassName);
 				var me = this;
+				me.store.proxy.setExtraParam("className", currentClassName);
 				if (cl) {
-					this.updateStoreForClassId(cl.get("id"), {
-						cb : function() {
-							me.store.proxy.setExtraParam("className", currentClassName);
-							me.store.loadPage(1);
-						}
-					});
+					this.updateStoreForClassId(cl.get("id"), function() {
+						me.jumpOnPosition(currentCard);
+					}, this);
 				}
-				this.oldClassName = currentClassName;
 			} else {
-				this.store.load({
-					scope : this,
-					callback : function(records, operation, success) {
-					}
-				});
+				this.jumpOnPosition(currentCard);
+			}
+			this.oldCard = currentCard;
+		},
+		jumpOnPosition : function(currentCard) {
+			this.getPosition(this.store, currentCard, function(position) {
+				this.store.proxy.setExtraParam("className", currentCard.className);
+				if (!position.found) {
+					this.store.loadPage(1);
+				} else {
+					var pageNumber = CMDBuild.core.Utils.getPageNumber(position.position);
+					var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
+					var relativeIndex = position.position % pageSize;
+					var me = this;
+					this.store.on('load',function (store, records, successful, eOpts ){
+						me.selectAt(relativeIndex);
+						});
+					this.store.loadPage(pageNumber);
+				}
+			}, this);
+
+		},
+		selectAt : function(index) {
+			try {
+				var sm = this.getSelectionModel();
+				sm.deselectAll();
+				this.noSelect = true;
+				sm.select(index);
+				this.noSelect = false;
+			} catch (e) {
+				this.noSelect = false;
 			}
 		},
 		// protected
@@ -150,39 +172,55 @@
 					 * description
 					 */
 					value = value.description;
-				} else if (typeof value == 'boolean') { // Localize the boolean
-					// values
+				} else if (typeof value == 'boolean') {
 					value = value ? Ext.MessageBox.buttonText.yes : Ext.MessageBox.buttonText.no;
-				} else if (typeof value == 'string') { // Strip HTML tags from
-					// strings in grid
+				} else if (typeof value == 'string') {
 					value = Ext.util.Format.stripTags(value);
 				}
 
 				return value;
 			};
 		},
+		getPosition : function(store, currentCard, callback, callbackScope) {
+			if (!currentCard.className) {
+				callback.apply(callbackScope, [ {
+					position : 0,
+					found : false
+				} ]);
+				return;
+			}
+			var params = Ext.apply({}, store.proxy.extraParams);
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = currentCard.cardId;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = currentCard.className;
+			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-		updateStoreForClassId : function(classId, o) {
+			CMDBuild.proxy.Card.readPosition({
+				params : params,
+				loadMask : false,
+				success : function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
+					var found = decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION];
+					callback.apply(callbackScope, [ {
+						position : position,
+						found : found
+					} ]);
+				}
+			});
+		},
+
+		updateStoreForClassId : function(classId, callback, callbackScope) {
 			var me = this;
 
 			this.loadAttributes(classId, function(attributes) {
-				function callCbOrLoadFirstPage(me) {
-					if (o && o.cb) {
-						o.cb.call(o.scope || me);
-					} else {
-						me.store.loadPage(1);
-					}
-				}
-
 				if (me.currentClassId == classId) {
-					callCbOrLoadFirstPage(me);
+					callback.apply(callbackScope, []);
 				} else {
 					me.currentClassId = classId;
 
 					if (me.gridSearchField) {
-						me.gridSearchField.setValue(""); // clear only the
-						// field without
-						// reload the grid
+						me.gridSearchField.setValue("");
 					}
 
 					if (me.cmAdvancedFilter)
@@ -195,8 +233,7 @@
 					}
 
 					me.setColumnsForClass(attributes);
-					// me.setGridSorting(attributes);
-					callCbOrLoadFirstPage(me);
+					callback.apply(callbackScope, []);
 				}
 			});
 		},
@@ -214,11 +251,11 @@
 		 *            fields
 		 * @param {Number}
 		 *            pageSize
-		 *
+		 * 
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 *
+		 * 
 		 * @private
-		 *
+		 * 
 		 * TODO: waiting for refactor (build grid proxy)
 		 */
 		buildStore : function(fields, pageSize) {
@@ -246,7 +283,11 @@
 						totalProperty : 'results',
 						idProperty : 'Id'
 					},
-					extraParams : this.getStoreExtraParams()
+					extraParams : null
+				},
+				listeners : {
+					beforeload : function(a, b, c) {
+					}
 				}
 			});
 		},
@@ -271,9 +312,7 @@
 			var headers = [];
 			var fields = [];
 
-			var c = _CMCache.getEntryTypeById(this.currentClassId);
-
-			if (c && c.get('superclass')) {
+			if (_CMUtils.isSuperclass(this.currentClassId)) {
 				headers.push(this.buildClassColumn());
 			}
 
@@ -284,21 +323,9 @@
 				if (header && header.dataIndex != 'IdClass_value') {
 
 					this.addRendererToHeader(header);
-					// There was a day in which I receved the order to skip the
-					// Notes attribute.
-					// Today, the boss told me to enable the notes. So, I leave
-					// the condition
-					// commented to document the that a day the notes were
-					// hidden.
-
-					// if (attribute.name != "Notes") {
 					headers.push(header);
-					// }
-
 					fields.push(header.dataIndex);
 				} else if (attribute.name == "Description") {
-					// FIXME Always add Description, even if hidden, for the
-					// reference popup
 					fields.push("Description");
 				}
 			}
@@ -329,6 +356,31 @@
 		});
 
 		me.bbar = me.pagingBar;
+	}
+
+	function getSorting(store) {
+		var sorters = store.getSorters();
+		var out = [];
+		for (var i = 0, l = sorters.length; i < l; ++i) {
+			var s = sorters[i];
+			out.push({
+				property : s.property,
+				direction : s.direction
+			});
+		}
+
+		return out;
+	}
+	function sameCard(newCard, oldCard) {
+		return false;
+		if (!oldCard || !newCard) {
+			return false;
+		}
+		return (oldCard.cardId == newCard.cardId && oldCard.className == newCard.className);
+	}
+	function updateTitle(className, grid) {
+		var prefix = CMDBuild.Translation.management.modcard.title;
+		grid.setTitle(prefix + className);
 	}
 
 })();

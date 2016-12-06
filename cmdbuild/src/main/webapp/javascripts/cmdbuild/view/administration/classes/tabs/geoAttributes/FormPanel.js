@@ -85,7 +85,6 @@
 		border: false,
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
-		overflowY: 'auto',
 		split: true,
 		region: 'center',
 
@@ -244,6 +243,7 @@
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.baseProperties,
 						flex: 1,
+						overflowY: 'auto',
 
 						layout: {
 							type: 'vbox',
@@ -286,7 +286,6 @@
 
 								listeners: {
 									scope: this,
-//									changecomplete: function (field, newValue, thumb, eOpts) {
 									drag: function (field, e, eOpts) {
 										this.delegate.cmfg('onClassesTabGeoAttributesMinZoomDrag');
 									}
@@ -313,6 +312,7 @@
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.style,
 						flex: 1,
+						overflowY: 'auto',
 
 						layout: {
 							type: 'vbox',
