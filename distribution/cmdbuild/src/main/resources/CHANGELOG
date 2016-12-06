@@ -68,6 +68,8 @@ FIXES
 
  * GIS navigation add button not sorted
 
+ * Workflow grid print button doesn't create a report of full workflow instances
+
 
 
 
