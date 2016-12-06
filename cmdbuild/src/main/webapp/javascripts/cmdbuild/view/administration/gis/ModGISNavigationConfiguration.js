@@ -2,13 +2,22 @@
 
 	var DEFAULT_MENU_TEXT = CMDBuild.Translation.selectAClass;
 
+	Ext.define('CMDBuild.view.administration.gis.CMClassesMenuButtonDelegate', {
+		/**
+		 *
+		 * @param {Ext.menu.Menu} menu
+		 * @param {CMDBUild EntryType} entryType
+		 */
+		onCMClassesMenuButtonItemClick: function(menu, entryType){}
+	});
+
 	Ext.define("CMDBuild.view.administration.gis.CMModGISNavigationConfiguration", {
 		extend: "Ext.form.Panel",
 		cmName: "gis-filter-configuration",
 
 		mixins: {
 			delegable: "CMDBuild.core.CMDelegable",
-			classesMenuDelegate: "CMDBuild.core.buttons.CMClassesMenuButtonDelegate"
+			classesMenuDelegate: "CMDBuild.view.administration.gis.CMClassesMenuButtonDelegate"
 		},
 
 		constructor: function() {
@@ -28,9 +37,7 @@
 			this.bodyStyle = "padding: 5px";
 
 			var me = this;
-			this.classesMenu = new CMDBuild.core.buttons.CMClassesMenuButton({
-				text: DEFAULT_MENU_TEXT
-			});
+			this.classesMenu = Ext.create('CMDBuild.view.administration.gis.CMClassesMenuButton', { text: DEFAULT_MENU_TEXT });
 
 			this.classesMenu.addDelegate(this);
 

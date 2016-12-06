@@ -148,14 +148,12 @@
 					undefinedHTML : '&nbsp;'
 				});
 				var scaleLineControl = new ol.control.ScaleLine();
-				this.map = new ol.Map(
-						{
-							controls : /* ol.control.defaults().extend( */[ zoomControl, scaleLineControl,
-									mousePositionControl ],// ),
-							target : configuration.mapDivId,
-							layers : [],
-							view : this.view
-						});
+				this.map = new ol.Map({
+					controls : [ zoomControl, scaleLineControl,	mousePositionControl ],
+					target : configuration.mapDivId,
+					layers : [],
+					view : this.view
+				});
 				me = this;
 				this.map.getView().on('propertychange', function(e) {
 					switch (e.key) {
@@ -262,10 +260,13 @@
 			var layers = this.getLayers();
 			var geoAttributes = {};
 			this.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.getGeometries) {
-					var layerName = layer.get("name");
-					geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+				var geoAttribute = layer.get("geoAttribute");
+				if (geoAttribute && geoAttribute.masterTableName === className) {
+					var adapter = layer.get("adapter");
+					if (adapter && adapter.getGeometries) {
+						var layerName = layer.get("name");
+						geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+					}
 				}
 			});
 			return geoAttributes;
@@ -302,9 +303,18 @@
 			var configuration = this.interactionDocument.getConfigurationMap();
 			var currentCard = this.interactionDocument.getCurrentCard();
 			var me = this;
+			var isVisible = this.interactionDocument.getVisible();
+			var currentZoom = this.getZoom();
 			this.interactionDocument.getLayersForCard(currentCard, function(layers) {
-				if (layers.length > 0 && layers[0].minZoom > 0) {
-					configuration.zoom = layers[0].minZoom
+				if (layers.length > 0 && layers[0].minZoom >= 0) {
+					if (! isVisible) {
+						configuration.zoom = layers[0].minZoom;
+					} else if (currentZoom < layers[0].minZoom) {
+						configuration.zoom = layers[0].minZoom;
+					}
+					else {
+						configuration.zoom = currentZoom;
+					}
 				}
 				me.view.setZoom(configuration.zoom);
 			});

@@ -40,6 +40,14 @@ NEW FEATURES
 
 FIXES
 
+ * Map cards list does not select the current element
+
+ * Navigation tree error on layers selection
+
+ * Error on map zoom when the user changes class
+
+ * Error on save Postgis features with more then one Gis layer active
+
  * Gis: Fault on Geo Server Layers
 
  * AdditionalActivityLabel metadata not correctly managed if relative attribute is not displayed in grid
@@ -75,6 +83,12 @@ FIXES
  * ReferenceFields not corretly managed inside widget workflow window
 
  * Advanced filter runtime with parameter not correctly managed
+
+ * GIS navigation add button not sorted
+
+ * Workflow grid print button doesn't create a report of full workflow instances
+
+ * Synchronous events implemented also for processes
 
 
 

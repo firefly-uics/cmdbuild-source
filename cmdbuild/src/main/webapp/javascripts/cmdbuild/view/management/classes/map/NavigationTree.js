@@ -84,7 +84,11 @@
 
 							this.mon(this, "checkchange", function(node, checked) {
 								Ext.suspendLayouts();
-								checkNodeChildren(node, checked);
+								if (checked) {
+									openAllNode(node);
+								} else {
+									closeAllNode(node);
+								}
 								Ext.resumeLayouts();
 								var allNodes = getAllNodes(this.getRootNode());
 								this.interactionDocument.setNavigables(allNodes);
@@ -132,7 +136,14 @@
 						},
 						loaded : function() {
 							var allNodes = getAllNodes(this.getRootNode());
+							for (var i = 0; i < allNodes.length; i++) {
+								var layerType = allNodes[i].get("className");
+								if (layerType === "GeoServer") {//NB:TODO
+									allNodes[i].remove();
+								}
+							}
 							this.interactionDocument.setStarted(true);
+							
 							this.interactionDocument.setNavigables(allNodes);
 						},
 						navigateOnCard : function(record) {
@@ -181,52 +192,102 @@
 			type : 'boolean'
 		} ]
 	});
-	function check(node, checked) {
-		node.set('checked', checked);
-		var isBase = node.get("baseNode");
-		checkParentNodes(node, checked, false);
-		checkBrotherNodes(node, !isBase);
-	}
-	function checkParentNodes(node, checked, overBase) {
-		var parentNode = node.parentNode;
-		if (parentNode) {
-			parentNode.set('checked', checked);
-			var isBase = parentNode.get("baseNode");
-			if (isBase) {
-				checkParentNodes(parentNode, checked, true);
-				checkBrotherNodes(parentNode, false);
-			} else if (overBase) {
-				checkParentNodes(parentNode, checked, true);
-			} else {
-				checkParentNodes(parentNode, checked, false);
-				checkBrotherNodes(parentNode, true);
-			}
-		}
-	}
-	function checkBrotherNodes(node, checked) {
-		var parentNode = node.parentNode;
-		if (!parentNode) {
-			return;
-		}
-		var children = parentNode.childNodes || parentNode.children || [];
-		for (var i = 0, l = children.length; i < l; ++i) {
-			var child = children[i];
-			if (child !== node) {
-				child.set('checked', checked);
-				checkNodeChildren(child, checked);
-			}
-
-		}
-	}
 	function checkNodeChildren(node, checked) {
 		var children = node.childNodes || node.children || [];
 		for (var i = 0, l = children.length; i < l; ++i) {
 			var child = children[i];
 			child.set("checked", checked);
 			checkNodeChildren(child, checked);
-
 		}
 
+	}
+	function check(node, checked) {
+		node.set('checked', checked);
+		var isBase = node.get("baseNode");
+		if (checked) {
+			var parents = getParents(node);
+			openFromRoot(parents);
+		} else {
+			closeAllNode(node);
+		}
+	}
+	function getParents(node) {
+		var parents = [];
+		while (node) {
+			parents.push({
+				node : node,
+				position : undefined
+			});
+			node = node.parentNode;
+		}
+		var overBase = true;
+		for (var i = parents.length - 1; i >= 0; i--) {
+			var isBase = parents[i].node.get("baseNode");
+			if (isBase) {
+				overBase = false;
+				parents[i].position = "base";
+			} else {
+				parents[i].position = (overBase) ? "over" : "under";
+
+			}
+		}
+		return parents;
+	}
+	function openFromRoot(parents) {
+		for (var i = parents.length - 1; i >= 0; i--) {
+			var navigable = parents[i];
+			navigable.node.set('checked', true);
+			if (navigable.position === "base") {
+				closeBrothers(navigable.node);
+			} else if (navigable.position === "under") {
+				openBrothers(navigable.node);
+			}
+			//over NOP
+		}
+		openAllNode(parents[0].node);
+	}
+	function openBrothers(node) {
+		var parentNode = node.parentNode;
+		var children = parentNode.childNodes || parentNode.children || [];
+		for (var i = 0; i < children.length; i++) {
+			var child = children[i];
+			if (child != node) {
+				openAllNode(child);
+			}
+		}
+	}
+	function closeBrothers(node) {
+		var parentNode = node.parentNode;
+		var children = parentNode.childNodes || parentNode.children || [];
+		for (var i = 0, l = children.length; i < l; ++i) {
+			var child = children[i];
+			if (child != node) {
+				closeAllNode(child)
+			}
+		}
+	}
+	function closeAllNode(node) {
+		node.set('checked', false);
+		var children = node.childNodes || node.children || [];
+		for (var i = 0, l = children.length; i < l; ++i) {
+			var child = children[i];
+			closeAllNode(child)
+		}
+	}
+	function openAllNode(node) {
+		node.set('checked', true);
+		var children = node.childNodes || node.children || [];
+		var baseInserted = false;
+		for (var i = 0, l = children.length; i < l; ++i) {
+			var child = children[i];
+			if (!baseInserted) {
+				openAllNode(child);
+				baseInserted = (child.get("baseNode") === true) ;
+			}
+			else {
+				closeAllNode(child);
+			}
+		}
 	}
 	function selectNode(tree, node) {
 		if (!node) {
