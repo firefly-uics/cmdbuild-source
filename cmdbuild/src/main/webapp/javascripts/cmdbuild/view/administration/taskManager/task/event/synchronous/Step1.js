@@ -99,7 +99,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: _CMCache.getClassesAndProcessesStore(),
+				store: _CMCache.getClassesStore(),
 				queryMode: 'local',
 
 				listeners: {
