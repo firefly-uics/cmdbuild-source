@@ -546,24 +546,27 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onWorkflowModuleInit: function (node) {
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
+		onWorkflowModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manual loadMask manage (show)
 
-				this.buildLocalCache(node, function () {
+				this.buildLocalCache(parameters.node, function () {
 					CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manual loadMask manage (hide)
 
 					this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
-					this.cmfg('onWorkflowWokflowSelect', node); // FIXME: node rawData property is for legacy mode with workflowState module
+					this.cmfg('onWorkflowWokflowSelect', parameters.node); // FIXME: node rawData property is for legacy mode with workflowState module
 
-					this.onModuleInit(node); // Custom callParent() implementation
+					this.onModuleInit(parameters); // Custom callParent() implementation
 				});
 			}
 		},

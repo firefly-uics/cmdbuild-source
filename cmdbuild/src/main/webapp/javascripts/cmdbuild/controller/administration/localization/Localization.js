@@ -68,23 +68,26 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onLocalizationModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
-				this.sectionController = this.buildSectionController(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
+		onLocalizationModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
+				this.sectionController = this.buildSectionController(parameters.node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
 
 				this.view.removeAll(true);
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.view.add(this.sectionController.getView());
 
 				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		}
 	});

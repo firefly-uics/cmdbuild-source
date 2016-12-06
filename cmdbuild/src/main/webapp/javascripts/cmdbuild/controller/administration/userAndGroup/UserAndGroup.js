@@ -79,15 +79,18 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onUserAndGroupModuleInit: function (node) {
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
-				var selectedAccordionData = node.getData();
+		onUserAndGroupModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
+				var selectedAccordionData = parameters.node.getData();
 				selectedAccordionData[CMDBuild.core.constants.Proxy.ID] = selectedAccordionData[CMDBuild.core.constants.Proxy.ENTITY_ID];
 
 				this.userAndGroupSelectedAccordionSet({ value: selectedAccordionData });
@@ -96,7 +99,7 @@
 
 				this.view.getLayout().getActiveItem().fireEvent('show'); // Manual show event fire because was already selected
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

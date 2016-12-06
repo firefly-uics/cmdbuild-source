@@ -58,13 +58,16 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.management.report.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.management.report.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onReportModuleInit: function(node) {
-			if (!Ext.Object.isEmpty(node)) {
-				var nodeData = node.getData();
+		onReportModuleInit: function(parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+_debug('onReportModuleInit', parameters);
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
+				var nodeData = parameters.node.getData();
 				nodeData[CMDBuild.core.constants.Proxy.TYPE] = nodeData[CMDBuild.core.constants.Proxy.ENTITY_ID];
 
 				this.reportSelectedAccordionSet({ value: nodeData });
@@ -78,7 +81,7 @@
 					}
 				}
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.view.add(this.sectionController.getView());
 
@@ -94,7 +97,7 @@
 					}
 				});
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

@@ -30,7 +30,7 @@
 
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleShow', {
 					identifier: "notconfiguredpanel",
-					parameters: msg
+					params: msg
 				});
 				return false;
 			}
