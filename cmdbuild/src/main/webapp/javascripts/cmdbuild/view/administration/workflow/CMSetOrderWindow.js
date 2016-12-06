@@ -5,10 +5,8 @@
 	Ext.define('CMDBuild.view.administration.workflow.CMSetOrderWindow', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 
-		height: 300,
-		width: 300,
 		buttonAlign: 'center',
-
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.administration.modClass.attributeProperties.set_sorting_criteria,
 
 		initComponent: function() {

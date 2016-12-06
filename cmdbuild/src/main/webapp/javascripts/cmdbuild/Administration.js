@@ -29,6 +29,7 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.interfaces.Init'); // Interfaces configuration
 			Ext.create('CMDBuild.core.Data'); // Data connections configuration
+			Ext.create('CMDBuild.core.Locale'); // Localization setup
 			Ext.create('CMDBuild.core.cache.Cache');
 
 			CMDBuild.core.Administration.init();

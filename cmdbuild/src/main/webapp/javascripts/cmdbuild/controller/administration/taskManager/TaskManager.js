@@ -76,79 +76,119 @@
 			this.controllerGrid = Ext.create('CMDBuild.controller.administration.taskManager.Grid', { parentDelegate: this });
 
 			// Inject panels
-			this.view.add(this.controllerGrid.getView());
-			this.view.add(this.controllerForm.getView());
+			this.view.add([
+				this.controllerGrid.getView(),
+				this.controllerForm.getView()
+			]);
 		},
 
 		/**
 		 * @param {Array} type
 		 */
 		configureAddButton: function (type) {
-			if (Ext.isArray(type) && !Ext.isEmpty(type)) {
-				this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).removeAll();
+			// Error handling
+				if (!Ext.isArray(type) || Ext.isEmpty(type))
+					return _error('configureAddButton(): unmanaged type parameter', this, type);
+			// END: Error handling
 
-				switch (type[0]) {
-					case 'all': {
-						this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
-							Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
+			var componentToolbar = this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP);
+
+			componentToolbar.removeAll();
+
+			switch (type[0]) {
+				case 'all':
+					return componentToolbar.add(
+						Ext.create('CMDBuild.core.buttons.icon.split.add.Add', {
+							text: CMDBuild.Translation.addTask,
+
+							menu: Ext.create('Ext.menu.Menu', {
+								items: [
+									{
+										text: CMDBuild.Translation.connector,
+										scope: this,
+
+										handler: function (button, e) {
+											this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['connector']);
+										}
+									},
+									{
+										text: CMDBuild.Translation.email,
+										scope: this,
+
+										handler: function (button, e) {
+											this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['email']);
+										}
+									},
+									{
+										text: CMDBuild.Translation.event,
+										menu: [
+											{
+												text: CMDBuild.Translation.asynchronous,
+												scope: this,
+
+												handler: function (button, e) {
+													this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'asynchronous']);
+												}
+											},
+											{
+												text: CMDBuild.Translation.synchronous,
+												scope: this,
+
+												handler: function (button, e) {
+													this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'synchronous']);
+												}
+											}
+										]
+									},
+									{
+										text: CMDBuild.Translation.workflow,
+										scope: this,
+
+										handler: function (button, e) {
+											this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['workflow']);
+										}
+									},
+									{
+										text: CMDBuild.Translation.others,
+										menu: [
+											{
+												text: CMDBuild.Translation.sendEmail,
+												scope: this,
+
+												handler: function (button, e) {
+													this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['generic']);
+												}
+											}
+										]
+									}
+								]
+							})
+						})
+					);
+
+				case 'event':
+					if (Ext.isEmpty(type[1]))
+						return componentToolbar.add(
+							Ext.create('CMDBuild.core.buttons.icon.split.add.Add', {
 								text: CMDBuild.Translation.addTask,
 
 								menu: Ext.create('Ext.menu.Menu', {
 									items: [
-										{
-											text: CMDBuild.Translation.connector,
-											scope: this,
-
-											handler: function (button, e) {
-												this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['connector']);
-											}
-										},
-										{
-											text: CMDBuild.Translation.email,
-											scope: this,
-
-											handler: function (button, e) {
-												this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['email']);
-											}
-										},
 										{
 											text: CMDBuild.Translation.event,
 											menu: [
 												{
 													text: CMDBuild.Translation.asynchronous,
 													scope: this,
-
-													handler: function (button, e) {
+													handler: function () {
 														this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'asynchronous']);
 													}
 												},
 												{
 													text: CMDBuild.Translation.synchronous,
 													scope: this,
-
-													handler: function (button, e) {
+													handler: function () {
 														this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'synchronous']);
-													}
-												}
-											]
-										},
-										{
-											text: CMDBuild.Translation.workflow,
-											scope: this,
-
-											handler: function (button, e) {
-												this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['workflow']);
-											}
-										},
-										{
-											text: CMDBuild.Translation.others,
-											menu: [
-												{
-													text: CMDBuild.Translation.sendEmail,
-													scope: this,
-
-													handler: function (button, e) {
-														this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['generic']);
 													}
 												}
 											]
@@ -157,68 +197,18 @@
 								})
 							})
 						);
-					} break;
 
-					case 'event': {
-						if (Ext.isEmpty(type[1])) {
-							this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
-									Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
-										text: CMDBuild.Translation.addTask,
+				default:
+					return componentToolbar.add(
+						Ext.create('CMDBuild.core.buttons.icon.add.Add', {
+							text: CMDBuild.Translation.addTask,
+							scope: this,
 
-										menu: Ext.create('Ext.menu.Menu', {
-											items: [
-												{
-													text: CMDBuild.Translation.event,
-													menu: [
-														{
-															text: CMDBuild.Translation.asynchronous,
-															scope: this,
-															handler: function () {
-																this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'asynchronous']);
-															}
-														},
-														{
-															text: CMDBuild.Translation.synchronous,
-															scope: this,
-															handler: function () {
-																this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'synchronous']);
-															}
-														}
-													]
-												}
-											]
-										})
-									})
-								);
-						} else {
-							this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
-								Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-									text: CMDBuild.Translation.addTask,
-									scope: this,
-
-									handler: function (button, e) {
-										this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', type);
-									}
-								})
-							);
-						}
-					} break;
-
-					default: {
-						this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: CMDBuild.Translation.addTask,
-								scope: this,
-
-								handler: function (button, e) {
-									this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', type);
-								}
-							})
-						);
-					}
-				}
-			} else {
-				_error('configureAddButton(): unmanaged type property', this, type);
+							handler: function (button, e) {
+								this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', type);
+							}
+						})
+					);
 			}
 		},
 
@@ -251,20 +241,19 @@
 		},
 
 		/**
-		 * Forwarder method
-		 *
 		 * @param {CMDBuild.model.administration.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
 		onTaskManagerRowSelected: function (record) {
-			if (Ext.isObject(record) && !Ext.Object.isEmpty(record)) {
-				this.taskManagerSelectedTaskSet({ value: record });
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+					return _error('onTaskManagerRowSelected(): empty or wrong record parameter', this, record);
+			// END: Error handling
 
-				this.controllerForm.cmfg('onTaskManagerFormRowSelected');
-			} else {
-				_error('onTaskManagerRowSelected(): empty or wrong record parameter', this, record);
-			}
+			this.taskManagerSelectedTaskSet({ value: record });
+
+			this.controllerForm.cmfg('onTaskManagerFormRowSelected');
 		},
 
 		// SelectedTask property functions
@@ -298,8 +287,6 @@
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
-			 *
-			 * @private
 			 */
 			taskManagerSelectedTaskReset: function (parameters) {
 				this.propertyManageReset('selectedTask');
@@ -323,23 +310,23 @@
 
 		/**
 		 * @param {Object} parameters
-		 * @param {Object} parameters.enableClearForm
-		 * @param {Object} parameters.enableClearGrid
+		 * @param {Object} parameters.disableClearForm
+		 * @param {Object} parameters.disableClearGrid
 		 *
 		 * @returns {Void}
 		 */
 		taskManagerClearSelection: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
-			parameters.enableClearForm = Ext.isBoolean(parameters.enableClearForm) ? parameters.enableClearForm : true;
-			parameters.controllerGrid = Ext.isBoolean(parameters.controllerGrid) ? parameters.controllerGrid : true;
+			parameters.disableClearForm = Ext.isBoolean(parameters.disableClearForm) ? parameters.disableClearForm : false;
+			parameters.disableClearGrid = Ext.isBoolean(parameters.disableClearGrid) ? parameters.disableClearGrid : false;
 
 			this.taskManagerSelectedTaskReset();
 
 			// Forward to sub controllers
-			if (parameters.enableClearForm)
+			if (!parameters.disableClearForm)
 				this.controllerForm.cmfg('taskManagerFormClearSelection');
 
-			if (parameters.enableClearGrid)
+			if (!parameters.disableClearGrid)
 				this.controllerGrid.cmfg('taskManagerGridClearSelection');
 		}
 	});

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.configuration.ServerPanel', {
 		extend: 'Ext.form.Panel',
@@ -13,7 +13,12 @@
 		frame: false,
 		overflowY: 'auto',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.FieldSet', {
@@ -25,7 +30,7 @@
 								text: CMDBuild.Translation.clearCache,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationServerClearCacheButtonClick');
 								}
 							})
@@ -40,7 +45,7 @@
 								text: CMDBuild.Translation.serviceSynchronization,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationServerServiceSynchButtonClick');
 								}
 							})
@@ -55,7 +60,7 @@
 								text: CMDBuild.Translation.unlockAllCards,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationServerUnlockCardsButtonClick');
 								}
 							})

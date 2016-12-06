@@ -7,25 +7,52 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DATE, type: 'date' },
-			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'auto' }, // 2nd level - a.k.a. entityId
-			{ name: CMDBuild.core.constants.Proxy.ITEM, type: 'auto' }, // 3rd level - card/workflow/item usually selected from grid
-			{ name: CMDBuild.core.constants.Proxy.MODULE_ID, type: 'string' }, // 1st level - module identifier
-			{ name: CMDBuild.core.constants.Proxy.SECTION, type: 'auto', defaultValue: {} },  // 4th level
-			{ name: CMDBuild.core.constants.Proxy.SUB_SECTION, type: 'auto', defaultValue: {} }  // 5th level
+			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'auto' }, // Selected entryType
+			{ name: CMDBuild.core.constants.Proxy.ITEM, type: 'auto' }, // Item selected from grid
+			{ name: CMDBuild.core.constants.Proxy.MODULE_ID, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.SECTION, type: 'auto', defaultValue: {} },  // Form tab object
+			{ name: CMDBuild.core.constants.Proxy.SUB_SECTION, type: 'auto', defaultValue: {} }  // Form tab sub-section
 		],
 
 		/**
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (data) {
-			data = Ext.clone(data);
+			data = Ext.isObject(data) ? data : {};
+
+			// Apply defaults
+			Ext.applyIf(data, {
+				entryType :{},
+				item :{},
+				section :{},
+				subSection :{}
+			});
+
 			data[CMDBuild.core.constants.Proxy.DATE] = new Date();
-			data[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.model.navigation.chronology.RecordProperty', data[CMDBuild.core.constants.Proxy.ENTRY_TYPE]);
-			data[CMDBuild.core.constants.Proxy.ITEM] = Ext.create('CMDBuild.model.navigation.chronology.RecordProperty', data[CMDBuild.core.constants.Proxy.ITEM]);
-			data[CMDBuild.core.constants.Proxy.SECTION] = Ext.create('CMDBuild.model.navigation.chronology.RecordProperty', data[CMDBuild.core.constants.Proxy.SECTION]);
-			data[CMDBuild.core.constants.Proxy.SUB_SECTION] = Ext.create('CMDBuild.model.navigation.chronology.RecordProperty', data[CMDBuild.core.constants.Proxy.SUB_SECTION]);
+			data[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create(
+				Ext.isNumber(data[CMDBuild.core.constants.Proxy.ENTRY_TYPE][CMDBuild.core.constants.Proxy.ID])
+					? 'CMDBuild.model.navigation.chronology.PropertyNumber' : 'CMDBuild.model.navigation.chronology.PropertyString',
+				data[CMDBuild.core.constants.Proxy.ENTRY_TYPE]
+			);
+			data[CMDBuild.core.constants.Proxy.ITEM] = Ext.create(
+				Ext.isNumber(data[CMDBuild.core.constants.Proxy.ITEM][CMDBuild.core.constants.Proxy.ID])
+					? 'CMDBuild.model.navigation.chronology.PropertyNumber' : 'CMDBuild.model.navigation.chronology.PropertyString',
+				data[CMDBuild.core.constants.Proxy.ITEM]
+			);
+			data[CMDBuild.core.constants.Proxy.SECTION] = Ext.create(
+				Ext.isNumber(data[CMDBuild.core.constants.Proxy.SECTION][CMDBuild.core.constants.Proxy.ID])
+					? 'CMDBuild.model.navigation.chronology.PropertyNumber' : 'CMDBuild.model.navigation.chronology.PropertyString',
+				data[CMDBuild.core.constants.Proxy.SECTION]
+			);
+			data[CMDBuild.core.constants.Proxy.SUB_SECTION] = Ext.create(
+				Ext.isNumber(data[CMDBuild.core.constants.Proxy.SUB_SECTION][CMDBuild.core.constants.Proxy.ID])
+					? 'CMDBuild.model.navigation.chronology.PropertyNumber' : 'CMDBuild.model.navigation.chronology.PropertyString',
+				data[CMDBuild.core.constants.Proxy.SUB_SECTION]
+			);
 
 			this.callParent(arguments);
 		},
@@ -47,26 +74,28 @@
 		},
 
 		/**
-		 * @param {Array or String} attributePath
+		 * @param {Array or String} property
 		 *
 		 * @returns {Mixed}
 		 *
 		 * @override
 		 */
-		get: function (attributePath) {
-			var requiredAttribute = this;
+		get: function (property) {
+			if (Ext.isArray(property) && !Ext.isEmpty(property)) {
+				var returnValue = this;
 
-			if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath)) {
-				Ext.Array.forEach(attributePath, function (attributeName, i, allAttributeNames) {
-					if (
-						!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
-						&& !Ext.isEmpty(requiredAttribute) && Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)
-					) {
-						requiredAttribute = requiredAttribute.get(attributeName);
-					}
+				Ext.Array.forEach(property, function (propertyName, i, allPropertyNames) {
+					if (Ext.isObject(returnValue) && !Ext.Object.isEmpty(returnValue))
+						if (Ext.isFunction(returnValue.get)) { // Ext.data.Model manage
+							returnValue = returnValue.get(propertyName);
+						} else if (!Ext.isEmpty(returnValue[propertyName])) { // Simple object manage
+							returnValue = returnValue[propertyName];
+						} else { // Not found
+							returnValue = null;
+						}
 				}, this);
 
-				return requiredAttribute;
+				return returnValue;
 			}
 
 			return this.callParent(arguments);

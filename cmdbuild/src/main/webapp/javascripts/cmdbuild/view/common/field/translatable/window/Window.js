@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.translatable.window.Window', {
 		extend: 'CMDBuild.core.window.AbstractModal',
@@ -9,20 +9,34 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {String}
+		 */
+		baseTitle: CMDBuild.Translation.translations,
+
+		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.FormPanel}
 		 */
 		form: undefined,
 
 		autoHeight: true,
-		autoWidth: true,
 		autoScroll: true,
+		autoWidth: true,
 		border: false,
+		closeAction: 'hide',
+		dimensionsMode: 'absolute',
 		frame: false,
-		layout: 'fit',
 
-		baseTitle: CMDBuild.Translation.translations,
+		dimensions: {
+			height: 'auto',
+			width: 800
+		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -40,34 +54,26 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onTranslatableWindowConfirmButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onFieldTranslatableWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onTranslatableWindowAbortButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onFieldTranslatableWindowAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.form = Ext.create('CMDBuild.view.common.field.translatable.window.FormPanel', {
-						delegate: this.delegate
-					})
+					this.form = Ext.create('CMDBuild.view.common.field.translatable.window.FormPanel', { delegate: this.delegate })
 				]
 			});
 
 			this.callParent(arguments);
-		},
-
-		listeners: {
-			beforeshow: function(window, eOpts) {
-				this.delegate.cmfg('onTranslatableWindowBeforeShow');
-			}
 		}
 	});
 

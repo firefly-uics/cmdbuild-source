@@ -58,13 +58,6 @@
 			}
 		},
 
-		getFieldSetForFilter: function(attribute) {
-			if (attributeTypeIsNotHandled(attribute)) {
-				return undefined;
-			}
-			return attributesMap[attribute.type].getFieldSetForFilter(attribute);
-		},
-
 		getCellEditorForAttribute: function(attribute) {
 			if (attributeTypeIsNotHandled(attribute)) {
 				return undefined;

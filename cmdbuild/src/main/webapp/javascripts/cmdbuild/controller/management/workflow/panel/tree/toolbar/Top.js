@@ -61,7 +61,7 @@
 		/**
 		 * @param {Array} type
 		 *
-		 * @returns {CMDBuild.core.buttons.iconized.split.add.Workflow or CMDBuild.core.buttons.iconized.add.Workflow}
+		 * @returns {CMDBuild.core.buttons.icon.split.add.Workflow or CMDBuild.core.buttons.icon.add.Workflow}
 		 *
 		 * @private
 		 */
@@ -80,7 +80,7 @@
 
 				this.buildMenuChildren(selectedWorkflowDescendants, menuItems);
 
-				return Ext.create('CMDBuild.core.buttons.iconized.split.add.Workflow', {
+				return Ext.create('CMDBuild.core.buttons.icon.split.add.Workflow', {
 					text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 					itemId: 'addButton',
 					disabled: this.isAddButtonDisabled(menuItems),
@@ -98,7 +98,7 @@
 					isEnableActionEnabled: this.isEnableActionEnabled
 				});
 			} else {
-				return Ext.create('CMDBuild.core.buttons.iconized.add.Workflow', {
+				return Ext.create('CMDBuild.core.buttons.icon.add.Workflow', {
 					text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 					itemId: 'addButton',
 					disabled: this.isAddButtonDisabled(),

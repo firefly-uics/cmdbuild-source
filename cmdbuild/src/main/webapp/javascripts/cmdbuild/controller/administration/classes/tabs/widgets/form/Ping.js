@@ -56,7 +56,7 @@
 			var widgetDefinition = CMDBuild.model.administration.classes.tabs.widgets.ping.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
-			widgetDefinition[CMDBuild.core.constants.Proxy.TEMPLATES] = this.view.presetGrid.getData(CMDBuild.core.constants.Proxy.DATA);
+			widgetDefinition[CMDBuild.core.constants.Proxy.TEMPLATES] = this.view.presetGrid.getValue(CMDBuild.core.constants.Proxy.DATA);
 
 			return widgetDefinition;
 		},
@@ -70,7 +70,7 @@
 		 */
 		classesTabWidgetsWidgetPingLoadRecord: function (record) {
 			this.view.loadRecord(record);
-			this.view.presetGrid.setData(record.get(CMDBuild.core.constants.Proxy.TEMPLATES));
+			this.view.presetGrid.setValue(record.get(CMDBuild.core.constants.Proxy.TEMPLATES));
 		}
 	});
 

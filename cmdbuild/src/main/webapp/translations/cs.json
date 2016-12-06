@@ -1,6 +1,6 @@
 {
 	"description": "Čeština",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Administrační modul",
 		"modClass": {
@@ -1361,6 +1361,7 @@
 	"widget": "Nástroje",
 	"workflow": "Proces",
 	"workflowAttributes" : "Atributy procesu",
+	"xml": "XML",
 	"workflowEngine": "Procesní server",
 	"write": "Zapsat",
 	"xpdlFile": "XPDL soubor",

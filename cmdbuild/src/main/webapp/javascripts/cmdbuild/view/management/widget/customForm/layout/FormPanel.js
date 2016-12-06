@@ -13,12 +13,12 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Export}
+		 * @property {CMDBuild.core.buttons.icon.Export}
 		 */
 		exportButton: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Import}
+		 * @property {CMDBuild.core.buttons.icon.Import}
 		 */
 		importButton: undefined,
 
@@ -46,7 +46,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.importButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
+							this.importButton = Ext.create('CMDBuild.core.buttons.icon.Import', {
 								text: CMDBuild.Translation.import,
 								scope: this,
 
@@ -54,14 +54,14 @@
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
-							this.exportButton = Ext.create('CMDBuild.core.buttons.iconized.Export', {
+							this.exportButton = Ext.create('CMDBuild.core.buttons.icon.Export', {
 								scope: this,
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormExportButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
+							Ext.create('CMDBuild.core.buttons.icon.Reload', {
 								text: CMDBuild.Translation.resetToDefault,
 								scope: this,
 

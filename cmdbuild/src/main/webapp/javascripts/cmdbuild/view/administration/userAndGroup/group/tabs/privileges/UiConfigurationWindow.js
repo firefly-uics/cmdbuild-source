@@ -19,11 +19,16 @@
 		form: undefined,
 
 		autoHeight: true,
-		closeAction: 'hide',
 		border: false,
+		closeAction: 'hide',
+		dimensionsMode: 'absolute',
 		frame: false,
-		layout: 'fit',
 		title: CMDBuild.Translation.buttonsToDisable,
+
+		dimensions: {
+			height: 'auto',
+			width: 200
+		},
 
 		/**
 		 * @returns {Void}
@@ -102,9 +107,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Custom window width
-			this.width = 200;
 		},
 
 		listeners: {

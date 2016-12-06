@@ -54,7 +54,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Pdf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.pdf,
 								scope: this,
@@ -66,7 +66,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Odt', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.odt,
 								scope: this,
@@ -78,7 +78,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Rtf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.rtf,
 								scope: this,
@@ -90,7 +90,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
+							Ext.create('CMDBuild.core.buttons.icon.fileTypes.Csv', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.csv,
 								scope: this,

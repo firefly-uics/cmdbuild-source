@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.field.filter.runtimeParameters.RuntimeParametersWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.runtimeParameters.RuntimeParameters}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
@@ -16,13 +16,16 @@
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.GROUP, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.HIDDEN, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.constants.Proxy.IP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY, type: 'auto', defaultValue: [] },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.METADATA, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true, defaultValue: 20 }, // Max JavaScript number precision
 			{ name: CMDBuild.core.constants.Proxy.SCALE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.SHOW_COLUMN, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.constants.Proxy.SORT_DIRECTION, type: 'string' },
@@ -37,11 +40,14 @@
 		 * Function to translate old CMDBuild attributes configuration objects to new one used from new FieldManager
 		 *
 		 * @param {Object} data
+		 *
+		 * @returns {Void}
+		 *
+		 * FIXME: remove function and join to constructor
 		 */
-		setAdaptedData: function(data) {
-			if (!Ext.isEmpty(data) && Ext.isObject(data)) {
+		setAdaptedData: function (data) {
+			if (Ext.isObject(data) && !Ext.Object.isEmpty(data)) {
 				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
-				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
 				this.set(CMDBuild.core.constants.Proxy.MANDATORY, data['isnotnull']);
 				this.set(CMDBuild.core.constants.Proxy.SHOW_COLUMN, data['isbasedsp']);
 				this.set(CMDBuild.core.constants.Proxy.UNIQUE, data['isunique']);
@@ -77,16 +83,23 @@
 						this.set(CMDBuild.core.constants.Proxy.HIDDEN, true);
 					}
 
-				// ForeignKey's specific
+				// ForeignKey or reference specific
 				if (!Ext.isEmpty(data['fkDestination']))
 					this.set(CMDBuild.core.constants.Proxy.TARGET_CLASS, data['fkDestination']);
+
+				if (!Ext.isEmpty(data['referencedClassName']))
+					this.set(CMDBuild.core.constants.Proxy.TARGET_CLASS, data['referencedClassName']);
+
+				// Lookup specific
+				if (!Ext.isEmpty(data['lookupchain']))
+					this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE_HIERARKY, data['lookupchain']);
 			}
 		},
 
 		/**
 		 * @returns {Boolean}
 		 */
-		isValid: function() {
+		isValid: function () {
 			var customValidationValue = true;
 
 			switch (this.get(CMDBuild.core.constants.Proxy.TYPE)) {

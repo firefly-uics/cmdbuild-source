@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.field.trigger.cron.window.EditWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.trigger.cron.window.Edit}

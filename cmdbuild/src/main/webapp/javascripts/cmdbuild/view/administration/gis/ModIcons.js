@@ -47,10 +47,12 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			allowBlank: false,
 			vtype: 'commentextended'
 		});
-		this.uploadForm = new Ext.form.FormPanel({
+		this.uploadForm = Ext.create('CMDBuild.view.administration.gis.FormBasePanel', {
 			monitorValid: true,
 			fileUpload: true,
-			plugins: [new CMDBuild.CallbackPlugin()],
+			plugins: [
+				Ext.create('CMDBuild.view.administration.gis.CallbackPlugin')
+			],
 			region: 'south',
 			height: "40%",
 			split: true,
@@ -121,7 +123,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 	//private
 	buildUIButtons: function() {
-		this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+		this.addButton = Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 			scope: this,
 			handler: this.onAddClick
 		});
@@ -139,13 +141,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			handler: this.onAbort
 		});
 
-		this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+		this.modifyButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onModify
 	    });
 
-		this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+		this.removeButton = Ext.create('CMDBuild.core.buttons.icon.Remove', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onRemove

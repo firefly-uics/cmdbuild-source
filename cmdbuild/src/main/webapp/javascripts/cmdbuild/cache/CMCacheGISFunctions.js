@@ -2,7 +2,7 @@
 	var layers = undefined;
 	var layersStore = undefined;
 
-	Ext.define("CMDBUild.cache.CMCacheGisFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheGisFunctions", {
 		getAllLayers: function(cb) {
 			if (typeof layers == "undefined") {
 				CMDBuild.proxy.gis.Layer.readAll({
@@ -20,7 +20,7 @@
 			var me = this;
 			if (typeof layersStore == "undefined") {
 				layersStore =  new Ext.data.Store({
-					model: "GISLayerModel",
+					model: "CMDBuild.model.gis.GISLayerModel",
 					sorters: {
 						property: 'index',
 						direction: 'ASC'

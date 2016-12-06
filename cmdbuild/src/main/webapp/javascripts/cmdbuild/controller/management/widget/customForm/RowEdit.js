@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.widget.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.widget.customForm.layout.Grid}
@@ -79,7 +82,7 @@
 						var item = undefined;
 
 						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+							var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, 'system.template.');
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({
@@ -103,7 +106,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
+						if (attribute['fieldmode'] == 'read')
 							item.setDisabled(true);
 
 						// Force execution of template resolver

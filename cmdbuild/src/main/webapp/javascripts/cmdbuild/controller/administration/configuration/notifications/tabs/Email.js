@@ -78,7 +78,7 @@
 					return _error('onConfigurationNotificationsTabEmailShow(): empty configuration model', this, this.cmfg('configurationNotificationsConfigurationGet'));
 			// END: Error handling
 
-			this.view.reset();
+			this.view.panelFunctionReset();
 			this.view.loadRecord(this.cmfg('configurationNotificationsConfigurationGet'));
 		},
 

@@ -178,7 +178,7 @@
 		 * @private
 		 */
 		presetGridGetData: function () {
-			return this.view.presetGrid.getData(true);
+			return this.view.presetGrid.getValue(true);
 		},
 
 		/**

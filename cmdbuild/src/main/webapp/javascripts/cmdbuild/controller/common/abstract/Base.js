@@ -3,6 +3,7 @@
 	// External implementation to avoid overrides
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.Message'
 	]);
 
@@ -383,19 +384,38 @@
 		validate: function (form, showPopup) {
 			showPopup = Ext.isBoolean(showPopup) ? showPopup : true;
 
-			var invalidFieldsArray = form.getNonValidFields();
+			// Error handling
+				if (!Ext.isObject(form) || Ext.Object.isEmpty(form))
+					return _error('validate(): unmanaged form parameter', this, form);
+			// END: Error handling
+
+			var invalidFieldsArray = [];
+
+			if (Ext.isFunction(form.panelFunctionFieldInvalidGet))
+				invalidFieldsArray = form.panelFunctionFieldInvalidGet();
+
+			/**
+			 * Compatibility with CMDBuild.view.common.PanelFunctions version 1
+			 *
+			 * @legacy
+			 */
+			if (Ext.isFunction(form.getNonValidFields))
+				invalidFieldsArray = form.getNonValidFields();
 
 			// Check for invalid fields and builds errorMessage
 			if (
-				!Ext.isEmpty(form)
-				&& !Ext.isEmpty(invalidFieldsArray) && Ext.isArray(invalidFieldsArray)
+				Ext.isArray(invalidFieldsArray) && !Ext.isEmpty(invalidFieldsArray)
 				&& showPopup
 			) {
 				var errorMessage = '';
 
-				Ext.Array.each(invalidFieldsArray, function (invalidField, i, allInvalidFields) {
-					if (!Ext.isEmpty(invalidField) && Ext.isFunction(invalidField.getFieldLabel))
+				Ext.Array.forEach(invalidFieldsArray, function (invalidField, i, allInvalidFields) {
+					if (
+						!Ext.isEmpty(invalidField) && Ext.isFunction(invalidField.getFieldLabel)
+						&& !Ext.isEmpty(invalidField.getFieldLabel())
+					) {
 						errorMessage += '<li>' + invalidField.getFieldLabel() + '</li>';
+					}
 				}, this);
 
 				CMDBuild.core.Message.error(

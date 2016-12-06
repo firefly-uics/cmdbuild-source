@@ -5,10 +5,9 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
 			'CMDBuild.proxy.administration.filter.group.Default',
 			'CMDBuild.proxy.administration.filter.group.Group',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -247,7 +246,7 @@
 		success: function (result, options, decodedResult) {
 			decodedResult = decodedResult[CMDBuild.core.constants.Proxy.FILTER] || options.params;
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.view.form);
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FILTER] = decodedResult[CMDBuild.core.constants.Proxy.ID];

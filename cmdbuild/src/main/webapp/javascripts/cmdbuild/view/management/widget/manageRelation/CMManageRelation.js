@@ -118,7 +118,7 @@
 				this.tbar.push(this.addRelationButton);
 
 			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 					scope: this,
 
 					handler: function (button, e) {

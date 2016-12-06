@@ -12,17 +12,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskEventSynchronousStep3FieldsetNotificationExpand',
+			'onTaskManagerFormTaskEventSynchronousStep3FieldsetWorkflowExpand',
+			'onTaskManagerFormTaskEventSynchronousStep3ValidateSetup = onTaskManagerFormTaskEventSynchronousValidateSetup'
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.administration.taskManager.task.event.synchronous.Step3}
+		 * @cfg {CMDBuild.view.administration.taskManager.task.event.synchronous.Step3View}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.taskManager.task.event.asynchronous.Asynchronous} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.taskManager.task.event.synchronous.Synchronous} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 *
@@ -31,123 +33,38 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.synchronous.Step3', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.synchronous.Step3View', { delegate: this });
 		},
 
 		/**
-		 * @return {String}
+		 * @returns {Void}
 		 */
-		checkWorkflowComboSelected: function () {
-			return this.getValueWorkflowCombo();
+		onTaskManagerFormTaskEventSynchronousStep3FieldsetNotificationExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetNotification });
 		},
-
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
-			 */
-			getNotificationDelegate: function () {
-				return this.view.notificationForm.delegate;
-			},
-
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
-			 */
-			getWorkflowDelegate: function () {
-				return this.view.workflowForm.delegate;
-			},
-
-			/**
-			 * @return {Boolean}
-			 */
-			getValueNotificationFieldsetCheckbox: function () {
-				return this.view.notificationFieldset.checkboxCmp.getValue();
-			},
-
-			/**
-			 * @return {Object}
-			 */
-			getValueWorkflowAttributeGrid: function () {
-				return this.getWorkflowDelegate().getValueGrid();
-			},
-
-			/**
-			 * @return {String}
-			 */
-			getValueWorkflowCombo: function () {
-				return this.getWorkflowDelegate().getValueCombo();
-			},
-
-			/**
-			 * @return {Boolean}
-			 */
-			getValueWorkflowFieldsetCheckbox: function () {
-				return this.view.workflowFieldset.checkboxCmp.getValue();
-			},
 
 		/**
-		 * To erase workflow form used on addButtonClick
+		 * @returns {Void}
 		 */
-		eraseWorkflowForm: function () {
-			this.getWorkflowDelegate().eraseWorkflowForm();
+		onTaskManagerFormTaskEventSynchronousStep3FieldsetWorkflowExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetWorkflow });
 		},
 
-		// SETters functions
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledWorkflowAttributesGrid: function (state) {
-				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-			},
+		/**
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskEventSynchronousStep3ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-			/**
-			 * @param {String} value
-			 */
-			setValueNotificationAccount: function (value) {
-				this.getNotificationDelegate().setValue('sender', value);
-			},
+			// Notification validation
+			this.view.fieldNotificationAccount.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
+			this.view.fieldNotificationTemplate.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
 
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueNotificationFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.notificationFieldset.expand();
-				} else {
-					this.view.notificationFieldset.collapse();
-				}
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueNotificationTemplate: function (value) {
-				this.getNotificationDelegate().setValue('template', value);
-			},
-
-			/**
-			 * @param {Object} value
-			 */
-			setValueWorkflowAttributesGrid: function (value) {
-				this.getWorkflowDelegate().setValueGrid(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueWorkflowCombo: function (value) {
-				this.getWorkflowDelegate().setValueCombo(value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueWorkflowFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.workflowFieldset.expand();
-				} else {
-					this.view.workflowFieldset.collapse();
-				}
-			}
+			// Workflow validation
+			this.view.fieldWorkflow.fieldCombo.allowBlank = !(fullValidation && this.view.fieldsetWorkflow.checkboxCmp.getValue());
+		}
 	});
 
 })();

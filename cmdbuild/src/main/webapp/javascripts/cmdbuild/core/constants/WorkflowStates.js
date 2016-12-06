@@ -14,15 +14,6 @@
 			openCapitalized: 'OPEN',
 			suspended: 'open.not_running.suspended',
 			suspendedCapitalized: 'SUSPENDED'
-		},
-
-		/**
-		 * @param {Object} config
-		 *
-		 * @returns {Void}
-		 */
-		constructor: function (config) {
-			this.initConfig(config);
 		}
 	});
 

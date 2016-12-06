@@ -63,7 +63,8 @@
 							name: CMDBuild.core.constants.Proxy.FILTER,
 							fieldLabel: CMDBuild.Translation.cardCqlSelector,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+							resizable: true
 						})
 					]
 				})

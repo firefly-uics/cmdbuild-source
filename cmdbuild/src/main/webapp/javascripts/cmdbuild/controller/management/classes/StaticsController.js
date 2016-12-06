@@ -50,7 +50,7 @@
 			if (!Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray))
 				Ext.Array.each(fieldsArray, function(field, i, allFields) { // Validates all fields (display panel fields and edit panel fields)
 					if ( // Avoid DisplayFields validation on classes
-						Ext.getClassName(field) != 'CMDBuild.view.common.field.CMDisplayField'
+						Ext.getClassName(field) != 'CMDBuild.view.common.field.display.Text'
 						&& Ext.getClassName(field) != 'Ext.form.field.Display'
 					) {
 						if (Ext.isFunction(field.isValid) && !field.isValid()) {

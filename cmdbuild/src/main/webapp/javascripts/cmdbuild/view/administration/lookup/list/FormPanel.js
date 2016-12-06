@@ -22,7 +22,7 @@
 		activeCheckbox: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.state.Double}
+		 * @property {CMDBuild.core.buttons.icon.state.Double}
 		 */
 		enableDisableButton: undefined,
 
@@ -51,7 +51,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyLookup,
 								scope: this,
 
@@ -59,7 +59,7 @@
 									this.delegate.cmfg('onLookupListModifyButtonClick');
 								}
 							}),
-							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.icon.state.Double', {
 								state1text: CMDBuild.Translation.disableLookup,
 								state2text: CMDBuild.Translation.enableLookup,
 								scope: this,
@@ -106,14 +106,14 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 					}),
-					Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.LOOKUP_VALUE,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TRANSLATION_UUID, source: this },
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
@@ -136,7 +136,8 @@
 						name: CMDBuild.core.constants.Proxy.NOTES,
 						fieldLabel: CMDBuild.Translation.notes,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						resizable: true
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,

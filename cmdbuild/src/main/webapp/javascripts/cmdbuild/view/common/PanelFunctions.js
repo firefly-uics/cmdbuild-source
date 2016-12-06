@@ -17,8 +17,6 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions2'],
-
 		/**
 		 * Keeps in sync two fields, usually name and description. If the master field changes and the slave is empty, or it has the same
 		 * value as the old value of the master, its value is updated with the new one.
@@ -28,7 +26,7 @@
 		 * 			this.fieldSynch(slaveField, newValue, oldValue);
 		 * 		}
 		 *
-		 * @param {Object} fieldToComplete
+		 * @param {Object} slaveField
 		 * @param {Object} newValue
 		 * @param {Object} oldValue
 		 *
@@ -102,7 +100,6 @@
 			return (
 				field instanceof Ext.form.Field
 				|| field instanceof Ext.form.field.Base
-				|| field instanceof Ext.form.field.HtmlEditor
 				|| field instanceof Ext.form.FieldContainer
 			);
 		},

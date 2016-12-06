@@ -4,11 +4,6 @@
 
 		singleton: true,
 
-		/**
-		 * @cfg {Object}
-		 *
-		 * @private
-		 */
 		config: {
 			base: 90, // (seconds)
 			cache: 300000, // 5m (milliseconds)
@@ -19,15 +14,6 @@
 			report: 7200000, // 2h (milliseconds)
 			taskSingleExecution: 7200000, // 2h (milliseconds)
 			workflowWidgetsExecutionTimeout: 30000 // 30s (milliseconds)
-		},
-
-		/**
-		 * @param {Object} config
-		 *
-		 * @returns {Void}
-		 */
-		constructor: function (config) {
-			this.initConfig(config);
 		}
 	});
 

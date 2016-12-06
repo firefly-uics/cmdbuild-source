@@ -40,7 +40,7 @@
 		csvUploadForm: undefined,
 
 		border: false,
-		defaultSizeW: 0.90,
+		dimensionsMode: 'percentage',
 		autoHeight: true,
 		title: CMDBuild.Translation.importFromCSV,
 
@@ -135,9 +135,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Resize window, smaller than default size
-			this.width = this.width * this.defaultSizeW;
 		}
 	});
 
