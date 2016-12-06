@@ -323,9 +323,14 @@
 				if (!Ext.isString(format) || Ext.isEmpty(format))
 					return _error('onWorkflowTreePrintButtonClick(): unmanaged format parameter', this, format);
 			// END: Error handling
+			
+			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
 			var params = Ext.clone(this.storeExtraParamsGet());
 			params[CMDBuild.core.constants.Proxy.TYPE] = format;
+
+			if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
 
 			// Removes unwanted params to print all workflow data
 			delete params[CMDBuild.core.constants.Proxy.PAGE];
