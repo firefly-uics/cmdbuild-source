@@ -70,6 +70,8 @@ FIXES
 
  * Workflow grid print button doesn't create a report of full workflow instances
 
+ * Synchronous events implemented also for processes
+
 
 
 
