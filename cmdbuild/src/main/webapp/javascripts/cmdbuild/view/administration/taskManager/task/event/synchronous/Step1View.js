@@ -86,7 +86,7 @@
 						allowBlank: false,
 						forceSelection: true,
 
-						store: CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStoreEntryTypes(),
+						store: CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStoreClasses(),
 						queryMode: 'local',
 
 						listeners: {

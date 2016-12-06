@@ -84,16 +84,16 @@
 		 *
 		 * @returns {Void}
 		 */
-		getStoreEntryTypes: function (parameters) {
+		getStoreClasses: function (parameters) {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ENTRY_TYPE, {
 				autoLoad: true,
 				model: 'CMDBuild.model.administration.taskManager.task.event.synchronous.EntryType',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.entryType.readAll,
+					url: CMDBuild.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: { // Avoid to send limit, page and start parameters in server calls
 						active: true,
@@ -103,7 +103,7 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters processes and root of all classes
+					function (record) { // Filters system and root of all classes
 						return (
 							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
 							&& !record.get(CMDBuild.core.constants.Proxy.SYSTEM)
