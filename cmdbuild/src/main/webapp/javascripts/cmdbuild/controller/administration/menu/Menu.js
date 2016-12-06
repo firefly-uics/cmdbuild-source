@@ -53,23 +53,26 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.administration.menu.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.administration.menu.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onMenuModuleInit: function (node) {
-			if (!Ext.isEmpty(node)) {
-				this.selectedMenuName = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
+		onMenuModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.isEmpty(parameters.node)) {
+				this.selectedMenuName = parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
 
 				this.view.removeAll(true);
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.sectionController.cmfg('onMenuGroupMenuSelected');
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

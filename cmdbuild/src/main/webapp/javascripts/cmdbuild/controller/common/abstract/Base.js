@@ -215,8 +215,6 @@
 		/**
 		 * Method to manage module initialization (to localize)
 		 *
-		 * @returns {Void}
-		 *
 		 * @abstract
 		 */
 		onModuleInit: Ext.emptyFn,

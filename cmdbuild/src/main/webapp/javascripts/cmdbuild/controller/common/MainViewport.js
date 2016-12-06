@@ -553,7 +553,9 @@
 			if (this.cmfg('mainViewportAccordionIsCollapsed') && !Ext.isEmpty(node))
 				this.cmfg('mainViewportModuleShow', {
 					identifier: node.get('cmName'),
-					parameters: node
+					params: {
+						node: node
+					}
 				});
 		},
 
@@ -584,7 +586,7 @@
 							} else if (
 								!Ext.isEmpty(moduleControllerObject.cmName) && Ext.isString(moduleControllerObject.cmName)
 								&& !Ext.isEmpty(moduleControllerObject.cmfg) && Ext.isFunction(moduleControllerObject.cmfg)
-							) { // @deprecated
+							) { /** @deprecated */
 								if (!Ext.isEmpty(moduleControllerObject.cmfg('identifierGet'))) {
 									moduleControllerObject.parentDelegate = this; // Inject as parentDelegate in module controllers
 
@@ -592,7 +594,7 @@
 
 									this.moduleViewsBuffer.push(moduleControllerObject.getView());
 								}
-							} else if (!Ext.isEmpty(moduleControllerObject.cmName) && Ext.isString(moduleControllerObject.cmName)) { // @deprecated
+							} else if (!Ext.isEmpty(moduleControllerObject.cmName) && Ext.isString(moduleControllerObject.cmName)) { /** @deprecated */
 								this.moduleControllers[moduleControllerObject.cmName] = moduleControllerObject.delegate;
 
 								if (Ext.isFunction(moduleControllerObject.cmControllerType)) {
@@ -652,35 +654,41 @@
 			 *
 			 * @param {Object} parameters
 			 * @param {String} parameters.identifier
-			 * @param {Object} parameters.parameters
+			 * @param {Object} parameters.params
 			 *
 			 * @returns {Boolean}
 			 */
 			mainViewportModuleShow: function (parameters) {
 				parameters = Ext.isObject(parameters) ? parameters : {};
-				parameters.parameters = Ext.isEmpty(parameters.parameters) ? null : parameters.parameters;
+				parameters.params = Ext.isObject(parameters.params) ? parameters.params : {};
 
 				if (this.cmfg('mainViewportModuleControllerExists', parameters.identifier)) {
-					var modulePanel = this.cmfg('mainViewportModuleControllerGet', parameters.identifier);
+					var controllerModule = this.cmfg('mainViewportModuleControllerGet', parameters.identifier);
 
-					if (Ext.isObject(modulePanel) && !Ext.Object.isEmpty(modulePanel)) {
-						if (Ext.isFunction(modulePanel.getView)) {
-							modulePanel = modulePanel.getView();
-						} else if (!Ext.isEmpty(modulePanel.view)) { /** @deprecated */
-							modulePanel = modulePanel.view;
+					if (Ext.isObject(controllerModule) && !Ext.Object.isEmpty(controllerModule)) {
+						var viewModule = undefined;
+
+						if (Ext.isFunction(controllerModule.getView)) {
+							viewModule = controllerModule.getView();
+						} else if (!Ext.isEmpty(controllerModule.view)) { /** @deprecated */
+							viewModule = controllerModule.view;
 						}
 
-						this.view.moduleContainer.getLayout().setActiveItem(modulePanel);
+						this.view.moduleContainer.getLayout().setActiveItem(viewModule);
 
 						/**
 						 * Legacy event
 						 *
 						 * @deprecated
 						 */
-						modulePanel.fireEvent('CM_iamtofront', parameters.parameters);
+						viewModule.fireEvent('CM_iamtofront', parameters.params.node);
 
-						if (Ext.isObject(modulePanel.delegate) && !Ext.Object.isEmpty(modulePanel.delegate) && Ext.isFunction(modulePanel.delegate.cmfg))
-							modulePanel.delegate.cmfg('onModuleInit', parameters.parameters);
+						if (
+							Ext.isObject(controllerModule) && !Ext.Object.isEmpty(controllerModule) && Ext.isFunction(controllerModule.cmfg)
+							&& Ext.isObject(parameters.params) && !Ext.Object.isEmpty(parameters.params) // Avoid useless calls with no parameters
+						) {
+							controllerModule.cmfg('onModuleInit', parameters.params);
+						}
 					}
 
 					return true;
@@ -709,10 +717,8 @@
 			parameters = Ext.isObject(parameters) ? parameters : {};
 
 			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				Ext.isString(parameters.id) && !Ext.isEmpty(parameters.id) && Ext.Array.contains(this.enableSynchronizationForAccordions, parameters.id)
 				&& Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)
-				&& Ext.isString(parameters.id) && !Ext.isEmpty(parameters.id)
-				&& Ext.Array.contains(this.enableSynchronizationForAccordions, parameters.id)
 				&& !this.isAdministration
 			) {
 				var menuAccordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getNavigation()),

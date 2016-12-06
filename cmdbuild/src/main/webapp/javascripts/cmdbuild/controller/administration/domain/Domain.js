@@ -144,16 +144,19 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onDomainModuleInit: function (node) {
+		onDomainModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			this.domainSelectedDomainReset();
 
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				CMDBuild.proxy.administration.domain.Domain.read({ // FIXME: waiting for refactor (server endpoint)
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -161,15 +164,15 @@
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							var selectedDomain = Ext.Array.findBy(decodedResponse, function (domainObject, i) {
-								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+								return parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
 							}, this);
 
 							if (Ext.isObject(selectedDomain) && !Ext.Object.isEmpty(selectedDomain)) {
 								this.domainSelectedDomainSet({ value: selectedDomain });
 
-								this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+								this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
 							} else {
-								_error('onDomainModuleInit(): domain not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+								_error('onDomainModuleInit(): domain not found', this, parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
 
@@ -181,7 +184,7 @@
 
 						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 
-						this.onModuleInit(node); // Custom callParent() implementation
+						this.onModuleInit(parameters); // Custom callParent() implementation
 					}
 				});
 			} else {
@@ -193,7 +196,7 @@
 
 				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

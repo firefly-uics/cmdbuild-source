@@ -177,18 +177,21 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.administration.navigationTree.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.administration.navigationTree.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onNavigationTreeModuleInit: function (node) {
+		onNavigationTreeModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			this.navigationTreeSelectedTreeReset();
 
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
+				params[CMDBuild.core.constants.Proxy.NAME] = parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
 				CMDBuild.proxy.navigationTree.NavigationTree.read({
 					params: params,
@@ -200,14 +203,14 @@
 
 						this.cmfg('onNavigationTreeSelected');
 
-						this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+						this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 							this.tabPanel.setActiveTab(0);
 
 						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
 
-						this.onModuleInit(node); // Custom callParent() implementation
+						this.onModuleInit(parameters); // Custom callParent() implementation
 					}
 				});
 			} else {
@@ -220,7 +223,7 @@
 
 				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

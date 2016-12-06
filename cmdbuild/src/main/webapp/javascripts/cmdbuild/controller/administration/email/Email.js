@@ -46,15 +46,18 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onEmailModuleInit: function(node) {
-			if (!Ext.Object.isEmpty(node)) {
+		onEmailModuleInit: function(parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				this.view.removeAll(true);
 
-				switch (node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch (parameters.node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'queue': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Queue', { parentDelegate: this });
 					} break;
@@ -69,13 +72,13 @@
 					}
 				}
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 				this.view.add(this.sectionController.getView());
 
 				this.sectionController.getView().fireEvent('show');
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		}
 	});

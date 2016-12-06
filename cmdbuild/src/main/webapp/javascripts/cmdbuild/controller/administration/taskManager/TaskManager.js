@@ -222,21 +222,24 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onTaskManagerModuleInit: function (node) {
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
-				this.controllerGrid.cmfg('taskManagerGridConfigure', { type: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY) });
+		onTaskManagerModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-				this.configureAddButton(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
+				this.controllerGrid.cmfg('taskManagerGridConfigure', { type: parameters.node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY) });
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.configureAddButton(parameters.node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 
