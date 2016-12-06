@@ -324,7 +324,7 @@
 					return _error('onWorkflowTreePrintButtonClick(): unmanaged format parameter', this, format);
 			// END: Error handling
 
-			var params = this.storeExtraParamsGet();
+			var params = Ext.clone(this.storeExtraParamsGet());
 			params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 			// Removes unwanted params to print all workflow data
