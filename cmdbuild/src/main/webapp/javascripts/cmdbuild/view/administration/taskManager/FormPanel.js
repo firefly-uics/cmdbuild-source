@@ -18,7 +18,12 @@
 		/**
 		 * @property {CMDBuild.core.buttons.iconized.Modify}
 		 */
-		modifyButton: undefined,
+		buttonModify: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Remove}
+		 */
+		buttonRemove: undefined,
 
 		activeItem: 0,
 		bodyCls: 'cmdb-gray-panel',
@@ -45,7 +50,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							this.buttonModify = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
@@ -53,7 +58,7 @@
 									this.delegate.cmfg('onTaskManagerFormModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							this.buttonRemove = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeTask,
 								scope: this,
 
