@@ -326,6 +326,14 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 */
+		taskManagerFormToolbarTopStateManage: function () {
+			this.view.buttonModify.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
+			this.view.buttonRemove.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
+		},
+
+		/**
 		 * @param {Boolean} withDisabled
 		 *
 		 * @returns {Object}
