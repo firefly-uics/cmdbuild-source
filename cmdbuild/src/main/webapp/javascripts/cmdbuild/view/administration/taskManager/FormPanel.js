@@ -8,7 +8,7 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions2'],
+		mixins: ['CMDBUild.view.common.CMFormFunctions'], // FIXME: use new class "CMDBuild.view.common.PanelFunctions"
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.taskManager.Form}
@@ -16,9 +16,14 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.icon.modify.Modify}
+		 * @property {CMDBuild.core.buttons.iconized.Modify}
 		 */
-		modifyButton: undefined,
+		buttonModify: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Remove}
+		 */
+		buttonRemove: undefined,
 
 		activeItem: 0,
 		bodyCls: 'cmdb-gray-panel',
@@ -45,7 +50,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.modifyButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
+							this.buttonModify = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
@@ -53,7 +58,7 @@
 									this.delegate.cmfg('onTaskManagerFormModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.icon.Remove', {
+							this.buttonRemove = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeTask,
 								scope: this,
 
@@ -61,7 +66,7 @@
 									this.delegate.cmfg('onTaskManagerFormRemoveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.icon.Clone', {
+							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
 								text: CMDBuild.Translation.cloneTask,
 								scope: this,
 
@@ -118,10 +123,7 @@
 
 			this.callParent(arguments);
 
-			this.panelFunctionModifyStateSet({
-				forceToolbarTopState: true,
-				state: false
-			});
+			this.disableModify();
 		}
 	});
 

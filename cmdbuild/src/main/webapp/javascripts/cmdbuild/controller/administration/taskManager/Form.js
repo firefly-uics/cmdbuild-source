@@ -3,7 +3,9 @@
 	Ext.define('CMDBuild.controller.administration.taskManager.Form', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.taskManager.TaskManager}
@@ -23,10 +25,11 @@
 			'onTaskManagerFormRowSelected',
 			'onTaskManagerFormSaveButtonClick',
 			'taskManagerFormClearSelection',
-			'taskManagerFormModifyButtonStateManage',
 			'taskManagerFormNavigationSetDisableNextButton',
+			'taskManagerFormPanelForwarder',
 			'taskManagerFormPanelsAdd',
 			'taskManagerFormPanelsRemoveAll',
+			'taskManagerFormToolbarTopStateManage',
 			'taskManagerFormViewDataGet',
 			'taskManagerFormViewGet',
 			'taskManagerFormViewReset'
@@ -84,13 +87,11 @@
 					return Ext.create('CMDBuild.controller.administration.taskManager.task.workflow.Workflow', { parentDelegate: this });
 
 				default:
-					return _error('buildControllerTask(): unmanaged type parameter', this, type);
+					return _error('buildControllerTask(): unmanaged type property', this, type);
 			}
 		},
 
 		/**
-		 * Buttons disabling could be also dived by disabling next step
-		 *
 		 * @returns {Boolean}
 		 *
 		 * @private
@@ -103,8 +104,6 @@
 		},
 
 		/**
-		 * Buttons disabling could be also dived by disabling previous step
-		 *
 		 * @returns {Boolean}
 		 *
 		 * @private
@@ -155,10 +154,12 @@
 		},
 
 		/**
+		 * Forwarder method
+		 *
 		 * @returns {Void}
 		 */
 		onTaskManagerFormCloneButtonClick: function () {
-			this.cmfg('taskManagerClearSelection', { disableClearForm: true });
+			this.cmfg('taskManagerClearSelection', { enableClearForm: false });
 
 			this.controllerTask.cmfg('onTaskManagerFormTaskCloneButtonClick');
 		},
@@ -178,6 +179,11 @@
 		 * @returns {Void}
 		 */
 		onTaskManagerFormNavigationButtonClick: function (action) {
+			// Error handling
+				if (!Ext.isString(action) || Ext.isEmpty(action))
+					return _error('onTaskManagerFormNavigationButtonClick(): unmanaged action parameter', this, action);
+			// END: Error handling
+
 			switch (action) {
 				case 'first': {
 					if (!Ext.isEmpty(this.view.getLayout().getLayoutItems()))
@@ -185,30 +191,24 @@
 				} break;
 
 				case 'next': {
-					if (this.hasNext()) { // Optimize show event fire
-						this.view.getLayout().getNext().suspendEvent('show');
+					if (this.hasNext())
 						this.view.getLayout().next();
-						this.view.getLayout().getActiveItem().resumeEvent('show');
-					}
 				} break;
 
 				case 'previous': {
-					if (this.hasPrevious()) { // Optimize show event fire
-						this.view.getLayout().getPrev().suspendEvent('show');
+					if (this.hasPrevious())
 						this.view.getLayout().prev();
-						this.view.getLayout().getActiveItem().resumeEvent('show');
-					}
 				} break;
 
 				default: {
-					_error('onTaskManagerFormNavigationButtonClick(): unmanaged action parameter value', this, action);
+					_error('onTaskManagerFormNavigationButtonClick(): wrong action parameter value', this, action);
 				}
 			}
 
 			this.manageButtonsDisabledState();
 
-			// Fires show event before activeItem set action (cons: fire show event fired twice)
-			if (!Ext.isEmpty(this.view.getLayout().getActiveItem()))
+			// Fires show event on first item
+			if (!Ext.isEmpty(this.view.getLayout().getActiveItem()) && !this.view.getLayout().getPrev())
 				this.view.getLayout().getActiveItem().fireEvent('show');
 		},
 
@@ -249,21 +249,16 @@
 		 * Clear form panel
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
 		 */
 		taskManagerFormClearSelection: function () {
 			this.cmfg('taskManagerFormPanelsRemoveAll');
-
-			this.view.panelFunctionModifyStateSet({
-				forceToolbarBottomState: true,
-				forceToolbarTopState: true
+			this.cmfg('taskManagerFormPanelForwarder', {
+				functionName: 'disableModify',
+				params: true
 			});
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		taskManagerFormModifyButtonStateManage: function () {
-			this.view.modifyButton.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
+			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'disableCMTbar' });
 		},
 
 		/**
@@ -278,12 +273,42 @@
 		},
 
 		/**
+		 * Adapter method
+		 *
+		 * @param {Object} parameters
+		 * @param {Object} parameters.functionName
+		 * @param {Object} parameters.params
+		 *
+		 * @returns {Void}
+		 *
+		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
+		 */
+		taskManagerFormPanelForwarder: function (parameters) {
+			this.view.cmTBar = this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).items.items;
+			this.view.cmButtons = this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).items.items;
+
+			switch (parameters.functionName) {
+				case 'disableCMTbar':
+					return this.view.disableCMTbar();
+
+				case 'disableModify':
+					return this.view.disableModify(parameters.params);
+
+				case 'enableCMButtons':
+					return this.view.enableCMButtons();
+
+				case 'enableTabbedModify':
+					return this.view.enableTabbedModify(parameters.params);
+			}
+		},
+
+		/**
 		 * @param {Array} panels
 		 *
 		 * @returns {Void}
 		 */
 		taskManagerFormPanelsAdd: function (panels) {
-			this.view.removeAll(false);
+			this.view.removeAll();
 
 			// Error handling
 				if (!Ext.isArray(panels) || Ext.isEmpty(panels))
@@ -297,14 +322,18 @@
 		 * @returns {Object}
 		 */
 		taskManagerFormPanelsRemoveAll: function () {
-			this.view.removeAll(false);
+			this.view.removeAll();
 		},
 
 		/**
+		 * @param {Boolean} withDisabled
+		 *
 		 * @returns {Object}
 		 */
-		taskManagerFormViewDataGet: function () {
-			return this.view.panelFunctionDataGet({ includeDisabled: true });
+		taskManagerFormViewDataGet: function (withDisabled) {
+			withDisabled = Ext.isBoolean(withDisabled) ? withDisabled : false;
+
+			return this.view.getData(withDisabled);
 		},
 
 		/**
@@ -318,7 +347,7 @@
 		 * @returns {Void}
 		 */
 		taskManagerFormViewReset: function () {
-			this.view.panelFunctionReset();
+			this.view.reset();
 		}
 	});
 
