@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -114,8 +115,8 @@ public class DefaultTaskManagerLogicTest {
 
 		emailLogic = mock(EmailLogic.class);
 
-		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade, synchronousEventFacade,
-				emailLogic);
+		taskManagerLogic =
+				new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade, synchronousEventFacade, emailLogic);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -140,21 +141,45 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.delete(task);
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void cannotDeleteActiveTask() throws Exception {
+		// given
+		final Task task = ReadEmailTask.newInstance() //
+				.withId(ID) //
+				.build();
+		final org.cmdbuild.data.store.task.Task storedTask = DummyStorableTask.newInstance() //
+				.withRunningStatus(true) //
+				.build();
+		doReturn(storedTask) //
+				.when(store).read(anyLong());
+
+		// when
+		taskManagerLogic.delete(task);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(converter).from(eq(task));
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from((eq(storedTask)));
+		inOrder.verifyNoMoreInteractions();
+	}
+
 	@Test
 	public void allTasksRead() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask first = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance().withId(ID) //
-				.withDescription(DESCRIPTION) //
-				.withRunningStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				.build();
-		final org.cmdbuild.data.store.task.StartWorkflowTask second = org.cmdbuild.data.store.task.StartWorkflowTask
-				.newInstance().withId(ANOTHER_ID) //
-				.withDescription(DESCRIPTION) //
-				.withRunningStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask first =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance().withId(ID) //
+						.withDescription(DESCRIPTION) //
+						.withRunningStatus(ACTIVE_STATUS) //
+						.withCronExpression(CRON_EXPRESSION) //
+						.build();
+		final org.cmdbuild.data.store.task.StartWorkflowTask second =
+				org.cmdbuild.data.store.task.StartWorkflowTask.newInstance().withId(ANOTHER_ID) //
+						.withDescription(DESCRIPTION) //
+						.withRunningStatus(ACTIVE_STATUS) //
+						.withCronExpression(CRON_EXPRESSION) //
+						.build();
 		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
@@ -175,14 +200,14 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void specificTaskTypeReaded() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask first = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(1L) //
-				.build();
-		final org.cmdbuild.data.store.task.StartWorkflowTask second = org.cmdbuild.data.store.task.StartWorkflowTask
-				.newInstance() //
-				.withId(2L) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask first =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(1L) //
+						.build();
+		final org.cmdbuild.data.store.task.StartWorkflowTask second =
+				org.cmdbuild.data.store.task.StartWorkflowTask.newInstance() //
+						.withId(2L) //
+						.build();
 		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
@@ -206,10 +231,10 @@ public class DefaultTaskManagerLogicTest {
 		final ReadEmailTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.build();
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(ID) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.build();
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 
@@ -254,8 +279,8 @@ public class DefaultTaskManagerLogicTest {
 	public void scheduledTaskCreated() throws Exception {
 		// given
 		final ReadEmailTask newOne = ReadEmailTask.newInstance().build();
-		final org.cmdbuild.data.store.task.ReadEmailTask createdOne = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance().build();
+		final org.cmdbuild.data.store.task.ReadEmailTask createdOne =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance().build();
 		final ReadEmailTask convertedAfterRead = ReadEmailTask.newInstance().build();
 		final Storable storable = mock(Storable.class);
 		when(store.create(DUMMY_STORABLE_TASK)) //
@@ -323,6 +348,11 @@ public class DefaultTaskManagerLogicTest {
 		final ScheduledTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.build();
+		final org.cmdbuild.data.store.task.Task storedTask = DummyStorableTask.newInstance() //
+				.withRunningStatus(false) //
+				.build();
+		doReturn(storedTask) //
+				.when(store).read(anyLong());
 		final Email first = mock(Email.class);
 		final Email second = mock(Email.class);
 		when(emailLogic.readAll(anyLong())) //
@@ -347,11 +377,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void scheduledTaskNotStoredWhenActivatedIfAlreadyInThatState() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(true) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(true) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -375,11 +405,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void scheduledTaskStoredWhenActivated() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(false) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(false) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -392,8 +422,8 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.activate(ID);
 
 		// then
-		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
-				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor =
+				ArgumentCaptor.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
@@ -420,11 +450,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void scheduledTaskNotStoredWhenDeactivastedIfAlreadyInThatState() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(false) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(false) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -448,11 +478,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void scheduledTaskStoredWhenDeactivasted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(true) //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(true) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -465,8 +495,8 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.deactivate(ID);
 
 		// then
-		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
-				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor =
+				ArgumentCaptor.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
@@ -494,8 +524,8 @@ public class DefaultTaskManagerLogicTest {
 	public void synchronousEventTaskCreated() throws Exception {
 		// given
 		final SynchronousEventTask newOne = SynchronousEventTask.newInstance().build();
-		final org.cmdbuild.data.store.task.SynchronousEventTask createdOne = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance().build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask createdOne =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance().build();
 		final SynchronousEventTask convertedAfterRead = SynchronousEventTask.newInstance().build();
 		final Storable storable = mock(Storable.class);
 		when(store.create(DUMMY_STORABLE_TASK)) //
@@ -562,6 +592,11 @@ public class DefaultTaskManagerLogicTest {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withId(ID) //
 				.build();
+		final org.cmdbuild.data.store.task.Task storedTask = DummyStorableTask.newInstance() //
+				.withRunningStatus(false) //
+				.build();
+		doReturn(storedTask) //
+				.when(store).read(anyLong());
 		final Email first = mock(Email.class);
 		final Email second = mock(Email.class);
 		when(emailLogic.readAll(anyLong())) //
@@ -586,11 +621,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void synchronousEventTaskNotStoredWhenActivatedIfAlreadyInThatState() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(true) //
-				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(true) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -614,11 +649,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void synchronousEventTaskStoredWhenActivated() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(false) //
-				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(false) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -631,8 +666,8 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.activate(ID);
 
 		// then
-		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
-				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor =
+				ArgumentCaptor.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
@@ -659,11 +694,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void synchronousEventTaskNotStoredWhenDeactivatedIfAlreadyInThatState() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(false) //
-				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(false) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -687,11 +722,11 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void synchronousEventTaskStoredWhenDeactivated() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withId(ID) //
-				.withRunningStatus(true) //
-				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withRunningStatus(true) //
+						.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
 		when(storeAsSourceConverter.toLogic()) //
@@ -704,8 +739,8 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.deactivate(ID);
 
 		// then
-		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
-				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor =
+				ArgumentCaptor.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
@@ -732,9 +767,9 @@ public class DefaultTaskManagerLogicTest {
 	@Test(expected = TaskManagerException.class)
 	public void synchronousEventTaskCannotBeExecuted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored =
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.build();
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final SynchronousEventTask storedTask = SynchronousEventTask.newInstance() //
@@ -759,9 +794,9 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void asynchronousEventTaskExecuted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.AsynchronousEventTask stored = org.cmdbuild.data.store.task.AsynchronousEventTask
-				.newInstance() //
-				.build();
+		final org.cmdbuild.data.store.task.AsynchronousEventTask stored =
+				org.cmdbuild.data.store.task.AsynchronousEventTask.newInstance() //
+						.build();
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final AsynchronousEventTask storedTask = AsynchronousEventTask.newInstance() //
@@ -785,9 +820,9 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void connectorTaskExecuted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ConnectorTask stored = org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.build();
+		final org.cmdbuild.data.store.task.ConnectorTask stored =
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.build();
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final ConnectorTask storedTask = ConnectorTask.newInstance() //
@@ -836,9 +871,9 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void readEmailTaskExecuted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.build();
+		final org.cmdbuild.data.store.task.ReadEmailTask stored =
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.build();
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final ReadEmailTask storedTask = ReadEmailTask.newInstance() //
@@ -862,9 +897,9 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void startProcessTaskExecuted() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask stored = org.cmdbuild.data.store.task.StartWorkflowTask
-				.newInstance() //
-				.build();
+		final org.cmdbuild.data.store.task.StartWorkflowTask stored =
+				org.cmdbuild.data.store.task.StartWorkflowTask.newInstance() //
+						.build();
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final StartWorkflowTask storedTask = StartWorkflowTask.newInstance() //
