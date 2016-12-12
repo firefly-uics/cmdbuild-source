@@ -506,8 +506,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static class Execute extends ForwardingTaskVisitor implements Action<Void> {
 
-		private static TaskVisitor UNSUPPORTED = newProxy(TaskVisitor.class,
-				unsupported("execution not supported for this kind of task"));
+		private static TaskVisitor UNSUPPORTED =
+				newProxy(TaskVisitor.class, unsupported("execution not supported for this kind of task"));
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -592,6 +592,27 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
+	private static class AssureNotActive implements Action<Void> {
+
+		private final TaskStore store;
+		private final Task task;
+
+		public AssureNotActive(final TaskStore store, final Task task) {
+			this.store = store;
+			this.task = task;
+		}
+
+		@Override
+		public Void execute() {
+			Validate.isTrue(task.getId() != null, "invalid id");
+			if (store.read(task.getId()).isRunning()) {
+				throw new IllegalStateException("cannot delete task since it's still active");
+			}
+			return null;
+		}
+
+	}
+
 	private final LogicAndStoreConverter converter;
 	private final TaskStore store;
 	private final SchedulerFacade schedulerFacade;
@@ -641,6 +662,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	@Override
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
+		execute(assureNotActive(task));
 		execute(doDeleteEmails(task));
 		execute(doDelete(task));
 	}
@@ -705,6 +727,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private Execute doExecute(final Long id) {
 		return new Execute(converter, store, schedulerFacade, id);
+	}
+
+	private AssureNotActive assureNotActive(final Task task) {
+		return new AssureNotActive(store, task);
 	}
 
 	private <T> T execute(final Action<T> action) {

@@ -90,6 +90,8 @@ FIXES
 
  * Synchronous events implemented also for processes
 
+ * Active task can be removed
+
 
 
 
