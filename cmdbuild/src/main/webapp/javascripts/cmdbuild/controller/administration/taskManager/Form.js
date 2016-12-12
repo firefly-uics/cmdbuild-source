@@ -25,11 +25,11 @@
 			'onTaskManagerFormRowSelected',
 			'onTaskManagerFormSaveButtonClick',
 			'taskManagerFormClearSelection',
-			'taskManagerFormModifyButtonStateManage',
 			'taskManagerFormNavigationSetDisableNextButton',
 			'taskManagerFormPanelForwarder',
 			'taskManagerFormPanelsAdd',
 			'taskManagerFormPanelsRemoveAll',
+			'taskManagerFormToolbarTopStateManage',
 			'taskManagerFormViewDataGet',
 			'taskManagerFormViewGet',
 			'taskManagerFormViewReset'
@@ -262,13 +262,6 @@
 		},
 
 		/**
-		 * @returns {Void}
-		 */
-		taskManagerFormModifyButtonStateManage: function () {
-			this.view.modifyButton.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
-		},
-
-		/**
 		 * @param {Boolean} state
 		 *
 		 * @returns {Void}
@@ -330,6 +323,16 @@
 		 */
 		taskManagerFormPanelsRemoveAll: function () {
 			this.view.removeAll();
+		},
+
+		/**
+		 * Setup buttons state, if task is active disable modify and delete
+		 *
+		 * @returns {Void}
+		 */
+		taskManagerFormToolbarTopStateManage: function () {
+			this.view.buttonModify.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
+			this.view.buttonRemove.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
 		},
 
 		/**
