@@ -135,12 +135,17 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			 */
 			authUser = actualOperationUser.getAuthenticatedUser();
 		} else if (loginDTO.isPasswordRequired()) {
-			final Login login = Login.newInstance(loginDTO.getLoginString());
+			final Login login = Login.newInstance() //
+					.withValue(loginDTO.getLoginString()) //
+					.build();
 			final AuthenticatedUser authenticated = authService.authenticate(login, loginDTO.getPassword());
-			authUser = (!loginDTO.isServiceUsersAllowed()
-					&& (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER : authenticated;
+			authUser =
+					(!loginDTO.isServiceUsersAllowed() && (authenticated.isService() || authenticated.isPrivileged()))
+							? ANONYMOUS_USER : authenticated;
 		} else {
-			final Login login = Login.newInstance(loginDTO.getLoginString());
+			final Login login = Login.newInstance() //
+					.withValue(loginDTO.getLoginString()) //
+					.build();
 			authUser = authService.authenticate(login, new PasswordCallback() {
 				@Override
 				public void setPassword(final String password) {
@@ -165,8 +170,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				for (final String name : authUser.getGroupNames()) {
 					groupsForLogin.add(getGroupInfoForGroup(name));
 				}
-				final OperationUser operationUser = new OperationUser(authUser, new NullPrivilegeContext(),
-						new NullGroup());
+				final OperationUser operationUser =
+						new OperationUser(authUser, new NullPrivilegeContext(), new NullGroup());
 				userStore.setUser(operationUser);
 				return DefaultResponse.newInstance(false, AuthExceptionType.AUTH_MULTIPLE_GROUPS.toString(),
 						groupsForLogin);
@@ -191,8 +196,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				selectedGroupName = groupName;
 			} else {
 				final String defaultGroupName = authUser.getDefaultGroupName();
-				selectedGroupName = (defaultGroupName == null) ? getFirst(authUser.getGroupNames(), groupName)
-						: defaultGroupName;
+				selectedGroupName =
+						(defaultGroupName == null) ? getFirst(authUser.getGroupNames(), groupName) : defaultGroupName;
 			}
 			final CMGroup selectedGroup = getGroupWithName(selectedGroupName);
 			privilegeCtx = buildPrivilegeContext(selectedGroup);

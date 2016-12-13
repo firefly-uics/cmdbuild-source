@@ -1,6 +1,7 @@
 package org.cmdbuild.auth;
 
-import org.cmdbuild.common.digest.Base64Digester;
+import static java.util.Objects.requireNonNull;
+
 import org.cmdbuild.dao.view.CMDataView;
 
 /**
@@ -8,12 +9,26 @@ import org.cmdbuild.dao.view.CMDataView;
  */
 public class LegacyDBAuthenticator extends DatabaseAuthenticator {
 
-	public LegacyDBAuthenticator(final CMDataView view) {
-		super(view);
+	public static interface Configuration extends DatabaseAuthenticator.Configuration {
+
 	}
 
-	public LegacyDBAuthenticator(final CMDataView view, final Base64Digester digester) {
-		super(view, digester);
+	private final Configuration configuration;
+	private final CMDataView view;
+
+	public LegacyDBAuthenticator(final Configuration configuration, final CMDataView view) {
+		this.configuration = requireNonNull(configuration);
+		this.view = requireNonNull(view);
+	}
+
+	@Override
+	protected Configuration configuration() {
+		return configuration;
+	}
+
+	@Override
+	protected CMDataView view() {
+		return view;
 	}
 
 	@Override

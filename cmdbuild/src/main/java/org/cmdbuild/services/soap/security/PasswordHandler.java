@@ -51,10 +51,14 @@ public class PasswordHandler implements CallbackHandler {
 			final String impersonatedUser = matcher.group(5);
 			final String group = matcher.group(8);
 
-			authenticationLogin = LoginAndGroup.newInstance(Login.newInstance(userOrServiceUser), group);
+			authenticationLogin = LoginAndGroup.newInstance(Login.newInstance() //
+					.withValue(userOrServiceUser) //
+					.build(), group);
 			impersonateForcibly = defaultIfBlank(impersonate, "#").equals("!");
 			if (isNotEmpty(impersonatedUser)) {
-				impersonationLogin = LoginAndGroup.newInstance(Login.newInstance(impersonatedUser), group);
+				impersonationLogin = LoginAndGroup.newInstance(Login.newInstance() //
+						.withValue(impersonatedUser) //
+						.build(), group);
 			} else {
 				impersonationLogin = null;
 			}
