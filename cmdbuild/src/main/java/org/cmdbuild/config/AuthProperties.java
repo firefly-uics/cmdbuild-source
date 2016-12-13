@@ -32,6 +32,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	private static final String LDAP_AUTHENTICATION_PRINCIPAL = "ldap.search.auth.principal";
 	private static final String LDAP_AUTHENTICATION_PASSWORD = "ldap.search.auth.password";
 	private static final String AUTH_METHODS = "auth.methods";
+	private static final String AUTH_CASE_INSENSITIVE = "auth.case.insensitive";
 
 	public AuthProperties() {
 		super();
@@ -49,6 +50,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		setProperty(LDAP_AUTHENTICATION_METHOD, "");
 		setProperty(LDAP_AUTHENTICATION_PRINCIPAL, "");
 		setProperty(LDAP_AUTHENTICATION_PASSWORD, "");
+		setProperty(AUTH_CASE_INSENSITIVE, "false");
 	}
 
 	public boolean isLdapConfigured() {
@@ -65,6 +67,10 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 
 	public static AuthProperties getInstance() {
 		return (AuthProperties) Settings.getInstance().getModule(MODULE_NAME);
+	}
+
+	public boolean isCaseInsensitive() {
+		return Boolean.valueOf(getProperty(AUTH_CASE_INSENSITIVE));
 	}
 
 	public boolean getForceWSPasswordDigest() {

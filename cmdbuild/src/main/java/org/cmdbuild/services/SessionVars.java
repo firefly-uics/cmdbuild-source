@@ -54,7 +54,9 @@ public class SessionVars implements AuthenticationStore, LanguageStore {
 	public Login getLogin() {
 		Login type = (Login) valuesStore.get(LOGIN_KEY);
 		if (type == null) {
-			type = Login.newInstance(EMPTY);
+			type = Login.newInstance() //
+					.withValue(EMPTY) //
+					.build();
 			setLogin(type);
 		}
 		return type;

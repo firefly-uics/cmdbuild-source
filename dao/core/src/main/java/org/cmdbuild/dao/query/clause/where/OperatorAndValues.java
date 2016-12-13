@@ -22,6 +22,10 @@ public class OperatorAndValues {
 		return EqualsOperatorAndValue.eq(value);
 	}
 
+	public static OperatorAndValue equalsIgnoreCase(final Object value) {
+		return new EqualsIgnoreCaseOperatorAndValue(value);
+	}
+
 	public static OperatorAndValue gt(final Object value) {
 		return GreaterThanOperatorAndValue.gt(value);
 	}

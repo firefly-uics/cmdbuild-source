@@ -21,6 +21,8 @@ NEW FEATURES
 
  * Better performances when importing CSV data
 
+ * Case sensitivity for authentication
+
 
 FIXES
 
