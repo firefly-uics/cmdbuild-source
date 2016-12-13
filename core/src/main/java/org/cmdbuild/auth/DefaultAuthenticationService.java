@@ -55,7 +55,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		/**
 		 * Returns the names of the authenticators that should be activated, or
 		 * null if all authenticators should be activated.
-		 * 
+		 *
 		 * @return active authenticators or null
 		 */
 		Collection<String> getActiveAuthenticators();
@@ -192,7 +192,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	@Override
 	public CMUser fetchUserByUsername(final String username) {
-		final Login login = Login.newInstance(username);
+		final Login login = Login.newInstance() //
+				.withValue(username) //
+				.build();
 		return fetchUser(login);
 	}
 
@@ -374,7 +376,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public Iterable<CMUser> fetchAllUsers(boolean activeOnly) {
+	public Iterable<CMUser> fetchAllUsers(final boolean activeOnly) {
 		for (final UserFetcher uf : userFetchers) {
 			return uf.fetchAllUsers(activeOnly);
 		}
