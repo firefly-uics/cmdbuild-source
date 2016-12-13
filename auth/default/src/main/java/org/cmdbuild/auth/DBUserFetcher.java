@@ -9,7 +9,6 @@ import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
-import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.equalsIgnoreCase;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.cmdbuild.auth.logging.LoggingSupport;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
@@ -37,6 +36,8 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -44,25 +45,17 @@ import com.google.common.collect.Lists;
 /**
  * Implements user, group and privilege management on top of the DAO layer
  */
-public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
-
-	public static interface Configuration {
-
-		boolean isCaseInsensitive();
-
-	}
+public abstract class DBUserFetcher implements UserFetcher {
 
 	private static final String ROLE_NAME_COLUMN = org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 
-	/**
-	 * Usable by subclasses only.
-	 */
-	protected DBUserFetcher() {
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	protected final CMDataView view;
+
+	protected DBUserFetcher(final CMDataView view) {
+		Validate.notNull(view);
+		this.view = view;
 	}
-
-	protected abstract Configuration configuration();
-
-	protected abstract CMDataView view();
 
 	@Override
 	public CMUser fetchUser(final Login login) {
@@ -72,7 +65,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 
 	@Override
 	public CMUser fetchUserById(final Long userId) {
-		final CMQueryRow row = view().select(anyAttribute(userClass())) //
+		final CMQueryRow row = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.where(condition(attribute(userClass(), userClass().getKeyAttributeName()), eq(userId))) //
 				.limit(1) //
@@ -84,7 +77,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 
 	@Override
 	public List<CMUser> fetchUsersFromGroupId(final Long groupId) {
-		final CMQueryResult result = view().select(anyAttribute(userClass())) //
+		final CMQueryResult result = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
 				.where(condition(attribute(roleClass(), roleClass().getKeyAttributeName()), eq(groupId))) //
@@ -102,7 +95,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 
 	@Override
 	public List<Long> fetchUserIdsFromGroupId(final Long groupId) {
-		final CMQueryResult result = view().select(anyAttribute(userClass())) //
+		final CMQueryResult result = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
 				.where(condition(attribute(roleClass(), roleClass().getKeyAttributeName()), eq(groupId))) //
@@ -153,7 +146,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 			final String groupName //
 	) {
 		try {
-			final CMCard roleCard = view().select(anyAttribute(roleClass())) //
+			final CMCard roleCard = view.select(anyAttribute(roleClass())) //
 					.from(roleClass()) //
 					.where(condition(attribute(roleClass(), ROLE_NAME_COLUMN), eq(groupName))) //
 					.limit(1) //
@@ -174,7 +167,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 	private String fetchDefaultGroupNameForUser(final String username) {
 		String defaultGroupName = null;
 		if (allowsDefaultGroup()) {
-			final CMQueryResult result = view()
+			final CMQueryResult result = view
 					.select(attribute(userClass(), userNameAttribute()),
 							attribute(userGroupDomain(), UserRole.DEFAULT_GROUP),
 							attribute(roleClass(), roleClass().getCodeAttributeName())) //
@@ -205,13 +198,12 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 
 	protected CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryResult queryResult = view().select(anyAttribute(userClass())) //
+		final CMQueryResult queryResult = view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(and( //
 						activeCondition(userClassAlias), //
 						condition(attribute(userClassAlias, loginAttributeName(login)), //
-								configuration().isCaseInsensitive() ? equalsIgnoreCase(login.getValue())
-										: eq(login.getValue())))) //
+								eq(login.getValue())))) //
 				.limit(1) //
 				.skipDefaultOrdering() //
 				.run();
@@ -232,7 +224,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 		final List<String> groupNames = new ArrayList<String>();
 		final Alias groupClassAlias = EntryTypeAlias.canonicalAlias(roleClass());
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryResult userGroupsRows = view().select(attribute(groupClassAlias, Role.CODE)) //
+		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, Role.CODE)) //
 				.from(roleClass()) //
 				.join(userClass(), as(userClassAlias), over(userGroupDomain())) //
 				.where(and( //
@@ -251,7 +243,7 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 	@Override
 	public Iterable<CMUser> fetchAllUsers(final boolean activeOnly) {
 		final Alias userClassAlias = canonical(userClass());
-		return from(view().select(anyAttribute(userClass())) //
+		return from(view.select(anyAttribute(userClass())) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(activeOnly ? activeCondition(userClassAlias) : alwaysTrue()) //
 				.run()) //
@@ -269,12 +261,12 @@ public abstract class DBUserFetcher implements UserFetcher, LoggingSupport {
 	@Override
 	public Iterable<CMUser> fetchServiceOrPrivilegedUsers() {
 		final CMClass target = userClass();
-		final CMQueryResult result = view().select(anyAttribute(target)) //
+		final CMQueryResult result = view.select(anyAttribute(target)) //
 				.from(target) //
 				.where(or( //
 						condition(attribute(target, User.SERVICE), eq(true)), //
 						condition(attribute(target, User.PRIVILEGED), eq(true))) //
-				) //
+		) //
 				.run();
 		final List<CMUser> allUsers = Lists.newArrayList();
 		for (final CMQueryRow row : result) {

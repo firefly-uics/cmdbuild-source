@@ -32,9 +32,7 @@ public class HeaderAuthenticator implements ClientRequestAuthenticator {
 	public Response authenticate(final ClientRequest request) {
 		final String loginString = request.getHeader(conf.getHeaderAttributeName());
 		if (loginString != null) {
-			final Login login = Login.newInstance() //
-					.withValue(loginString) //
-					.build();
+			final Login login = Login.newInstance(loginString);
 			logger.info("Authenticated user " + loginString);
 			return Response.newLoginResponse(login);
 		} else {

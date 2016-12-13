@@ -4,33 +4,25 @@ import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.view.CMDataView;
 
 /**
  * Fetches the users in the legacy database tables decided by the DBA
  */
-public abstract class LegacyDBUserFetcher extends DBUserFetcher {
+public class LegacyDBUserFetcher extends DBUserFetcher {
 
-	public static interface Configuration extends DBUserFetcher.Configuration {
-
+	public LegacyDBUserFetcher(final CMDataView view) {
+		super(view);
 	}
-
-	/**
-	 * Usable by subclasses only.
-	 */
-	protected LegacyDBUserFetcher() {
-	}
-
-	@Override
-	protected abstract Configuration configuration();
 
 	@Override
 	protected final CMClass userClass() {
-		return view().findClass("User");
+		return view.findClass("User");
 	}
 
 	@Override
 	protected final CMClass roleClass() {
-		return view().findClass(ROLE_CLASS_NAME);
+		return view.findClass(ROLE_CLASS_NAME);
 	}
 
 	@Override
@@ -60,7 +52,7 @@ public abstract class LegacyDBUserFetcher extends DBUserFetcher {
 
 	@Override
 	protected CMDomain userGroupDomain() {
-		return view().findDomain("UserRole");
+		return view.findDomain("UserRole");
 	}
 
 	@Override
