@@ -12,8 +12,6 @@ public interface OperatorAndValueVisitor {
 
 	void visit(EqualsOperatorAndValue operatorAndValue);
 
-	void visit(EqualsIgnoreCaseOperatorAndValue operatorAndValue);
-
 	void visit(GreaterThanOperatorAndValue operatorAndValue);
 
 	void visit(GreaterThanOrEqualToOperatorAndValue operatorAndValue);

@@ -2,26 +2,28 @@ package org.cmdbuild.auth;
 
 import java.util.NoSuchElementException;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.view.CMDataView;
 
 public abstract class DatabaseAuthenticator extends LegacyDBUserFetcher implements PasswordAuthenticator {
 
-	public static interface Configuration extends LegacyDBUserFetcher.Configuration {
+	private final Digester digester;
 
+	public DatabaseAuthenticator(final CMDataView view) {
+		this(view, new Base64Digester());
 	}
-
-	private static final Digester DIGESTER = new Base64Digester();
 
 	/**
-	 * Usable by subclasses only.
+	 * Used by tests
 	 */
-	protected DatabaseAuthenticator() {
+	public DatabaseAuthenticator(final CMDataView view, final Base64Digester digester) {
+		super(view);
+		Validate.notNull(digester);
+		this.digester = digester;
 	}
-
-	@Override
-	protected abstract Configuration configuration();
 
 	@Override
 	public String getName() {
@@ -33,7 +35,7 @@ public abstract class DatabaseAuthenticator extends LegacyDBUserFetcher implemen
 		if (password == null) {
 			return false;
 		}
-		final String encryptedPassword = DIGESTER.encrypt(password);
+		final String encryptedPassword = digester.encrypt(password);
 		final String dbEncryptedPassword = fetchEncryptedPassword(login);
 		return encryptedPassword.equals(dbEncryptedPassword);
 	}
@@ -41,7 +43,7 @@ public abstract class DatabaseAuthenticator extends LegacyDBUserFetcher implemen
 	@Override
 	public String fetchUnencryptedPassword(final Login login) {
 		final String dbEncryptedPassword = fetchEncryptedPassword(login);
-		return DIGESTER.decrypt(dbEncryptedPassword);
+		return digester.decrypt(dbEncryptedPassword);
 	}
 
 	private String fetchEncryptedPassword(final Login login) {
@@ -68,9 +70,9 @@ public abstract class DatabaseAuthenticator extends LegacyDBUserFetcher implemen
 	private boolean changePassword(final Login login, final String oldPassword, final String newPassword) {
 		if (checkPassword(login, oldPassword)) {
 			try {
-				final String newEncryptedPassword = DIGESTER.encrypt(newPassword);
+				final String newEncryptedPassword = digester.encrypt(newPassword);
 				final CMCard userCard = fetchUserCard(login);
-				view().update(userCard).set(userPasswordAttribute(), newEncryptedPassword).save();
+				view.update(userCard).set(userPasswordAttribute(), newEncryptedPassword).save();
 				return true;
 			} catch (final NoSuchElementException e) {
 				// let it return false

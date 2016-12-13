@@ -23,11 +23,11 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.ClientRequestAuthenticator.Response;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.PasswordAuthenticator;
 import org.cmdbuild.auth.UserFetcher;
-import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
@@ -43,12 +43,8 @@ import com.google.common.collect.Sets;
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationServiceTest {
 
-	private static final Login LOGIN = Login.newInstance() //
-			.withValue("Any User") //
-			.build();
-	private static final Login WRONG_LOGIN = Login.newInstance() //
-			.withValue("Inexistent User") //
-			.build();
+	private static final Login LOGIN = Login.newInstance("Any User");
+	private static final Login WRONG_LOGIN = Login.newInstance("Inexistent User");
 	private static final String PASSWORD = "cleartext password";
 	private static final String WRONG_PASSWORD = "wrong password";
 	private static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();

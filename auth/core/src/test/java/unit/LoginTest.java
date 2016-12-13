@@ -17,12 +17,8 @@ public class LoginTest {
 		final String STRING_WITHOUT_AT = "anything without the at char";
 		final String STRING_WITH_AT = "anything with the @ char"; // "firstname.surname@example.com";
 
-		final Login usernameLogin = Login.newInstance() //
-				.withValue(STRING_WITHOUT_AT) //
-				.build();
-		final Login emailLogin = Login.newInstance() //
-				.withValue(STRING_WITH_AT) //
-				.build();
+		final Login usernameLogin = Login.newInstance(STRING_WITHOUT_AT);
+		final Login emailLogin = Login.newInstance(STRING_WITH_AT);
 
 		assertThat(usernameLogin.getValue(), is(STRING_WITHOUT_AT));
 		assertThat(usernameLogin.getType(), is(LoginType.USERNAME));
@@ -33,27 +29,16 @@ public class LoginTest {
 
 	@Test(expected = NullPointerException.class)
 	public void disallowsNullLoginStrings() {
-		Login.newInstance() //
-				.build();
+		Login.newInstance(null);
 	}
 
 	@Test
 	public void implementsEqualsAndHash() {
-		final Login login = Login.newInstance() //
-				.withValue("A") //
-				.build();
-		final Login sameLogin = Login.newInstance() //
-				.withValue("A") //
-				.build();
+		final Login login = Login.newInstance("A");
+		final Login sameLogin = Login.newInstance("A");
 		final Object anotherObject = new Object();
-		final Login anotherLoginType = Login.newInstance() //
-				.withValue("A") //
-				.withType(LoginType.EMAIL) //
-				.build();
-		final Login anotherLoginString = Login.newInstance() //
-				.withValue("B") //
-				.withType(LoginType.USERNAME) //
-				.build();
+		final Login anotherLoginType = Login.newInstance("A", LoginType.EMAIL);
+		final Login anotherLoginString = Login.newInstance("B", LoginType.USERNAME);
 		final Login nullLogin = null;
 
 		assertThat(login, equalTo(login));

@@ -39,11 +39,6 @@ public abstract class ForwardingOperatorAndValueVisitor extends ForwardingObject
 	}
 
 	@Override
-	public void visit(final EqualsIgnoreCaseOperatorAndValue operatorAndValue) {
-		delegate().visit(operatorAndValue);
-	}
-
-	@Override
 	public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
 		delegate().visit(operatorAndValue);
 	}

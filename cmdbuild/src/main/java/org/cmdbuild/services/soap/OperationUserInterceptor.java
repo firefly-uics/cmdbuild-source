@@ -59,8 +59,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		private final AuthenticatedUser authenticatedUser;
 		private final String username;
 
-		private AuthenticatedUserWithExtendedUsername(final AuthenticatedUser authenticatedUser,
-				final String username) {
+		private AuthenticatedUserWithExtendedUsername(final AuthenticatedUser authenticatedUser, final String username) {
 			this.authenticatedUser = authenticatedUser;
 			this.username = username;
 		}
@@ -223,7 +222,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 				/*
 				 * we don't want that a User is represented by a Card of a user
 				 * class, so we login again with the authentication user
-				 *
+				 * 
 				 * at the end we keep the authenticated user with the privileges
 				 * of the impersonated... it's a total mess
 				 */
@@ -251,11 +250,9 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 					@Override
 					public boolean apply(final CMUser input) {
-						final Login login = Login.newInstance() //
-								.withValue(username) //
-								.build();
-						return (login.getType() == EMAIL) ? input.getEmail().equals(username)
-								: input.getUsername().equals(username);
+						final Login login = Login.newInstance(username);
+						return (login.getType() == EMAIL) ? input.getEmail().equals(username) : input.getUsername()
+								.equals(username);
 					}
 
 				}) //
