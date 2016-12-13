@@ -19,7 +19,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters)
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters)
 		},
 
 		/**
@@ -32,7 +32,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.functions.readCards });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
 		}
 	});
 

@@ -73,19 +73,18 @@
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var nodes = [];
 					var standard = [];
 					var simple = [];
 					var standardNodesMap = {};
 
-					// Removes all processes and root class from response
+					// Filter root and system classes
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
-							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
-							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
+							item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses()
+							&& !item[CMDBuild.core.constants.Proxy.SYSTEM]
 						);
 					}, this);
 

@@ -5,9 +5,9 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
 			'CMDBuild.model.dataView.filter.GridStore',
-			'CMDBuild.model.dataView.filter.SourceClass'
+			'CMDBuild.model.dataView.filter.SourceEntity',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -56,13 +56,13 @@
 		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreSourceClass: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+		getStoreSources: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ENTRY_TYPE, {
 				autoLoad: true,
-				model: 'CMDBuild.model.dataView.filter.SourceClass',
+				model: 'CMDBuild.model.dataView.filter.SourceEntity',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.entryType.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -74,14 +74,13 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters root of all classes
+					function (record) { // Filters root class
 						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
 				],
-
 				listeners: {
 					load: function (store, records, successful, eOpts) { // Add Dashboards items
 						CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, {
