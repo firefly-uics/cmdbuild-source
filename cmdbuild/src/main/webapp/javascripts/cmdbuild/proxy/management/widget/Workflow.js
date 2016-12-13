@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.Workflow', {
+	Ext.define('CMDBuild.proxy.management.widget.Workflow', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
