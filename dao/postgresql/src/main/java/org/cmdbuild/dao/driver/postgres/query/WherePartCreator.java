@@ -5,8 +5,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT_EQ;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_ILIKE;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
-import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LIKE;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LT_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_NULL;
@@ -39,6 +39,7 @@ import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.EqualsIgnoreCaseOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
@@ -189,6 +190,12 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 			@Override
+			public void visit(final EqualsIgnoreCaseOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_ILIKE,
+						valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
 			public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_GT,
 						valueOf(operatorAndValue.getValue())));
@@ -214,19 +221,19 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 			@Override
 			public void visit(final ContainsOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_ILIKE,
 						valueOf("%" + operatorAndValue.getValue() + "%")));
 			}
 
 			@Override
 			public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_ILIKE,
 						valueOf(operatorAndValue.getValue() + "%")));
 			}
 
 			@Override
 			public void visit(final EndsWithOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_ILIKE,
 						valueOf("%" + operatorAndValue.getValue())));
 			}
 

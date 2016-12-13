@@ -88,7 +88,9 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 
 		final String userFromTicket = casService.getUsernameFromTicket(skipSsoRequest);
 		if (userFromTicket != null) {
-			final Login login = Login.newInstance(userFromTicket);
+			final Login login = Login.newInstance() //
+					.withValue(userFromTicket) //
+					.build();
 			logger.trace(MARKER, "authenticated as '{}'", userFromTicket);
 			return Response.newLoginResponse(login);
 		}
