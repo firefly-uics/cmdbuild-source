@@ -35,7 +35,7 @@
 
 		/**
 		 * @returns {Void}
-		 * 
+		 *
 		 * @override
 		 */
 		initComponent : function() {
@@ -69,7 +69,7 @@
 		 *            record.Id
 		 * @param {String}
 		 *            record.IdClass
-		 * 
+		 *
 		 * @returns {Void}
 		 */
 		navigateOnCard : function(record) {
@@ -251,11 +251,11 @@
 		 *            fields
 		 * @param {Number}
 		 *            pageSize
-		 * 
+		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 * 
+		 *
 		 * @private
-		 * 
+		 *
 		 * TODO: waiting for refactor (build grid proxy)
 		 */
 		buildStore : function(fields, pageSize) {
@@ -269,7 +269,7 @@
 			});
 			fields.push('IdClass_value');
 
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CARD, {
 				autoLoad : false,
 				fields : fields,
 				pageSize : pageSize,

@@ -39,35 +39,27 @@
 		detail: function (params, path, router) {
 			if (this.paramsValidation(params)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Card.readClass({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Card.readClassByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var classObject = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) == classObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER))) // Single card selection
+								return this.manageIdentifierCard(decodedResponse, this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER));
 
-							if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
-								if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER))) // Single card selection
-									return this.manageIdentifierCard(classObject, this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER));
-
-								if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
-									return this.manageFilterSimple(classObject);
-							}
-
-							return CMDBuild.core.Message.error(
-								CMDBuild.Translation.common.failure,
-								CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
-								false
-							);
-						} else {
-							_error('detail(): unmanaged decodedResponse value', this, decodedResponse);
+							if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
+								return this.manageFilterSimple(decodedResponse);
 						}
+
+						return CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
+							false
+						);
 					}
 				});
 			}
@@ -203,50 +195,42 @@
 		print: function (params, path, router) {
 			if (this.paramsValidation(params)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Card.readClass({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Card.readClassByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var classObject = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) == classObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
-
-							if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
-								if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
-									if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER))) // Single card selection
-										return this.manageIdentifierCard(
-											classObject,
-											this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER),
-											Ext.Function.createDelayed(function () {
-												CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').cardPanelController.onPrintCardMenuClick(
-													this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
-												);
-											}, 1500, this)
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER))) // Single card selection
+								return this.manageIdentifierCard(
+									decodedResponse,
+									this.paramsModel.get(CMDBuild.core.constants.Proxy.CARD_IDENTIFIER),
+									Ext.Function.createDelayed(function () {
+										CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').cardPanelController.onPrintCardMenuClick(
+											this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
 										);
+									}, 1500, this)
+								);
 
-									if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
-										return this.manageFilterSimple(
-											classObject,
-											Ext.Function.createDelayed(function () {
-												CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').cardPanelController.onPrintCardMenuClick(
-													this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
-												);
-											}, 1500, this)
+							if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
+								return this.manageFilterSimple(
+									decodedResponse,
+									Ext.Function.createDelayed(function () {
+										CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').cardPanelController.onPrintCardMenuClick(
+											this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
 										);
-								}
-							}
-
-							return CMDBuild.core.Message.error(
-								CMDBuild.Translation.common.failure,
-								CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
-								false
-							);
+									}, 1500, this)
+								);
 						}
+
+						return CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
+							false
+						);
 					}
 				});
 			}

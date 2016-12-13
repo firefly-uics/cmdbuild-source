@@ -20,7 +20,7 @@
 
 				Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.lock });
 
-				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
+				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters, true);
 			},
 
 			/**
@@ -33,7 +33,7 @@
 
 				Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.unlock });
 
-				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
+				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters, true);
 			},
 
 		/**
@@ -61,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.getPosition });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**

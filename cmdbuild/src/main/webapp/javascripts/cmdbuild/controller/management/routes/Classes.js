@@ -38,29 +38,22 @@
 		detail: function (params, path, router) {
 			if (this.paramsValidation(params)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Classes.readClassByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var classObject = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) == classObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+							return this.manageIdentifierClass(decodedResponse);
 
-							if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
-								return this.manageIdentifierClass(classObject);
-							} else {
-								CMDBuild.core.Message.error(
-									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
-									false
-								);
-							}
-						}
+						return CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
+							false
+						);
 					}
 				});
 			}
@@ -171,35 +164,28 @@
 		print: function (params, path, router) {
 			if (this.paramsValidation(params)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Classes.readClassByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var classObject = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) == classObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+							return this.manageIdentifierClass(decodedResponse, function () {
+								Ext.Function.createDelayed(function () {
+									CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').gridController.onPrintGridMenuClick(
+										this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
+									);
+								}, 500, this)();
+							});
 
-							if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)) {
-								return this.manageIdentifierClass(classObject, function () {
-									Ext.Function.createDelayed(function () {
-										CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').gridController.onPrintGridMenuClick(
-											this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT)
-										);
-									}, 500, this)();
-								});
-							} else {
-								CMDBuild.core.Message.error(
-									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
-									false
-								);
-							}
-						}
+						return CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER) + ')',
+							false
+						);
 					}
 				});
 			}

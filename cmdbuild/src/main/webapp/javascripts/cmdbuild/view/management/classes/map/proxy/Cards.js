@@ -9,7 +9,7 @@
 		/**
 		 * @param {Object}
 		 *            parameters
-		 * 
+		 *
 		 * @returns {Void}
 		 */
 		read : function(parameters) {
@@ -19,7 +19,7 @@
 				url : CMDBuild.proxy.index.Json.card.readAll
 			});
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARDS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
 		}
 	});
 
