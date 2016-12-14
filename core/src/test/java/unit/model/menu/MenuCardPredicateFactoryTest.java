@@ -1,16 +1,23 @@
 package unit.model.menu;
 
+import static com.google.common.reflect.Reflection.newProxy;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -18,7 +25,6 @@ import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.model.view.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
-import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.services.store.menu.MenuCardPredicateFactory;
 import org.cmdbuild.services.store.menu.MenuItemType;
 import org.junit.Before;
@@ -55,7 +61,6 @@ public class MenuCardPredicateFactoryTest {
 		final CMCard classMockMenuCard = getMockMenuCard(MenuItemType.CLASS);
 		final CMCard folderMockMenuCard = getMockMenuCard(MenuItemType.FOLDER);
 		final CMCard rootMockMenuCard = getMockMenuCard(MenuItemType.ROOT);
-		final CMCard dashboardMockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
 
 		final CMGroup mockGroup = mock(CMGroup.class);
 		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
@@ -64,11 +69,9 @@ public class MenuCardPredicateFactoryTest {
 		final Predicate<?> classPredicate = factory.getPredicate(classMockMenuCard);
 		final Predicate<?> folderPredicate = factory.getPredicate(folderMockMenuCard);
 		final Predicate<?> rootPredicate = factory.getPredicate(rootMockMenuCard);
-		final Predicate<?> dashboardPredicate = factory.getPredicate(dashboardMockMenuCard);
 
 		// then
 		assertTrue(classPredicate instanceof IsReadableClass);
-		assertTrue(dashboardPredicate instanceof IsReadableDashboard);
 		assertTrue(folderPredicate instanceof IsAlwaysReadable);
 		assertTrue(rootPredicate instanceof IsAlwaysReadable);
 	}
@@ -105,8 +108,39 @@ public class MenuCardPredicateFactoryTest {
 	}
 
 	@Test
+	public void shouldAcceptEveryDashdashboardWhenUserHasAdministrationPrivileges() {
+		// given
+		final AuthenticatedUser user = newProxy(AuthenticatedUser.class, unsupported("should not be used"));
+		final CMGroup group = newProxy(CMGroup.class, unsupported("should not be used"));
+		final OperationUser operationUser = new OperationUser(user, new SystemPrivilegeContext(), group);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
+		final CMCard mockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
+		doReturn(null) //
+				.when(mockMenuCard).get("Definition");
+		final CMGroup mockGroup = mock(CMGroup.class);
+		doReturn(MOCK_GROUP_NAME) //
+				.when(mockGroup).getName();
+		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
+
+		// when
+		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
+
+		// then
+		assertThat(predicate.apply(mockMenuCard), equalTo(true));
+	}
+
+	@Test
 	public void shouldReturnFalseIfNullDashboardDefinition() {
 		// given
+		final AuthenticatedUser user = newProxy(AuthenticatedUser.class, unsupported("should not be used"));
+		final PrivilegeContext privilegeContext = mock(PrivilegeContext.class);
+		doReturn(false) //
+				.when(privilegeContext).hasAdministratorPrivileges();
+		final CMGroup group = newProxy(CMGroup.class, unsupported("should not be used"));
+		final OperationUser operationUser = new OperationUser(user, privilegeContext, group);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
 		final CMCard mockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
 		when(mockMenuCard.get("Definition")).thenReturn(null);
 		final CMGroup mockGroup = mock(CMGroup.class);
@@ -117,12 +151,20 @@ public class MenuCardPredicateFactoryTest {
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
 
 		// then
-		assertFalse(predicate.apply(mockMenuCard));
+		assertThat(predicate.apply(mockMenuCard), equalTo(false));
 	}
 
 	@Test
 	public void shouldReturnFalseIfGroupCannotReadTheDashboard() {
 		// given
+		final AuthenticatedUser user = newProxy(AuthenticatedUser.class, unsupported("should not be used"));
+		final PrivilegeContext privilegeContext = mock(PrivilegeContext.class);
+		doReturn(false) //
+				.when(privilegeContext).hasAdministratorPrivileges();
+		final CMGroup group = newProxy(CMGroup.class, unsupported("should not be used"));
+		final OperationUser operationUser = new OperationUser(user, privilegeContext, group);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
 		final CMCard mockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
 		when(mockMenuCard.get("Definition")).thenReturn("{groups:[group1, group2]}");
 		final CMGroup mockGroup = mock(CMGroup.class);
@@ -133,15 +175,23 @@ public class MenuCardPredicateFactoryTest {
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
 
 		// then
-		assertFalse(predicate.apply(mockMenuCard));
+		assertThat(predicate.apply(mockMenuCard), equalTo(false));
 	}
 
 	@Test
 	public void shouldReturnFalseIfMalformedDashboardDefinition() {
 		// given
+		final AuthenticatedUser user = newProxy(AuthenticatedUser.class, unsupported("should not be used"));
+		final PrivilegeContext privilegeContext = mock(PrivilegeContext.class);
+		doReturn(false) //
+				.when(privilegeContext).hasAdministratorPrivileges();
+		final CMGroup group = newProxy(CMGroup.class, unsupported("should not be used"));
+		final OperationUser operationUser = new OperationUser(user, privilegeContext, group);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
 		final CMCard mockMenuCard = getMockMenuCard(MenuItemType.DASHBOARD);
-		when(mockMenuCard.get("Definition")).thenReturn(
-				"{malformed, json, groups:[group1, group2, " + MOCK_GROUP_NAME + "]}");
+		when(mockMenuCard.get("Definition"))
+				.thenReturn("{malformed, json, groups:[group1, group2, " + MOCK_GROUP_NAME + "]}");
 		final CMGroup mockGroup = mock(CMGroup.class);
 		when(mockGroup.getName()).thenReturn(MOCK_GROUP_NAME);
 		final MenuCardPredicateFactory factory = menuCardPredicateFactory(mockGroup);
@@ -150,7 +200,7 @@ public class MenuCardPredicateFactoryTest {
 		final Predicate<CMCard> predicate = factory.getPredicate(mockMenuCard);
 
 		// then
-		assertFalse(predicate.apply(mockMenuCard));
+		assertThat(predicate.apply(mockMenuCard), equalTo(false));
 	}
 
 	private CMCard getMockMenuCard(final MenuItemType type) {

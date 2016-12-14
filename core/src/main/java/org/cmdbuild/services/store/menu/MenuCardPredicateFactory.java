@@ -1,5 +1,6 @@
 package org.cmdbuild.services.store.menu;
 
+import static com.google.common.base.Predicates.or;
 import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
 import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
@@ -10,6 +11,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.UserStoreSupplier;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
@@ -27,6 +29,25 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class MenuCardPredicateFactory {
+
+	private static class AdministratorCanSeeAll<T> implements Predicate<T> {
+
+		private final Supplier<OperationUser> supplier;
+
+		public AdministratorCanSeeAll(final Supplier<OperationUser> supplier) {
+			this.supplier = supplier;
+		}
+
+		@Override
+		public boolean apply(final T input) {
+			return supplier.get().hasAdministratorPrivileges();
+		}
+
+	}
+
+	public static <T> Predicate<T> administrator(final Supplier<OperationUser> supplier) {
+		return new AdministratorCanSeeAll<T>(supplier);
+	}
 
 	private final CMGroup group;
 	private final CMDataView dataView;
@@ -70,7 +91,7 @@ public class MenuCardPredicateFactory {
 			return new IsReadableReport(applicationContext().getBean(ReportStore.class),
 					currentGroupAllowed(UserStoreSupplier.of(userStore)));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
-			return new IsReadableDashboard(dataView, group);
+			return or(administrator(UserStoreSupplier.of(userStore)), new IsReadableDashboard(dataView, group));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
 			return new IsReadableView(dataView, privilegeContext.get(), viewConverter);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CUSTOM_PAGE.getValue())) {
