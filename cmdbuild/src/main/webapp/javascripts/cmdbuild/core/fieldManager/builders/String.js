@@ -21,6 +21,8 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Column or Object}
+		 *
+		 * @override
 		 */
 		buildColumn: function (parameters) {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
@@ -37,6 +39,8 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildEditor: function () {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : {
@@ -52,6 +56,8 @@
 
 		/**
 		 * @returns {Ext.form.field.Text}
+		 *
+		 * @override
 		 */
 		buildField: function () {
 			return Ext.create('Ext.form.field.Text', {
@@ -69,6 +75,44 @@
 				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE)
+			});
+		},
+
+		/**
+		 * @returns {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView}
+		 *
+		 * @override
+		 */
+		buildFilterCondition: function () {
+			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
+				defaultValueCondition: CMDBuild.core.constants.Proxy.CONTAIN,
+				fields: [
+					Ext.create('Ext.form.field.Text', {
+						enforceMaxLength: true,
+						maxLength: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.LENGTH),
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
+					})
+				],
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				store: Ext.create('Ext.data.ArrayStore', {
+					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
+					data: [
+						['isnotnull', CMDBuild.Translation.isNotNull],
+						['isnull', CMDBuild.Translation.isNull],
+						['notbegin', CMDBuild.Translation.doesNotBeginWith],
+						['notcontain', CMDBuild.Translation.doesNotContain],
+						['notend', CMDBuild.Translation.doesNotEndWith],
+						['notequal', CMDBuild.Translation.different],
+						[CMDBuild.core.constants.Proxy.BEGIN, CMDBuild.Translation.beginsWith],
+						[CMDBuild.core.constants.Proxy.CONTAIN, CMDBuild.Translation.contains],
+						[CMDBuild.core.constants.Proxy.END, CMDBuild.Translation.endsWith],
+						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
+					],
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+					]
+				})
 			});
 		}
 	});

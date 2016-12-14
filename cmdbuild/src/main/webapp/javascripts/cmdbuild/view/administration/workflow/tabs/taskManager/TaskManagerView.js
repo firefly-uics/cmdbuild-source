@@ -30,7 +30,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addTask,
 								disablePanelFunctions: true,
 								scope: this,
@@ -39,7 +39,7 @@
 									this.delegate.cmfg('onWorkflowTabTasksAddButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
@@ -47,7 +47,7 @@
 									this.delegate.cmfg('onWorkflowTabTasksModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeTask,
 								scope: this,
 

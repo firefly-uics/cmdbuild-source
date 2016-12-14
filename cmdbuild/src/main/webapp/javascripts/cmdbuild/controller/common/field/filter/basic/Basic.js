@@ -1,5 +1,10 @@
 (function () {
 
+	/**
+	 * Required managed functions from upper structure:
+	 * 	- panelGridAndFormGridFilterApply
+	 * 	- panelGridAndFormGridFilterClear
+	 */
 	Ext.define('CMDBuild.controller.common.field.filter.basic.Basic', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 

@@ -3,6 +3,7 @@
 	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils',
 		'CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters'
 	]);
 
@@ -10,7 +11,6 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		mixins: {
-			commonFunctions: 'CMDBuild.controller.management.common.CMModClassAndWFCommons',
 			observable: 'Ext.util.Observable'
 		},
 
@@ -20,6 +20,24 @@
 			this.view.delegate = this;
 
 			this.buildSubControllers();
+		},
+
+		/**
+		 * Retrieve the form to use as target for the templateResolver asking it to its view
+		 *
+		 * @return {Object} or null if something is not right
+		 */
+		getFormForTemplateResolver: function() {
+			var form = null;
+
+			if (this.view) {
+				var wm = this.view.getWidgetManager();
+
+				if (wm && typeof wm.getFormForTemplateResolver == 'function')
+					form = wm.getFormForTemplateResolver() || null;
+			}
+
+			return form;
 		},
 
 		/**
@@ -378,7 +396,10 @@
 		 * @param {Number} classId
 		 */
 		changeClassUIConfigurationForGroup: function (classId) {
-			var privileges = _CMUtils.getClassPrivileges(classId);
+			if (!classId)
+				return false;
+
+			var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(classId));
 
 			this.view.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
 
@@ -510,7 +531,10 @@
 			me.mon(me.gridController, me.gridController.CMEVENTS.gridVisible, me.onGridVisible, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.load, me.onGridLoad, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.itemdblclick, function() {
-				var privileges = _CMUtils.getEntryTypePrivilegesByCard(me.cardPanelController.card);
+				if (!me.cardPanelController.card)
+					return false;
+
+				var privileges = CMDBuild.core.Utils.getEntryTypePrivileges(_CMCache.getEntryTypeById(me.cardPanelController.card.get('IdClass')));
 				if (! privileges.crudDisabled.modify) {
 					me.cardPanelController.onModifyCardClick();
 					_CMUIState.onlyFormIfFullScreen();

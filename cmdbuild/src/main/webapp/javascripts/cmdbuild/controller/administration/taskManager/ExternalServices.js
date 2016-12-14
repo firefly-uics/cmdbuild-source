@@ -81,7 +81,7 @@
 						// Load grid store
 						this.controllerGrid.cmfg('taskManagerGridConfigure', {
 							type: parameters.type,
-							storeLoadParameters: {
+							loadParams: {
 								scope: this,
 								callback: function (records, operation, success) {
 									this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', parameters.type); // Setup form in add mode
@@ -147,7 +147,7 @@
 						// Load grid store
 						this.controllerGrid.cmfg('taskManagerGridConfigure', {
 							type: parameters.type,
-							storeLoadParameters: {
+							loadParams: {
 								scope: this,
 								callback: function (records, operation, success) {
 									this.cmfg('taskManagerRecordSelect', parameters.id);
@@ -199,7 +199,7 @@
 						// Load grid store
 						this.controllerGrid.cmfg('taskManagerGridConfigure', {
 							type: parameters.type,
-							storeLoadParameters: {
+							loadParams: {
 								scope: this,
 								callback: function (records, operation, success) {
 									this.cmfg('taskManagerRecordSelect', parameters.id);

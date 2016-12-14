@@ -7,6 +7,8 @@
 		 */
 		delegate: undefined,
 
+		dimensionsMode: 'percentage',
+
 		initComponent: function() {
 			this.widgetsToAdd = {};
 			this.widgetsContainer = new Ext.panel.Panel({

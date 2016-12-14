@@ -12,6 +12,7 @@
 		multiSelect: false,
 		extraParams: {},
 		gridConfig: {}, // passed at instantiation
+		dimensionsMode: 'percentage',
 
 		initComponent: function() {
 			if (typeof this.idClass == 'undefined' && typeof this.ClassName == 'undefined') {
@@ -53,7 +54,7 @@
 		},
 
 		buildAddButton: function() {
-			var addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card');
+			var addCardButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Card');
 			var entry = _CMCache.getEntryTypeById(this.getIdClass());
 
 			addCardButton.updateForEntry(entry);

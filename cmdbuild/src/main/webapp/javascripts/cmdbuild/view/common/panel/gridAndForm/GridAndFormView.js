@@ -23,12 +23,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
-				tools: [
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', { delegate: this.delegate }),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize', { delegate: this.delegate }),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize', { delegate: this.delegate }),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore', { delegate: this.delegate })
-				]
+				tools: this.delegate.cmfg('panelGridAndFormToolsArrayBuild')
 			});
 
 			this.callParent(arguments);

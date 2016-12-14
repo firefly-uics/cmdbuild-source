@@ -137,19 +137,22 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.lookup.accordion.Administration} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.administration.lookup.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onLookupModuleInit: function(node) {
+		onLookupModuleInit: function(parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			this.lookupSelectedLookupTypeReset();
 
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				CMDBuild.proxy.lookup.Type.read({ // TODO: waiting for refactor (crud + rename)
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var lookupObject = Ext.Array.findBy(decodedResponse, function(item, i) {
-							return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID];
+							return parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 						lookupObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = lookupObject[CMDBuild.core.constants.Proxy.TEXT];
 
@@ -157,12 +160,12 @@
 
 						this.cmfg('onLookupSelected');
 
-						this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+						this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 							this.view.tabPanel.setActiveTab(0);
 
-						this.onModuleInit(node); // Custom callParent() implementation
+						this.onModuleInit(parameters); // Custom callParent() implementation
 					}
 				});
 			} else {
@@ -173,7 +176,7 @@
 				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 					this.view.tabPanel.setActiveTab(0);
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		}
 	});

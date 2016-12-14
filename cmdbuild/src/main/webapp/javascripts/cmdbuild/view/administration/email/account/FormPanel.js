@@ -17,12 +17,12 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Remove}
+		 * @property {CMDBuild.core.buttons.icon.Remove}
 		 */
 		removeButton: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Check}
+		 * @property {CMDBuild.core.buttons.icon.Check}
 		 */
 		setDefaultButton: undefined,
 
@@ -41,7 +41,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyAccount,
 								scope: this,
 
@@ -49,7 +49,7 @@
 									this.delegate.cmfg('onEmailAccountModifyButtonClick');
 								}
 							}),
-							this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							this.removeButton = Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeAccount,
 								scope: this,
 
@@ -57,7 +57,7 @@
 									this.delegate.cmfg('onEmailAccountRemoveButtonClick');
 								}
 							}),
-							this.setDefaultButton = Ext.create('CMDBuild.core.buttons.iconized.Check', {
+							this.setDefaultButton = Ext.create('CMDBuild.core.buttons.icon.Check', {
 								text: CMDBuild.Translation.setAsDefault,
 								scope: this,
 

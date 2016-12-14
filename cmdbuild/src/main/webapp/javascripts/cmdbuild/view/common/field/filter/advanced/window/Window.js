@@ -1,8 +1,5 @@
-(function() {
+(function () {
 
-	/**
-	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow
-	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.Window', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 
@@ -14,9 +11,9 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.filter.CMFilterAttributes}
+		 * @cfg {String}
 		 */
-		attributePanel: undefined,
+		dimensionsMode: 'percentage',
 
 		/**
 		 * @cfg {String}
@@ -26,22 +23,17 @@
 		/**
 		 * @property {CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView}
 		 */
-		columnPrivileges: undefined,
+		columnPrivileges: {},
 
 		/**
-		 * @property {CMDBuild.view.management.common.filter.CMFunctions}
+		 * @property {CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView}
 		 */
-		functionPanel: undefined,
+		fieldFilter: undefined,
 
 		/**
 		 * @property {CMDBuild.view.common.field.filter.advanced.window.GridPanel}
 		 */
 		grid: undefined,
-
-		/**
-		 * @property {CMDBuild.view.management.common.filter.CMRelations}
-		 */
-		relationPanel: undefined,
 
 		/**
 		 * @property {Ext.panel.Panel}
@@ -51,16 +43,20 @@
 		/**
 		 * @property {Ext.tab.Panel}
 		 */
-		tabPanel: undefined,
-
-		/**
-		 * @property {Ext.tab.Panel}
-		 */
 		windowTabPanel: undefined,
 
+		border: true,
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		closeAction: 'hide',
+		frame: false,
+		overflowY: 'auto',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -78,14 +74,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onFieldFilterAdvancedWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onFieldFilterAdvancedWindowAbortButtonClick');
 								}
 							})
@@ -98,6 +94,7 @@
 			if (this.delegate.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges')) {
 				Ext.apply(this, {
 					layout: 'fit',
+
 					items: [
 						this.windowTabPanel = Ext.create('Ext.tab.Panel', {
 							border: false,
@@ -113,17 +110,15 @@
 									items: [
 										this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 											delegate: this.delegate,
+											cls: 'cmdb-border-bottom',
 											region: 'north',
 											height: '30%',
 											split: true
 										}),
-										this.tabPanel = Ext.create('Ext.tab.Panel', {
-											region: 'center',
-											bodyCls: 'cmdb-gray-panel-no-padding',
-											border: false,
+										this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView', {
 											cls: 'x-panel-body-default-framed cmdb-border-top',
-
-											items: []
+											isAdministration: true,
+											region: 'center'
 										})
 									]
 								}),
@@ -135,6 +130,8 @@
 			} else {
 				Ext.apply(this, {
 					layout: 'border',
+					overflowY: 'hidden',
+
 					items: [
 						this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 							delegate: this.delegate,
@@ -142,13 +139,10 @@
 							height: '30%',
 							split: true
 						}),
-						this.tabPanel = Ext.create('Ext.tab.Panel', {
-							region: 'center',
-							bodyCls: 'cmdb-gray-panel-no-padding',
-							border: false,
+						this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.ConfiguratorView', {
 							cls: 'x-panel-body-default-framed cmdb-border-top',
-
-							items: []
+							isAdministration: true,
+							region: 'center'
 						})
 					]
 				});
@@ -158,11 +152,8 @@
 		},
 
 		listeners: {
-			beforeshow: function(window, eOpts) {
+			beforeshow: function (window, eOpts) {
 				return this.delegate.cmfg('onFieldFilterAdvancedWindowBeforeShow');
-			},
-			show: function(window, eOpts) {
-				return this.delegate.cmfg('onFieldFilterAdvancedWindowShow');
 			}
 		}
 	});

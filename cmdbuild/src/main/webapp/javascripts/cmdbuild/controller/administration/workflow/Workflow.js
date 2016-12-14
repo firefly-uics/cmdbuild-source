@@ -127,19 +127,22 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		onWorkflowModuleInit: function (node) { // FIXME: waiting for refactor (server)
+		onWorkflowModuleInit: function (parameters) { // FIXME: waiting for refactor (server)
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			this.cmfg('workflowSelectedWorkflowReset');
 
-			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
-//				params[CMDBuild.core.constants.Proxy.ID] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
+//				params[CMDBuild.core.constants.Proxy.ID] = parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
 				CMDBuild.proxy.administration.workflow.Workflow.getAll({
 					params: params,
@@ -150,7 +153,7 @@
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
+								return parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
 							}, this);
 
 							if (Ext.isObject(selectedWorkflow) && !Ext.Object.isEmpty(selectedWorkflow)) {
@@ -166,9 +169,9 @@
 
 								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 
-								this.onModuleInit(node); // Custom callParent() implementation
+								this.onModuleInit(parameters); // Custom callParent() implementation
 							} else {
-								_error('onWorkflowModuleInit(): workflow not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+								_error('onWorkflowModuleInit(): workflow not found', this, parameters.node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						} else {
 							_error('onWorkflowModuleInit(): unmanaged response', this, decodedResponse);
@@ -187,7 +190,7 @@
 //
 //							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 //
-//							this.onModuleInit(node); // Custom callParent() implementation
+//							this.onModuleInit(parameters); // Custom callParent() implementation
 //						} else {
 //							_error('onWorkflowModuleInit(): unmanaged response', this, decodedResponse);
 //						}
@@ -202,7 +205,7 @@
 
 				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		},
 

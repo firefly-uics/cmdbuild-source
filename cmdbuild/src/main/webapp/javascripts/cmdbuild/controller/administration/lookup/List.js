@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.lookup.Lookup',
 			'CMDBuild.model.lookup.Lookup',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.controller.common.field.translatable.Utils'
 		],
 
 		/**
@@ -272,9 +272,7 @@
 			// HACK to apply TranslationUuid to form to be able to save translations ... because lookups doesn't have an identifier like a name
 			this.form.loadRecord(this.lookupListSelectedLookupGet());
 
-			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
-
-			CMDBuild.core.Message.success();
+			CMDBuild.controller.common.field.translatable.Utils.commit(this.form);
 
 			this.onLookupListLookupSelected();
 		}

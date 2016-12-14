@@ -12,11 +12,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskConnectorStep1FieldsetNotificationExpand',
+			'onTaskManagerFormTaskConnectorStep1ValidateSetup = onTaskManagerFormTaskConnectorValidateSetup'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.connector.Step1}
+		 * @property {CMDBuild.view.administration.taskManager.task.connector.Step1View}
 		 */
 		view: undefined,
 
@@ -31,84 +32,27 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.Step1', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.Step1View', { delegate: this });
 		},
 
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
-			 */
-			getNotificationDelegate: function () {
-				return this.view.notificationForm.delegate;
-			},
+		/**
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskConnectorStep1FieldsetNotificationExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetNotification });
+		},
 
-			/**
-			 * @return {String}
-			 */
-			getValueId: function () {
-				return this.view.idField.getValue();
-			},
+		/**
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskConnectorStep1ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-			/**
-			 * @return {Boolean}
-			 */
-			getValueNotificationFieldsetCheckbox: function () {
-				return this.view.notificationFieldset.checkboxCmp.getValue();
-			},
-
-		// GETters functions
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledTypeField: function (state) {
-				this.view.typeField.setDisabled(state);
-			},
-
-			/**
-			 * @param {Boolean} value
-			 */
-			setValueActive: function (value) {
-				this.view.activeField.setValue(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueDescription: function (value) {
-				this.view.descriptionField.setValue(value);
-			},
-
-			/**
-			 * @param {Int} value
-			 */
-			setValueId: function (value) {
-				this.view.idField.setValue(value);
-			},
-
-			/**
-			 * @param {Object} value
-			 */
-			setValueNotificationAccount: function (value) {
-				this.getNotificationDelegate().setValue('sender', value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueNotificationFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.notificationFieldset.expand();
-				} else {
-					this.view.notificationFieldset.collapse();
-				}
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueNotificationTemplate: function (value) {
-				this.getNotificationDelegate().setValue('template', value);
-			}
+			this.view.fieldNotificationAccount.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
+			this.view.fieldNotificationTemplate.allowBlank = !(fullValidation && this.view.fieldsetNotification.checkboxCmp.getValue());
+		}
 	});
 
 })();

@@ -5,10 +5,13 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
+			'CMDBuild.model.administration.taskManager.Grid',
+			'CMDBuild.model.administration.taskManager.task.connector.Account',
+			'CMDBuild.model.administration.taskManager.task.connector.Attribute',
 			'CMDBuild.model.administration.taskManager.task.connector.AvailableSqlSources',
 			'CMDBuild.model.administration.taskManager.task.connector.Class',
-			'CMDBuild.model.administration.taskManager.Grid'
+			'CMDBuild.model.administration.taskManager.task.connector.Template',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -27,19 +30,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		read: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.connector.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
-		},
-
-		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
@@ -51,11 +41,68 @@
 					url: CMDBuild.proxy.index.Json.taskManager.connector.readAll,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.TYPE, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreAccount: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.connector.Account',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.email.account.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreAttributes: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
+				autoLoad: false,
+				model: 'CMDBuild.model.administration.taskManager.task.connector.Attribute',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.attribute.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.ATTRIBUTES
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -69,12 +116,12 @@
 				model: 'CMDBuild.model.administration.taskManager.task.connector.Class',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
-					extraParams: {
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
 						limitParam: undefined,
 						pageParam: undefined,
 						startParam: undefined
@@ -83,8 +130,7 @@
 				filters: [
 					function (record) { // Filters processes and root of all classes
 						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeClass()
-							&& record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
+							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
 							&& !record.get(CMDBuild.core.constants.Proxy.SYSTEM)
 						);
 					}
@@ -108,30 +154,57 @@
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
-				}
-			});
-		},
-
-		/**
-		 * @returns {Ext.data.ArrayStore}
-		 */
-		getStoreDeletionTypes: function () {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
-				data: [
-					[CMDBuild.Translation.deleteCard, CMDBuild.core.constants.Proxy.DELETE_CARD],
-					[CMDBuild.Translation.changeStatus, CMDBuild.core.constants.Proxy.CHANGE_STATUS]
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.VALUE, direction: 'ASC' }
 				]
 			});
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 *
-		 * TODO: implement real server call
 		 */
-		getStoreSource: Ext.emptyFn,
+		getStoreTemplate: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.connector.Template',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.email.template.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		read: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.connector.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
+		},
 
 		/**
 		 * @param {Object} parameters

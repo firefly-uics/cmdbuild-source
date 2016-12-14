@@ -7,7 +7,7 @@
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.dataView.sql.GridStore',
-			'CMDBuild.model.Function'
+			'CMDBuild.model.dataView.sql.Function'
 		],
 
 		singleton: true,
@@ -57,7 +57,7 @@
 		getStoreDataSources: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
 				autoLoad: true,
-				model: 'CMDBuild.model.Function',
+				model: 'CMDBuild.model.dataView.sql.Function',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.functions.readAll,

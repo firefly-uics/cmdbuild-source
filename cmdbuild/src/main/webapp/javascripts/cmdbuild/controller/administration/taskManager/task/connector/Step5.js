@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.taskManager.task.connector.Step5', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.administration.taskManager.task.Connector'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.taskManager.task.connector.Connector}
@@ -14,12 +17,18 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onBeforeEdit',
-			'onStepEdit'
+			'onTaskManagerFormTaskConnectorStep5BeforeEdit = onTaskManagerCommonFieldEditableBeforeEdit',
+			'onTaskManagerFormTaskConnectorStep5Show',
+			'onTaskManagerFormTaskConnectorStep5ValidateSetup = onTaskManagerFormTaskConnectorValidateSetup'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.connector.Step5}
+		 * @property {Ext.grid.Panel}
+		 */
+		grid: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.taskManager.task.connector.Step5View}
 		 */
 		view: undefined,
 
@@ -34,259 +43,99 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.Step5', { delegate: this });
-		},
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.connector.Step5View', { delegate: this });
 
-		buildClassCombo: function () {
-			var me = this;
-
-			this.view.attributeLevelMappingGrid.columns[2].setEditor({
-				xtype: 'combo',
-				displayField: CMDBuild.core.constants.Proxy.NAME,
-				valueField: CMDBuild.core.constants.Proxy.NAME,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
-
-				store: this.parentDelegate.getStoreFilteredClass(),
-				queryMode: 'local',
-
-				listeners: {
-					select: function (combo, records, eOpts) {
-						me.buildClassAttributesCombo(this.getValue());
-					}
-				}
-			});
+			// Shorthands
+			this.grid = this.view.grid;
 		},
 
 		/**
-		 * To setup class attribute combo editor
-		 *
 		 * @param {String} className
-		 * @param {Boolean} onStepEditExecute
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
 		 */
-		buildClassAttributesCombo: function (className, onStepEditExecute) {
-			if (!Ext.isEmpty(className)) {
-				var me = this;
-				var attributesListStore = [];
+		buildEditorClassAttributes: function (className) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
 
-				if (Ext.isEmpty(onStepEditExecute))
-					var onStepEditExecute = true;
-
-				for (var key in _CMCache.getClasses())
-					if (key == _CMCache.getEntryTypeByName(className).get(CMDBuild.core.constants.Proxy.ID))
-						attributesListStore.push(this.view.classesAttributesMap[key]);
-
-				this.view.attributeLevelMappingGrid.columns[3].setEditor({
+			if (Ext.isEmpty(className))
+				return this.view.columnClassAttribute.setEditor({
 					xtype: 'combo',
-					displayField: CMDBuild.core.constants.Proxy.NAME,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
-
-					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.core.constants.Proxy.NAME],
-						data: attributesListStore[0]
-					}),
-					queryMode: 'local',
-
-					listeners: {
-						select: function (combo, records, eOpts) {
-							me.cmfg('onStepEdit');
-						}
-					}
+					disabled: true
 				});
 
-				if (onStepEditExecute)
-					this.onStepEdit();
-			}
-		},
+			var store = CMDBuild.proxy.administration.taskManager.task.Connector.getStoreAttributes();
+			store.load({ params: params });
 
-		buildSourceCombo: function () {
-			var me = this;
-
-			this.view.attributeLevelMappingGrid.columns[0].setEditor({
+			return this.view.columnClassAttribute.setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
 				forceSelection: true,
-				editable: false,
 				allowBlank: false,
 
-				store: this.parentDelegate.getStoreFilteredSource(),
-				queryMode: 'local',
-
-				listeners: {
-					select: function (combo, records, eOpts) {
-						me.buildSourceAttributesCombo(this.getValue());
-					}
-				}
+				store: store,
+				queryMode: 'local'
 			});
 		},
 
 		/**
-		 * To setup source attribute combo editor
+		 * @param {Object} parameters
+		 * @param {String} parameters.columnName
+		 * @param {CMDBuild.model.administration.taskManager.task.connector.MappingAttribute} parameters.record
 		 *
-		 * @param {String} sourceName
-		 * @param {Boolean} onStepEditExecute
+		 * @returns {Void}
 		 */
-		buildSourceAttributesCombo: function (sourceName, onStepEditExecute) {
-			if (!Ext.isEmpty(sourceName)) {
-				var me = this;
-				var attributesListStore = [];
+		onTaskManagerFormTaskConnectorStep5BeforeEdit: function (parameters) {
+			var columnName = parameters.columnName,
+				record = parameters.record;
 
-				if (Ext.isEmpty(onStepEditExecute))
-					var onStepEditExecute = true;
-
-// TODO: to finish implementation when stores will be ready
-//				for (var key in _CMCache.getClasses())
-//					if (key == classId)
-//						attributesListStore.push(this.view.classesAttributesMap[key]);
-
-				this.view.attributeLevelMappingGrid.columns[1].setEditor({
-					xtype: 'combo',
-					displayField: CMDBuild.core.constants.Proxy.NAME,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-
-					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.core.constants.Proxy.NAME],
-						data: attributesListStore
-					}),
-
-					listeners: {
-						select: function (combo, records, eOpts) {
-							me.cmfg('onStepEdit');
-						}
-					}
-				});
-
-				if (onStepEditExecute)
-					this.onStepEdit();
+			switch (columnName) {
+				case CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE:
+					return this.buildEditorClassAttributes(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME));
 			}
 		},
 
-		// GETters functions
-			/**
-			 * @return {Array} data
-			 */
-			getData: function () {
-				var data = [];
-
-				// To validate and filter grid rows
-				this.view.attributeLevelMappingGrid.getStore().each(function (record) {
-					if (
-						!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SOURCE_NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SOURCE_ATTRIBUTE))
-					) {
-						var buffer = {};
-
-						buffer[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
-						buffer[CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE] = record.get(CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE);
-						buffer[CMDBuild.core.constants.Proxy.SOURCE_NAME] = record.get(CMDBuild.core.constants.Proxy.SOURCE_NAME);
-						buffer[CMDBuild.core.constants.Proxy.SOURCE_ATTRIBUTE] = record.get(CMDBuild.core.constants.Proxy.SOURCE_ATTRIBUTE);
-						buffer[CMDBuild.core.constants.Proxy.IS_KEY] = record.get(CMDBuild.core.constants.Proxy.IS_KEY);
-
-						data.push(buffer);
-					}
-				});
-
-				return data;
-			},
-
 		/**
-		 * @return {Boolean}
+		 * @returns {Void}
 		 */
-		isEmptyMappingGrid: function () {
-			return Ext.Object.isEmpty(this.getData());
+		onTaskManagerFormTaskConnectorStep5Show: function () {
+			this.view.columnSourceName.setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				forceSelection: true,
+				allowBlank: false,
+
+				store: this.cmfg('taskManagerFormTaskConnectorExternalEntityStoreGet'),
+				queryMode: 'local'
+			});
+
+			this.view.columnClassName.setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				forceSelection: true,
+				allowBlank: false,
+
+				store: this.cmfg('taskManagerFormTaskConnectorClassesStoreGet'),
+				queryMode: 'local'
+			});
 		},
 
 		/**
-		 * @param {String} cls
-		 */
-		markInvalidTable: function (cls) {
-			this.view.attributeLevelMappingGrid.addBodyCls(cls);
-		},
-
-		/**
-		 * @param {String} cls
-		 */
-		markValidTable: function (cls) {
-			this.view.attributeLevelMappingGrid.removeBodyCls(cls);
-		},
-
-		/**
-		 * Function to update rows stores/editors on beforeEdit event
+		 * @param {Boolean} fullValidation
 		 *
-		 * @param {String} fieldName
-		 * @param {Object} rowData
+		 * @returns {Void}
 		 */
-		onBeforeEdit: function (fieldName, rowData) {
-			switch (fieldName) {
-				case CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE: {
-					if (!Ext.isEmpty(rowData[CMDBuild.core.constants.Proxy.CLASS_NAME])) {
-						this.buildClassAttributesCombo(rowData[CMDBuild.core.constants.Proxy.CLASS_NAME], false);
-					} else {
-						var columnModel = this.view.attributeLevelMappingGrid.columns[3];
-						var columnEditor = columnModel.getEditor();
+		onTaskManagerFormTaskConnectorStep5ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-						if (!columnEditor.disabled)
-							columnModel.setEditor({
-								xtype: 'combo',
-								disabled: true
-							});
-					}
-				} break;
-
-				case CMDBuild.core.constants.Proxy.SOURCE_ATTRIBUTE: {
-					if (!Ext.isEmpty(rowData[CMDBuild.core.constants.Proxy.SOURCE_NAME])) {
-						this.buildSourceAttributesCombo(rowData[CMDBuild.core.constants.Proxy.SOURCE_NAME], false);
-					} else {
-						var columnModel = this.view.attributeLevelMappingGrid.columns[1];
-						var columnEditor = columnModel.getEditor();
-
-						if (!columnEditor.disabled)
-							columnModel.setEditor({
-								xtype: 'combo',
-								disabled: true
-							});
-					}
-				} break;
-			}
-		},
-
-		/**
-		 * Step validation (at least one class/source association)
-		 */
-		onStepEdit: function () {
-			this.view.gridEditorPlugin.completeEdit();
-
-// TODO: re-enable when step6 will be implemented
-//			if (!this.isEmptyMappingGrid()) {
-//				this.cmfg('taskManagerFormNavigationSetDisableNextButton', false);
-//			} else {
-//				this.cmfg('taskManagerFormNavigationSetDisableNextButton', true);
-//			}
-		},
-
-		// SETters functions
-			/**
-			 * @param {Object} data
-			 */
-			setData: function (data) {
-				this.view.attributeLevelMappingGrid.getStore().loadData(data);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledButtonNext: function (state) {
-				this.cmfg('taskManagerFormNavigationSetDisableNextButton', state);
-			}
+			this.grid.allowBlank = !fullValidation;
+		}
 	});
 
 })();

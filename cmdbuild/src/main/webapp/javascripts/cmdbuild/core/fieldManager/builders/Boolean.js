@@ -18,6 +18,8 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Column or Object}
+		 *
+		 * @override
 		 */
 		buildColumn: function (parameters) {
 			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
@@ -34,6 +36,8 @@
 
 		/**
 		 * @returns {Ext.form.field.Checkbox}
+		 *
+		 * @override
 		 */
 		buildField: function () {
 			return Ext.create('Ext.form.field.Checkbox', {
@@ -55,6 +59,8 @@
 
 		/**
 		 * @returns {CMDBuild.view.common.field.display.Boolean}
+		 *
+		 * @override
 		 */
 		buildFieldReadOnly: function () {
 			return Ext.create('CMDBuild.view.common.field.display.Boolean', {
@@ -71,7 +77,38 @@
 		},
 
 		/**
+		 * @returns {CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView}
+		 *
+		 * @override
+		 */
+		buildFilterCondition: function () {
+			return Ext.create('CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.ConditionView', {
+				parentDelegate: this.parentDelegate,
+				fields: [
+					Ext.create('Ext.form.field.Checkbox', {
+						inputValue: true,
+						uncheckedValue: false
+					})
+				],
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				store: Ext.create('Ext.data.ArrayStore', {
+					fields: [CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.DESCRIPTION],
+					data: [
+						['isnotnull', CMDBuild.Translation.isNotNull],
+						['isnull', CMDBuild.Translation.isNull],
+						[CMDBuild.core.constants.Proxy.EQUAL, CMDBuild.Translation.equals]
+					],
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+					]
+				})
+			});
+		},
+
+		/**
 		 * @returns {Object}
+		 *
+		 * @override
 		 */
 		buildStoreField: function () {
 			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'boolean' };

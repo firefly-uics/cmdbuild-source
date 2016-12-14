@@ -8,8 +8,10 @@
 	Ext.define("CMDBuild.view.management.workflow.panel.form.tabs.activity.FormPanel", {
 		extend: "Ext.form.Panel",
 
+		requires: ['CMDBuild.core.Utils'],
+
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: "CMDBuild.view.common.CMFormFunctions"
 		},
 
 		_lastCard: null, // to sync the editable panel when goes in edit mode
@@ -75,7 +77,7 @@
 		},
 
 		buildTBar: function() {
-			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+			this.graphButton = Ext.create('CMDBuild.core.buttons.icon.RelationGraph', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -100,7 +102,7 @@
 			};
 
 			this.cmTBar = [
-				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 					text: CMDBuild.Translation.modifyActivity,
 					scope: this,
 
@@ -108,7 +110,7 @@
 						this.delegate.superController.cmfg('onWorkflowModifyButtonClick');
 					}
 				}),
-				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.icon.Remove', {
 					text: CMDBuild.Translation.abortProcess,
 					scope: this,
 
@@ -403,7 +405,7 @@
 		this._lastCard = null;
 
 		var panels = [],
-			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
+			groupedAttr = CMDBuild.core.Utils.groupAttributesObjects(attributes);
 
 		this.suspendLayouts();
 

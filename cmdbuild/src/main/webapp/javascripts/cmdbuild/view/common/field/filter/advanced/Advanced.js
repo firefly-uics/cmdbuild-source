@@ -19,12 +19,12 @@
 		fieldConfiguration: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.filter.Clear}
+		 * @property {CMDBuild.core.buttons.icon.filter.Clear}
 		 */
 		filterClearButton: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.filter.Set}
+		 * @property {CMDBuild.core.buttons.icon.filter.Set}
 		 */
 		filterSetButton: undefined,
 
@@ -44,7 +44,7 @@
 			Ext.apply(this, {
 				items: [
 					this.label = Ext.create('Ext.form.field.Display', { value: CMDBuild.Translation.notSet }),
-					this.filterSetButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
+					this.filterSetButton = Ext.create('CMDBuild.core.buttons.icon.filter.Set', {
 						border: false,
 						tooltip: CMDBuild.Translation.setFilter,
 						margin: '0 5',
@@ -54,7 +54,7 @@
 							this.delegate.cmfg('onFieldFilterAdvancedFilterSetButtonClick');
 						}
 					}),
-					this.filterClearButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
+					this.filterClearButton = Ext.create('CMDBuild.core.buttons.icon.filter.Clear', {
 						border: false,
 						tooltip: CMDBuild.Translation.clearFilter,
 						scope: this,

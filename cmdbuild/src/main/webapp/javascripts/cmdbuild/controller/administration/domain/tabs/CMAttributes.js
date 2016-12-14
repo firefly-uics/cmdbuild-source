@@ -303,7 +303,7 @@
 
 //									this.grid.selectAttributeByName(attribute[CMDBuild.core.constants.Proxy.NAME]);
 
-									CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+									CMDBuild.controller.common.field.translatable.Utils.commit(this.form);
 								} else {
 									_error('onSaveButtonClick(): domain not found', this, this.cmfg('domainSelectedDomainGet', ID));
 								}

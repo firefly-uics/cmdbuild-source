@@ -58,19 +58,19 @@
 
 			// Add listener for accordion expand
 			this.on('expand', function (accordion, eOpts) {
-				if (!Ext.isEmpty(this.delegate))
+				if (Ext.isObject(this.delegate) && !Ext.Object.isEmpty(this.delegate))
 					this.delegate.cmfg('onAccordionExpand');
 			}, this);
 
 			// Add listener to avoid selection of unselectable nodes
 			this.on('beforeselect', function (accordion, record, index, eOpts) {
-				if (!Ext.isEmpty(this.delegate))
+				if (Ext.isObject(this.delegate) && !Ext.Object.isEmpty(this.delegate))
 					return this.delegate.cmfg('onAccordionBeforeSelect', record);
 			}, this);
 
 			// Add listener for selectionchange
 			this.getSelectionModel().on('selectionchange', function (selectionModel, selected, eOpts) {
-				if (!Ext.isEmpty(this.delegate))
+				if (Ext.isObject(this.delegate) && !Ext.Object.isEmpty(this.delegate))
 					this.delegate.cmfg('onAccordionSelectionChange');
 			}, this);
 		}

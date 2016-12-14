@@ -24,18 +24,21 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
 /**
  * @override
  * @param attribute
- * @return Ext.form.TextField
+ * @return Ext.form.field.Number
  */
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = function(attribute) {
-	return new Ext.form.TextField({
+	return Ext.create('Ext.form.field.Number', {
 		labelAlign: "right",
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description || attribute.name,
+		decimalPrecision: 20,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		width: CMDBuild.core.constants.FieldWidths.LABEL + this.MAXWIDTH,
 		scale: attribute.scale,
 		precision: attribute.precision,
+		decimalPrecision: 20, // Set to max field allowednumber
+		hideTrigger: true,
 		vtype: this.customVType,
 		CMAttribute: attribute
 	});

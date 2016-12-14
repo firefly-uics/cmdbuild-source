@@ -3,7 +3,6 @@
 	Ext.require(['CMDBuild.bim.proxy.Bim']);
 
 	Ext.define("CMDBuild.delegate.administration.bim.CMBIMGridConfigurator", {
-		extend: "CMDBuild.delegate.administration.common.basepanel.CMBaseGridConfigurator",
 
 		getStore: function() {
 			if (this.store == null) {
@@ -17,7 +16,15 @@
 		 * @return an array of Ext.grid.column.Column to use for the grid
 		 */
 		getColumns: function() {
-			var columns = this.callParent(arguments);
+			var columns = [{
+				header: CMDBuild.Translation.administration.modClass.attributeProperties.name,
+				dataIndex: CMDBuild.core.constants.Proxy.NAME,
+				flex: 1
+			}, {
+				header: CMDBuild.Translation.administration.modClass.attributeProperties.description,
+				dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				flex: 1
+			}];
 
 			columns.push({
 				dataIndex: "active",

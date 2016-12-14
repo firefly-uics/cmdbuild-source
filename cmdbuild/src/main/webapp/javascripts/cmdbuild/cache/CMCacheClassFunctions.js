@@ -9,7 +9,7 @@
 		classesAndProcessesStore = getFakeStore();
 
 
-	Ext.define("CMDBUild.cache.CMCacheClassFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheClassFunctions", {
 
 		/**
 		 * @param {Number} id
@@ -383,7 +383,7 @@
 			var et = _CMCache.getEntryTypeById(classId);
 
 			return new Ext.data.Store({
-				model: "GISLayerModel",
+				model: "CMDBuild.model.gis.GISLayerModel",
 				autoLoad : false,
 				data: et.getMyGeoAttrs(),
 				sorters : [ {

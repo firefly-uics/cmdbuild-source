@@ -49,7 +49,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 								text: CMDBuild.Translation.modifyClass,
 								scope: this,
 
@@ -57,7 +57,7 @@
 									this.delegate.cmfg('onClassesTabPropertiesModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+							Ext.create('CMDBuild.core.buttons.icon.Remove', {
 								text: CMDBuild.Translation.removeClass,
 								scope: this,
 
@@ -65,7 +65,7 @@
 									this.delegate.cmfg('onClassesTabPropertiesRemoveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printClass,
 								delegateEventPrefix: 'onClassesTabProperties',

@@ -1,8 +1,10 @@
 (function () {
 
+
 	/**
 	 * Required managed functions:
 	 * 	- panelGridAndFromFullScreenUiSetup
+	 *  - panelGridAndFormToolsArrayBuild
 	 *
 	 * NOTE: "form" and "grid" (or "tree") pointers are required to work with UI state module
 	 *
@@ -198,7 +200,19 @@
 						default:
 							return this.panelGridAndFromFullScreenDisplayBoth();
 					}
-			}
+			},
+
+		/**
+		 * @returns {Array}
+		 */
+		panelGridAndFormToolsArrayBuild: function () {
+			return [
+				Ext.create('CMDBuild.controller.common.panel.gridAndForm.tools.properties.Properties', { parentDelegate: this }).getView(),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+			];
+		}
 	});
 
 })();

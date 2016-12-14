@@ -12,11 +12,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskEmailStep4FieldsetWorkflowExpand',
+			'onTaskManagerFormTaskEmailStep4ValidateSetup = onTaskManagerFormTaskEmailValidateSetup'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.taskManager.task.email.Step4}
+		 * @property {CMDBuild.view.administration.taskManager.task.email.Step4View}
 		 */
 		view: undefined,
 
@@ -31,77 +32,26 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.email.Step4', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.email.Step4View', { delegate: this });
 		},
 
 		/**
-		 * @return {String}
+		 * @returns {Void}
 		 */
-		checkWorkflowComboSelected: function () {
-			return this.getWorkflowDelegate().getValueCombo();
+		onTaskManagerFormTaskEmailStep4FieldsetWorkflowExpand: function () {
+			this.cmfg('taskManagerFormViewGet').panelFunctionReset({ target: this.view.fieldsetWorkflow });
 		},
-
-		// GETters functions
-			/**
-			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
-			 */
-			getWorkflowDelegate: function () {
-				return this.view.workflowForm.delegate;
-			},
-
-			/**
-			 * @return {Object}
-			 */
-			getValueWorkflowAttributeGrid: function () {
-				return this.getWorkflowDelegate().getValueGrid();
-			},
-
-			/**
-			 * @return {Boolean}
-			 */
-			getValueWorkflowFieldsetCheckbox: function () {
-				return this.view.workflowFieldset.checkboxCmp.getValue();
-			},
 
 		/**
-		 * To erase workflow form used on addButtonClick
+		 * @param {Boolean} fullValidation
+		 *
+		 * @returns {Void}
 		 */
-		eraseWorkflowForm: function () {
-			this.getWorkflowDelegate().eraseWorkflowForm();
-		},
+		onTaskManagerFormTaskEmailStep4ValidateSetup: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-		// SETters functions
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledWorkflowAttributesGrid: function (state) {
-				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-			},
-
-			/**
-			 * @param {Object} value
-			 */
-			setValueWorkflowAttributesGrid: function (value) {
-				this.getWorkflowDelegate().setValueGrid(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueWorkflowCombo: function (value) {
-				this.getWorkflowDelegate().setValueCombo(value);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueWorkflowFieldsetCheckbox: function (state) {
-				if (state) {
-					this.view.workflowFieldset.expand();
-				} else {
-					this.view.workflowFieldset.collapse();
-				}
-			}
+			this.view.fieldWorkflow.fieldCombo.allowBlank = !(fullValidation && this.view.fieldsetWorkflow.checkboxCmp.getValue());
+		}
 	});
 
 })();

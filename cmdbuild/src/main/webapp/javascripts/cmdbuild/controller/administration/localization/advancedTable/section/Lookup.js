@@ -116,7 +116,7 @@
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFields) {
+				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFieldObjects) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];

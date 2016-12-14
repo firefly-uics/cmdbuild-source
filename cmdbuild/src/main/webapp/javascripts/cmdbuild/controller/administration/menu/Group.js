@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.localization.Localization',
+			'CMDBuild.proxy.common.field.translatable.Translatable',
 			'CMDBuild.proxy.Menu'
 		],
 
@@ -24,15 +24,20 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onMenuGroupAbortButtonClick',
 			'onMenuGroupAddFolderButtonClick',
-			'onMenuGroupMenuSelected',
+			'onMenuGroupMenuSelected = onMenuGroupAbortButtonClick',
 			'onMenuGroupMenuTreeBeforeselect',
 			'onMenuGroupMenuTreeSelectionchange',
 			'onMenuGroupRemoveItemButtonClick',
 			'onMenuGroupRemoveMenuButtonClick',
-			'onMenuGroupSaveButtonClick'
+			'onMenuGroupSaveButtonClick',
+			'onMenuGroupTranslateButtonClick'
 		],
+
+		/**
+		 * @property {CMDBuild.controller.common.field.translatable.NoFieldWindow}
+		 */
+		controllerTranslationWindow: undefined,
 
 		/**
 		 * @property {Ext.tree.Panel}
@@ -40,7 +45,7 @@
 		menuTreePanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 * @property {CMDBuild.core.buttons.icon.MoveRight}
 		 */
 		removeItemButton: undefined,
 
@@ -66,6 +71,9 @@
 			this.availableItemsTreePanel = this.view.availableItemsTreePanel;
 			this.menuTreePanel = this.view.menuTreePanel;
 			this.removeItemButton = this.view.removeItemButton;
+
+			// Build sub controllers
+			this.controllerTranslationWindow = Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', { parentDelegate: this });
 		},
 
 		/**
@@ -198,13 +206,6 @@
 		},
 
 		/**
-		 * @returns {Void}
-		 */
-		onMenuGroupAbortButtonClick: function () {
-			this.onMenuGroupMenuSelected();
-		},
-
-		/**
 		 * @param {String} folderName
 		 *
 		 * @returns {Void}
@@ -329,24 +330,35 @@
 			CMDBuild.proxy.Menu.save({
 				params: params,
 				scope: this,
-				success: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.success();
-				},
 				callback: function (options, success, response) {
-					this.onMenuGroupMenuSelected();
+					this.cmfg('onMenuGroupMenuSelected');
 
-					// Customization of CMDBuild.view.common.field.translatable.Utils.commit
-					Ext.Object.each(this.view.translatableAttributesConfigurationsBuffer, function (key, value, myself) {
-						if (
-							!Ext.isEmpty(value)
-							&& !Ext.isEmpty(value[CMDBuild.core.constants.Proxy.TRANSLATIONS])
-						) {
-							value[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.constants.Proxy.TRANSLATIONS]);
-
-							CMDBuild.proxy.localization.Localization.update({ params: value });
-						}
-					}, this);
+					this.controllerTranslationWindow.cmfg('fieldTranslatableBufferTranslationsBatchSave');
 				}
+			});
+		},
+
+		/**
+		 * @param {CMDBuild.model.menu.TreeStore} record
+		 *
+		 * @returns {Void}
+		 */
+		onMenuGroupTranslateButtonClick: function (record) {
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+					return _error('onMenuGroupTranslateButtonClick(): unmanaged record parameter', this, record);
+			// END: Error handling
+
+			if (Ext.isEmpty(record.get('uuid')))
+				return CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.saveMenuBeforeAccess, false);
+
+			this.controllerTranslationWindow.cmfg('onFieldTranslatableWindowConfigureAndShow', {
+				config: {
+					type: CMDBuild.core.constants.Proxy.MENU_ITEM,
+					identifier: record.get('uuid'),
+					field: CMDBuild.core.constants.Proxy.DESCRIPTION
+				},
+				title: record.get(CMDBuild.core.constants.Proxy.TEXT)
 			});
 		},
 
@@ -362,11 +374,8 @@
 			CMDBuild.proxy.Menu.remove({
 				params: params,
 				scope: this,
-				success: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.success();
-				},
 				callback: function (options, success, response) {
-					this.onMenuGroupMenuSelected();
+					this.cmfg('onMenuGroupMenuSelected');
 				}
 			});
 		},

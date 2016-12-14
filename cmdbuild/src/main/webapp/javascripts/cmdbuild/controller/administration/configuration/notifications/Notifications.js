@@ -115,7 +115,7 @@
 				var configurationModel = Ext.create('CMDBuild.model.administration.configuration.notifications.Notifications', tabEmailConfigurationObject);
 
 				CMDBuild.proxy.administration.configuration.notifications.Notifications.update({
-					params: configurationModel.getParamsObject(),
+					params: configurationModel.getSubmitData(),
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						this.cmfg('onConfigurationNotificationsShow');

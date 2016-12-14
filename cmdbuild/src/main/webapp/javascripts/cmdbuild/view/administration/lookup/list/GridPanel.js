@@ -25,7 +25,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addLookup,
 								scope: this,
 
@@ -34,7 +34,7 @@
 								}
 							}),
 							'->',
-							Ext.create('CMDBuild.view.common.field.GridLocalSearch', { grid: this })
+							Ext.create('CMDBuild.view.common.field.grid.localSearch.LocalSearch', { grid: this })
 						]
 					})
 				],

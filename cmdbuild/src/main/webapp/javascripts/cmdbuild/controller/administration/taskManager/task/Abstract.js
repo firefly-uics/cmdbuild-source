@@ -1,6 +1,8 @@
 (function () {
 
 	/**
+	 * Create/Update discrimination is base on presence of selectedTask value, form has an hidden field for task ID that will be sent to server while updating a task
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.administration.taskManager.task.Abstract', {
@@ -15,62 +17,35 @@
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @abstract
-		 *
-		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
 		 */
 		onTaskManagerFormTaskAbortButtonClick: function () {
-			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
-				this.cmfg('onTaskManagerFormTaskRowSelected');
-			} else {
-				this.cmfg('taskManagerFormViewReset');
-				this.cmfg('taskManagerFormPanelForwarder', { functionName: 'disableModify' });
-				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
-			}
+			if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
+				return this.cmfg('taskManagerClearSelection');
+
+			return this.cmfg('onTaskManagerFormTaskRowSelected');
 		},
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @abstract
-		 *
-		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
 		 */
 		onTaskManagerFormTaskAddButtonClick: function () {
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'enableTabbedModify' });
-			this.controllerStep1.setDisabledTypeField(true);
+			this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({ state: true });
 			this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 		},
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @abstract
-		 *
-		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
 		 */
 		onTaskManagerFormTaskCloneButtonClick: function () {
-			this.controllerStep1.setValueId();
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'disableCMTbar' });
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'enableCMButtons' });
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'enableTabbedModify', params: true });
-			this.controllerStep1.setDisabledTypeField(true);
+			this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({ state: true });
 			this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 		},
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @abstract
-		 *
-		 * FIXME: waiting for refactor (CMDBuild.view.common.PanelFunctions)
 		 */
 		onTaskManagerFormTaskModifyButtonClick: function () {
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'disableCMTbar' });
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'enableCMButtons' });
-			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'enableTabbedModify', params: true });
-			this.controllerStep1.setDisabledTypeField(true);
+			this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({ state: true });
 			this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 		},
 
@@ -125,36 +100,36 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+			this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 			this.cmfg('taskManagerStoreLoad', {
 				scope: this,
 				callback: function (records, operation, success) {
-					this.cmfg('taskManagerClearSelection');
-					this.cmfg('taskManagerRecordSelect', Ext.isEmpty(decodedResponse) ? this.controllerStep1.getValueId() : decodedResponse);
+					if (Ext.isEmpty(records)) {
+						this.cmfg('taskManagerClearSelection');
+					} else {
+						this.cmfg('taskManagerRecordSelect', Ext.isEmpty(decodedResponse) ? this.cmfg('taskManagerFormViewGet').panelFunctionValueGet({
+							includeDisabled: true,
+							propertyName: CMDBuild.core.constants.Proxy.ID
+						}) : decodedResponse);
 
-					if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
-						this.cmfg('taskManagerFormPanelForwarder', {
-							functionName: 'disableModify',
-							params: true
-						});
+						if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
+							this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({
+								forceToolbarTopState: false,
+								state: false
+							});
+					}
 				}
 			});
-
-			this.cmfg('taskManagerFormPanelForwarder', {
-				functionName: 'disableModify',
-				params: true
-			});
-
-			this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 		},
 
 		/**
-		 * @param {Boolean} enableValidation
-		 *
 		 * @return {Boolean}
 		 *
+		 * @abstract
 		 * @override
+		 * @private
 		 */
-		validate: function (enableValidation) {
+		validate: function () {
 			return this.callParent([this.cmfg('taskManagerFormViewGet')]);
 		}
 	});

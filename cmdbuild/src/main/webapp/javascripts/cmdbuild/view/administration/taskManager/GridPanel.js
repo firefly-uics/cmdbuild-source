@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.administration.taskManager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Utils'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.taskManager.Grid}
@@ -38,23 +35,8 @@
 						flex: 1,
 						scope: this,
 
-						renderer: function (value, meta, record, rowIndex, colIndex, store, view) { // Convert to camelcase
-							if (Ext.isArray(value) && !Ext.isEmpty(value)) {
-								var translationKey = '';
-
-								Ext.Array.each(value, function (typeSection, i, allTypeSections) {
-									if (Ext.isString(typeSection) && !Ext.isEmpty(typeSection))
-										if (i > 0) {
-											translationKey += CMDBuild.core.Utils.toTitleCase(typeSection);
-										} else {
-											translationKey += typeSection;
-										}
-								}, this);
-
-								return CMDBuild.Translation[translationKey];
-							}
-
-							return value;
+						renderer: function (value, meta, record, rowIndex, colIndex, store, view) {
+							return this.delegate.cmfg('taskManagerGridRendererColumnType', value);
 						}
 					},
 					{
@@ -82,7 +64,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.taskManager.SingleExecution', {
+							Ext.create('CMDBuild.core.buttons.icon.taskManager.SingleExecution', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.singleExecution,
 								scope: this,
@@ -95,7 +77,7 @@
 									this.delegate.cmfg('onTaskManagerGridSingleExecutionButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.taskManager.CyclicExecution', {
+							Ext.create('CMDBuild.core.buttons.icon.taskManager.CyclicExecution', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.cyclicExecution,
 								scope: this,
@@ -108,7 +90,7 @@
 									this.delegate.cmfg('onTaskManagerGridCyclicExecutionButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Stop', {
+							Ext.create('CMDBuild.core.buttons.icon.Stop', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.stop,
 								scope: this,

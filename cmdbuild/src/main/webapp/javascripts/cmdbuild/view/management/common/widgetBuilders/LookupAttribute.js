@@ -113,9 +113,8 @@
 	};
 
 	/**
-	 * @override
+	 * FIXME: needs new implementation in new class
 	 */
-
 	CMDBuild.WidgetBuilders.LookupAttribute.prototype.genericBuildFieldsetForFilter = function(fieldId, fields, query, originalFieldName) {
 
 		var field = fields[0];

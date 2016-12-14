@@ -18,26 +18,6 @@ Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.ReferenceAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 
-/**
- * @override
- * @param attribute
- * @return Ext.form.FieldSet
- */
-CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = function(attribute) {
-	var attributeCopy = Ext.apply({}, {
-		fieldmode: "write", //change the field mode because in the filter must write on this field
-		name: attribute.name,
-		filter: false, // avoid the CQL filtering on the Search Window,
-		oneTime: true
-	}, attribute);
-
-	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);
-	manageCalculatedValues(field, attribute);
-	var conditionCombo = this.getQueryCombo(attributeCopy);
-
-	return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy);
-};
-
 // Manage "calculated" values to filter by
 // current User and current Group
 function manageCalculatedValues(field, attribute) {

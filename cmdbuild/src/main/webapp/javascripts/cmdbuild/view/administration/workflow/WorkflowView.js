@@ -43,7 +43,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addProcess,
 								scope: this,
 
@@ -51,7 +51,7 @@
 									this.delegate.cmfg('onWorkflowAddButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.icon.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printSchema,
 								delegateEventPrefix: 'onWorkflow',

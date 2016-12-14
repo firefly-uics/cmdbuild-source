@@ -4,8 +4,10 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.administration.taskManager.Grid'
+			'CMDBuild.model.administration.taskManager.Grid',
+			'CMDBuild.model.administration.taskManager.task.generic.Account',
+			'CMDBuild.model.administration.taskManager.task.generic.Template',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -35,11 +37,68 @@
 					url: CMDBuild.proxy.index.Json.taskManager.generic.readAll,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.TYPE, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreAccount: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.generic.Account',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.email.account.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreTemplate: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.generic.Template',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.email.template.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

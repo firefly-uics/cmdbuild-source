@@ -1,28 +1,10 @@
-<!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMReportAsComboItem.js"></script>
-
-<!-- DELEGATES -->
-	<!-- COMMON -->
-		<!-- BASEPANEL -->
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMFormDelegate.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMFormFieldManager.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseFormFieldManager.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridDelegate.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridConfigurator.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseGridConfigurator.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridAndFormPanelDelegate.js"></script>
-
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
-	<!-- COMMON -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
-
-		<!-- BASE PANEL-->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
+	<!-- BASE PANEL-->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardLayoutPanel.js"></script>

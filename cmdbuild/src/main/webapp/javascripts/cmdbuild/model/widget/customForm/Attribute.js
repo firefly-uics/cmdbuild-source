@@ -15,7 +15,7 @@
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
 			{ name: CMDBuild.core.constants.Proxy.HIDDEN, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' }, // FIXME: could be retrived from lookupTypeHierarky
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true },
@@ -42,7 +42,7 @@
 			objectModel['isnotnull'] = this.get(CMDBuild.core.constants.Proxy.MANDATORY);
 
 			switch (objectModel[CMDBuild.core.constants.Proxy.TYPE]) {
-				case 'lookup': {
+				case 'lookup': { // FIXME: remove on lookup FieldManager implementation
 					objectModel['lookup'] = this.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
 					objectModel['lookupchain'] = _CMCache.getLookupchainForType(this.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE));
 				} break;

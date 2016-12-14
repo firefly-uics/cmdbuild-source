@@ -11,7 +11,7 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 * @property {CMDBuild.view.common.field.translatable.Translatable}
 		 */
 		description: undefined,
 
@@ -21,7 +21,7 @@
 		fileField: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.CMGroupSelectionList}
+		 * @property {CMDBuild.view.common.field.multiselect.Group}
 		 */
 		groups: undefined,
 
@@ -63,26 +63,26 @@
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						disableEnableFunctions: true
 					}),
-					this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.description = Ext.create('CMDBuild.view.common.field.translatable.Translatable', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 
-						translationFieldConfig: {
+						config: {
 							type: CMDBuild.core.constants.Proxy.REPORT,
 							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TITLE, source: this }, // TODO: waiting for refactor (rename "name")
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
-					this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+					this.groups = Ext.create('CMDBuild.view.common.field.multiselect.Group', {
 						name: CMDBuild.core.constants.Proxy.GROUPS,
 						fieldLabel: CMDBuild.Translation.enabledGroups,
-						height: 300,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						height: 300
 					}),
 					this.fileField = Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.JRXML,

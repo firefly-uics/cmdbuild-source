@@ -5,10 +5,11 @@
 	var tr = CMDBuild.Translation.administration.modClass.geo_attributes;
 
 	Ext.define('CMDBuild.view.administration.gis.GisLayersForm', {
-		extend: 'Ext.form.Panel',
+		extend: 'CMDBuild.view.administration.gis.FormBasePanel',
 
 		mixins: {
-			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
+			cmFormFunctions: "CMDBuild.view.common.CMFormFunctions",
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions2'
 		},
 
 		autoScroll: false,
@@ -19,7 +20,9 @@
 		fileUpload: true,
 		frame: false,
 		hideMode: 'offsets',
-		plugins: [new CMDBuild.FormPlugin(), new CMDBuild.CallbackPlugin()],
+		plugins: [
+			Ext.create('CMDBuild.view.administration.gis.CallbackPlugin')
+		],
 
 		layout: {
 			type: 'border'
@@ -63,7 +66,11 @@
 
 				listeners: {
 					change: function(field, newValue, oldValue, eOpts) {
-						me.autoComplete(me.descriptionField, newValue, oldValue);
+						me.panelFunctionFieldSynch({
+							slaveField: this.descriptionField,
+							newValue: newValue,
+							oldValue: oldValue
+						});
 					}
 				}
 			});
@@ -92,8 +99,8 @@
 				queryMode: 'local'
 			});
 
-			this.rangeFields = Ext.create('CMDBuild.form.RangeSliders', {
-				maxSliderField: Ext.create('Ext.slider.Single', {
+			this.rangeFields = Ext.create('CMDBuild.view.common.field.slider.RangeContainer', {
+				fieldMax: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.max_zoom,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -103,7 +110,7 @@
 					name: 'maxZoom',
 					disabled: true
 				}),
-				minSliderField: Ext.create('Ext.slider.Single', {
+				fieldMin: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.min_zoom,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

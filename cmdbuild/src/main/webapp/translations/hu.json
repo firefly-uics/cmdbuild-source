@@ -1,6 +1,6 @@
 {
 	"description": "Hungarian",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Adminisztrációs modul",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Hiba történt",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribute level mapping table must be correctly filled",
 		"busyVisualControls": "A vizuális vezérlők elfoglaltak, ellenőrizze a szervert mielőtt újra próbálkozik.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Class level mapping table must be correctly filled",
 		"copyAttachmentFailure": "Hiba a \"{0}\" nevű csatolmány másolása közben",
 		"csvUploadOrDecodeFailure": "CSV feltöltési vagy dekódolási hiba",
 		"detail": "Részletek",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Az üzenet küldése sikertelen. Lehetséges okok: 1) A szolgáltatás nem működik; 2) Az URL és/vagy a port nem helyes",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Ellenőrizze, hogy a web szolgáltatás névtere, a metódus neve és paraméterei helyesek"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Reference level mapping table must be correctly filled",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Ez a mező kötelező",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Kezdeti szélesség",
 	"initialLongitude": "Kezdeti hosszúság",
 	"initialZoomLevel": "Kezdeti zoom szint",
+	"inputParameter": "Bemeneti paraméter",
 	"instance": "Eset",
 	"instanceName": "Szerver neve",
 	"inverseDescription": "<em>Inverse description</em>",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "3D megtekintő megnyitása",
 	"openRelationGraph": "Relációs gráf megnyitása",
 	"operativeInstructions": "Operatív utasítások",
+	"or": "<em>or</em>",
 	"origin": "Eredet",
 	"otherOptions": "Más opciók",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Beállítás",
 	"setAsDefault": "Beállítás alapértelmezettként",
 	"setFilter": "Szűrő beállítása",
-	"setLater": "Bemeneti paraméter",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Beállítás",
 	"showDetails": "<em>Show details</em>",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes" : "Folyamat attribútumok",
 	"workflowEngine": "Workflow engine",
 	"write": "Írás",
+	"xml": "XML",
 	"xpdlFile": "XPDL fájl",
 	"xpdlFileUploaded": "XPDL fájl feltöltve",
 	"yes": "<em>Yes</em>",

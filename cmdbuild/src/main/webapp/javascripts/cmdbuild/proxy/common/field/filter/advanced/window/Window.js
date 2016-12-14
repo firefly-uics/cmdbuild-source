@@ -4,9 +4,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.core.Utils',
-			'CMDBuild.model.common.field.filter.advanced.Filter'
+			'CMDBuild.model.common.field.filter.advanced.Filter',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -34,6 +33,19 @@
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readFilterUser: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.filter.user.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		}
 	});
 

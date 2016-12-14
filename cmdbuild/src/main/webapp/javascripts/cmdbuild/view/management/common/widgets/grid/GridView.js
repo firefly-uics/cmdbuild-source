@@ -32,7 +32,7 @@
 						dock: 'top',
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
-							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							this.addButton = Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
 
@@ -40,7 +40,7 @@
 									this.delegate.cmfg('onAddRowButtonClick');
 								}
 							}),
-							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
+							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.icon.Import', {
 								text: CMDBuild.Translation.importFromCSV,
 								scope: this,
 

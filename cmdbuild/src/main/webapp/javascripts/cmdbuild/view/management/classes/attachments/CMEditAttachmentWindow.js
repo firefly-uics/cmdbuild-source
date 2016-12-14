@@ -12,6 +12,7 @@
 		attachmentRecord: undefined, // could be set on creation
 
 		autoScroll: true,
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
 
 		initComponent: function() {
@@ -64,7 +65,8 @@
 						labelAlign: 'right',
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
-						allowBlank: false
+						allowBlank: false,
+						resizable: true
 					}),
 					this.metadataContainer
 				]

@@ -1,54 +1,59 @@
 (function() {
 
 	/**
-	 * Customization of CMDBuild.controller.common.field.translatable.Window, mainly used in menu translations tree
+	 * Customization of CMDBuild.controller.common.field.translatable.Window, mainly used in menu translations tree. Included/customized some
+	 * CMDBuild.controller.common.field.translatable.Translatable methods
+	 *
+	 * @link CMDBuild.controller.common.field.translatable.Translatable
 	 */
 	Ext.define('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
-		extend: 'CMDBuild.controller.common.abstract.Base',
+		extend: 'CMDBuild.controller.common.field.translatable.Window',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
-			'CMDBuild.proxy.localization.Localization'
+			'CMDBuild.proxy.common.field.translatable.Translatable'
 		],
+
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * Buffer object where save translatable values
 		 *
-		 * @cfg {Object}
+		 * @property {Object}
+		 *
+		 * @private
 		 */
-		buffer: {},
+		bufferTranslations: {},
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onTranslatableWindowAbortButtonClick',
-			'onTranslatableWindowBeforeShow',
-			'onTranslatableWindowConfirmButtonClick'
+			'fieldTranslatableBufferTranslationsBatchSave',
+			'fieldTranslatableConfigurationGet',
+			'fieldTranslatableConfigurationIsEmpty',
+			'fieldTranslatableConfigurationSet',
+			'fieldTranslatableParamsGet',
+			'onFieldTranslatableWindowAbortButtonClick',
+			'onFieldTranslatableWindowConfigureAndShow',
+			'onFieldTranslatableWindowConfirmButtonClick'
 		],
+
+		/**
+		 * @property {CMDBuild.model.common.field.translatable.Configuration}
+		 *
+		 * @private
+		 */
+		configuration: undefined,
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.FormPanel}
 		 */
 		form: undefined,
-
-		/**
-		 * Field translation properties.
-		 * NOTE: owner and identifier could be objects (key, form) to use with getData() to get data from server
-		 *
-		 * @cfg {Object}
-		 *
-		 * Ex. {
-		 * 		{String} type: entity type identifier (class, attributeclass, domain, attributedomain, filter, instancename, lookupvalue, menuitem, report, view, classwidget)
-		 * 		{Object or String} owner: translation owner identifier (className, domainName, ...) used only to translate entities attributes
-		 * 		{Object or String} identifier: entity's attribute/property identifier
-		 * 		{String} field: field to translate (description, inverseDescription, ...),
-		 * 		{CMDBuild.model.common.field.translatable.Window} translations
-		 * 	}
-		 */
-		translationFieldConfig: {},
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.Window}
@@ -57,240 +62,271 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {Mixed} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			if (!Ext.Object.isEmpty(this.configurationGet())) {
-				this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
-					delegate: this
-				});
+			this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', { delegate: this });
 
-				// Shorthands
-				this.form = this.view.form;
-
-				this.buildTranslationsFields();
-
-				// Show window
-				if (!Ext.isEmpty(this.view))
-					this.view.show();
-			} else {
-				_warning('no field configuration', this);
-			}
+			// Shorthands
+			this.form = this.view.form;
 		},
 
-		buildTranslationsFields: function() {
-			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration.localization.getEnabledLanguages());
+		// BufferTranslations methods
+			/**
+			 * @param {Object} translationObject
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			fieldTranslatableBufferTranslationsUpdate: function (translationObject) {
+				// Error handling
+					if (this.cmfg('fieldTranslatableConfigurationIsEmpty'))
+						return _error('fieldTranslatableBufferTranslationsUpdate(): unmanaged configuration property', this, this.cmfg('fieldTranslatableConfigurationGet'));
+				// END: Error handling
 
-			// Sort languages with description alphabetical order
-			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);
+				var identifier = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.IDENTIFIER);
 
-			Ext.Array.forEach(enabledLanguagesObjects, function(language, i, allLanguages) {
-				if (!Ext.isEmpty(this.form)) {
-					this.form.add(
-						Ext.create('Ext.form.field.Text', {
-							name: language.get(CMDBuild.core.constants.Proxy.TAG),
-							fieldLabel: language.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
-							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-							padding: '3 5',
-							labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.constants.Proxy.TAG),
-							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
-						})
-					);
-				}
-			}, this);
+				this.bufferTranslations[identifier] = this.cmfg('fieldTranslatableParamsGet', { includeTranslations : true });
+			},
 
-			this.view.center(); // AutoHeight windows won't be at the center of viewport on show, manually do it
-		},
+			/**
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			fieldTranslatableBufferTranslationsReset: function () {
+				this.bufferTranslations = {};
+			},
+
+			/**
+			 * Customization of CMDBuild.controller.common.field.translatable.Utils.commit
+			 *
+			 * @returns {Void}
+			 */
+			fieldTranslatableBufferTranslationsBatchSave: function () {
+				Ext.Object.each(this.bufferTranslations, function (identifier, params, myself) {
+					if (
+						Ext.isObject(params) && !Ext.Object.isEmpty(params)
+						&& Ext.isString(params[CMDBuild.core.constants.Proxy.TRANSLATIONS]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.TRANSLATIONS])
+					) {
+						CMDBuild.proxy.common.field.translatable.Translatable.update({ params: params });
+					}
+				}, this);
+
+				this.fieldTranslatableBufferTranslationsReset();
+			},
 
 		// Configuration methods
 			/**
-			 * @param {Boolean} withTranslationsObject
-			 * @param {Boolean} translationsObjectEncoded
+			 * @param {Array or String} attributePath
 			 *
-			 * @returns {Object} decodedConfigurationObject
+			 * @returns {Mixed or undefined}
 			 */
-			configurationGet: function(withTranslationsObject, translationsObjectEncoded) {
-				withTranslationsObject = withTranslationsObject || false;
-				translationsObjectEncoded = translationsObjectEncoded || false;
+			fieldTranslatableConfigurationGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				var decodedConfigurationObject = {};
-
-				if (
-					Ext.isObject(this.translationFieldConfig)
-					&& !Ext.Object.isEmpty(this.translationFieldConfig)
-				) {
-					decodedConfigurationObject = {};
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.TYPE] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TYPE];
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.OWNER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.OWNER);
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.IDENTIFIER);
-					decodedConfigurationObject[CMDBuild.core.constants.Proxy.FIELD] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.FIELD];
-
-					if (withTranslationsObject)
-						decodedConfigurationObject[CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationsGet(translationsObjectEncoded);
-				}
-
-				return decodedConfigurationObject;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
+			 * @param {Array or String} attributePath
+			 *
 			 * @returns {Boolean}
 			 */
-			isConfigurationValid: function() {
-				var configuration = this.configurationGet();
+			fieldTranslatableConfigurationIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return (
-					!Ext.Object.isEmpty(configuration)
-					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.TYPE])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.IDENTIFIER])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.FIELD])
-				);
+				return this.propertyManageIsEmpty(parameters);
 			},
 
-		/**
-		 * Decode object configuration values to get data from form
-		 *
-		 * @param {String} configurationKey
-		 *
-		 * @returns {String or null} decodedValue
-		 */
-		decodeConfigurationValue: function(configurationKey) {
-			var decodedValue = configurationKey;
-
-			if (!Ext.isEmpty(configurationKey)) {
-				var configurationValue = this.translationFieldConfig[configurationKey];
-
-				decodedValue = configurationValue;
-
-				if(
-					Ext.isObject(configurationValue)
-					&& configurationValue.hasOwnProperty('sourceType')
-					&& configurationValue.hasOwnProperty('key')
-					&& configurationValue.hasOwnProperty('source')
-				) {
-					switch (configurationValue.sourceType) {
-						case 'form': {
-							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData)) {
-								decodedValue = configurationValue.source.getData(true)[configurationValue.key];
-							} else {
-								_error('form getData() function not implemented', this);
-							}
-						} break;
-
-						case 'model': {
-							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get)) {
-								decodedValue = configurationValue.source.get(configurationValue.key);
-							} else {
-								_error('model get() function not implemented', this);
-							}
-						} break;
-
-						case 'object': {
-							if(configurationValue.source.hasOwnProperty(configurationValue.key) && Ext.isObject(configurationValue.source)) {
-								decodedValue = configurationValue.source[configurationValue.key];
-							} else {
-								_error('object declared source is not an object', this);
-							}
-						} break;
-
-						default: {
-							_error('type not supported', this);
-						}
-					}
-				}
-			}
-
-			return decodedValue;
-		},
-
-		onTranslatableWindowAbortButtonClick: function() {
-			this.view.destroy();
-		},
-
-		/**
-		 * Build fields with translations refreshing all data
-		 */
-		onTranslatableWindowBeforeShow: function() {
-			this.setViewTitle();
-
-			if (this.isConfigurationValid()) {
-				// Get translations object from buffer
-				if (this.buffer.hasOwnProperty(this.translationFieldConfig.identifier))
-					this.translationsSet(this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS]);
-
-				this.form.reset();
-
-				if (this.translationsGet().isEmpty()) {
-					CMDBuild.proxy.localization.Localization.read({
-						params: this.configurationGet(),
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							this.translationsSet(decodedResponse.response);
-
-							this.form.loadRecord(this.translationsGet());
-						}
-					});
-				} else {
-					this.form.loadRecord(this.translationsGet());
-				}
-			}
-		},
-
-		/**
-		 * Bufferize translations to save on card save
-		 */
-		onTranslatableWindowConfirmButtonClick: function() {
-			this.translationsSet(this.form.getValues());
-
-			this.buffer[this.translationFieldConfig.identifier] = this.translationFieldConfig;
-			this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData();
-
-			this.onTranslatableWindowAbortButtonClick();
-		},
-
-		// Translation method
 			/**
-			 * @param {Boolean} encoded
+			 * @param {Object} parameters
 			 *
-			 * @returns {CMDBuild.model.common.field.translatable.Window}
+			 * @returns {Void}
 			 */
-			translationsGet: function(encoded) {
-				encoded = encoded || false;
+			fieldTranslatableConfigurationReadTranslations: function () {
+				CMDBuild.proxy.common.field.translatable.Translatable.read({
+					params: this.cmfg('fieldTranslatableParamsGet'),
+					loadMask: false,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-				if (
-					!Ext.isEmpty(this.translationFieldConfig)
-					&& this.translationFieldConfig.hasOwnProperty(CMDBuild.core.constants.Proxy.TRANSLATIONS)
-				) {
-					if (encoded)
-						return Ext.encode(this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData());
-
-					return this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS];
-				}
-
-				return Ext.create('CMDBuild.model.common.field.translatable.Window');
-			},
-
-			translationsRead: function() {
-				if (this.isConfigurationValid()) {
-					CMDBuild.proxy.localization.Localization.read({
-						params: this.configurationGet(),
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							this.translationsSet(decodedResponse.response);
-						}
-					});
-				}
+						this.cmfg('fieldTranslatableConfigurationSet', {
+							propertyName: CMDBuild.core.constants.Proxy.TRANSLATIONS,
+							value: Ext.create('CMDBuild.model.common.field.translatable.Window', decodedResponse)
+						});
+					}
+				});
 			},
 
 			/**
-			 * @param {Object} translationsObject
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
-			translationsSet: function(translationsObject) {
-				this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
+			fieldTranslatableConfigurationSet: function (parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.field.translatable.Configuration';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		/**
+		 * @param {Object} value
+		 *
+		 * @returns {String or null}
+		 *
+		 * @private
+		 */
+		decodeConfigurationValue: function (value) {
+			if (Ext.typeOf(value) == 'string')
+				return value;
+
+			// Error handling
+				if (!Ext.isString(value.key) || Ext.isEmpty(value.key))
+					return _error('decodeConfigurationValue(): unmanaged key property', this, value.key);
+
+				if (!Ext.isString(value.sourceType) || Ext.isEmpty(value.sourceType))
+					return _error('decodeConfigurationValue(): unmanaged sourceType property', this, value.sourceType);
+
+				if (!Ext.isObject(value.source) || Ext.Object.isEmpty(value.source))
+					return _error('decodeConfigurationValue(): unmanaged source property', this, value.source);
+			// END: Error handling
+
+			switch (value.sourceType) {
+				case 'form': {
+					// Error handling
+						if (!Ext.isObject(value.source) || Ext.Object.isEmpty(value.source) || !Ext.isFunction(value.source.getData))
+							return _error('decodeConfigurationValue(): unmanaged source parameter', this, value.source);
+					// END: Error handling
+
+					return value.source.getData(true)[value.key];
+				} break;
+
+				case 'model': {
+					// Error handling
+						if (!Ext.isObject(value.source) || Ext.Object.isEmpty(value.source) || !Ext.isFunction(value.source.get))
+							return _error('decodeConfigurationValue(): unmanaged source parameter', this, value.source);
+					// END: Error handling
+
+					return value.source.get(value.key);
+				} break;
+
+				case 'object':
+					return value.source[value.key];
+
+				default:
+					return _error('decodeConfigurationValue(): unmanaged type property', this);
 			}
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.includeTranslations
+		 *
+		 * @returns {Object} params
+		 */
+		fieldTranslatableParamsGet: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.includeTranslations = Ext.isBoolean(parameters.includeTranslations) ? parameters.includeTranslations : false;
+
+			// Error handling
+				if (this.cmfg('fieldTranslatableConfigurationIsEmpty'))
+					return _error('fieldTranslatableParamsSet(): unmanaged configuration property', this, this.cmfg('fieldTranslatableConfigurationGet'));
+			// END: Error handling
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TYPE);
+			params[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.decodeConfigurationValue(
+				this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.IDENTIFIER)
+			);
+			params[CMDBuild.core.constants.Proxy.FIELD] = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.FIELD);
+
+			if (!this.cmfg('fieldTranslatableConfigurationIsEmpty', CMDBuild.core.constants.Proxy.OWNER))
+				params[CMDBuild.core.constants.Proxy.OWNER] = this.decodeConfigurationValue(
+					this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.OWNER)
+				);
+
+			if (parameters.includeTranslations) {
+				var translationsModel = this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TRANSLATIONS);
+
+				params[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.encode(translationsModel.getData());
+			}
+
+			return params;
+		},
+
+		/**
+		 * @returns {Object} parameters
+		 * @returns {Object} parameters.config
+		 * @returns {String} parameters.title
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onFieldTranslatableWindowConfigureAndShow: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			this.cmfg('fieldTranslatableConfigurationSet', { value: parameters.config }); // Setup configurations
+
+			// Error handling
+				if (this.cmfg('fieldTranslatableConfigurationIsEmpty') || !this.cmfg('fieldTranslatableConfigurationGet').isValid())
+					return _error('constructor(): unmanaged configuration property', this, this.cmfg('fieldTranslatableConfigurationGet'));
+			// END: Error handling
+
+			CMDBuild.proxy.common.field.translatable.Translatable.read({
+				params: this.cmfg('fieldTranslatableParamsGet'),
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					this.cmfg('fieldTranslatableConfigurationSet', {
+						propertyName: CMDBuild.core.constants.Proxy.TRANSLATIONS,
+						value: Ext.create('CMDBuild.model.common.field.translatable.Window', decodedResponse)
+					});
+
+					this.setViewTitle(parameters.title);
+
+					this.buildTranslationsFields();
+
+					this.form.loadRecord(this.cmfg('fieldTranslatableConfigurationGet', CMDBuild.core.constants.Proxy.TRANSLATIONS));
+
+					// Show window
+					if (!Ext.isEmpty(this.view))
+						this.view.show();
+				}
+			});
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onFieldTranslatableWindowConfirmButtonClick: function() {
+			this.cmfg('fieldTranslatableConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.TRANSLATIONS,
+				value: Ext.create('CMDBuild.model.common.field.translatable.Window', this.form.panelFunctionDataGet())
+			});
+
+			this.fieldTranslatableBufferTranslationsUpdate();
+
+			this.cmfg('onFieldTranslatableWindowAbortButtonClick');
+		}
 	});
 
 })();
