@@ -3,8 +3,6 @@
 	/**
 	 * Adapter
 	 *
-	 * @link CMDBuild.controller.management.common.CMModClassAndWFCommons
-	 *
 	 * @legacy
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.form.Form', {

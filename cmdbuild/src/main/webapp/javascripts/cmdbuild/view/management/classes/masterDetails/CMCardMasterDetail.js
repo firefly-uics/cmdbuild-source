@@ -46,7 +46,7 @@
 				}
 			});
 
-			this.addDetailButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
+			this.addDetailButton = Ext.create('CMDBuild.core.buttons.icon.split.add.Card', {
 				classId: undefined,
 				baseText: CMDBuild.Translation.management.moddetail.adddetail,
 				textPrefix: CMDBuild.Translation.management.moddetail.adddetail

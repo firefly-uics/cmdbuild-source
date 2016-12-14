@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -121,7 +122,7 @@
 				fixed: true,
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.iconized.Clone', {
+					Ext.create('CMDBuild.core.buttons.icon.Clone', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.cloneRow,
 						scope: this,
@@ -146,7 +147,7 @@
 							});
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+					Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
 						scope: this,
@@ -168,7 +169,7 @@
 							this.cmfg('onWidgetCustomFormLayoutGridEditRowButtonClick', record);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+					Ext.create('CMDBuild.core.buttons.icon.Remove', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.deleteRow,
 						scope: this,
@@ -229,7 +230,7 @@
 							delete header.flex;
 
 						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+							var xaVars = CMDBuild.core.Utils.extractMetadataByNamespace(attribute.meta, 'system.template.');
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver

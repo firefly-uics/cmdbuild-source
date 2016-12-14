@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager}
@@ -47,7 +47,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							Ext.create('CMDBuild.core.buttons.icon.add.Add', {
 								scope: this,
 
 								handler: function (button, e) {

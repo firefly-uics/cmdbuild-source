@@ -170,7 +170,20 @@
 			var ancestorsDomains = [];
 
 			if (Ext.isObject(entryType) && !Ext.Object.isEmpty(entryType)) {
-				var ancestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(entryType);
+				var ancestorsId = [];
+
+				// Same code of CMDBuild.core.Utils.getEntryTypeAncestorsId()
+				if (!Ext.Object.isEmpty(entryType)) {
+					ancestorsId.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
+
+					while (!Ext.isEmpty(entryType) && !Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
+						entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.constants.Proxy.PARENT));
+
+						if (!Ext.isEmpty(entryType))
+							ancestorsId.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
+					}
+				}
+				// END: Same code of CMDBuild.core.Utils.getEntryTypeAncestorsId()
 
 				// Retrieve entryType related domains
 				if (!Ext.isEmpty(ancestorsId) && Ext.isArray(ancestorsId))

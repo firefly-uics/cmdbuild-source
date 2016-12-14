@@ -47,28 +47,31 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onReportModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
+		onReportModuleInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.Object.isEmpty(parameters.node)) {
 				this.view.removeAll(true);
 
-				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch(parameters.node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'jasper':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.report.Jasper', { parentDelegate: this });
 					}
 				}
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(parameters.node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.view.add(this.sectionController.getView());
 
 				this.sectionController.getView().fireEvent('show');
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		}
 	});

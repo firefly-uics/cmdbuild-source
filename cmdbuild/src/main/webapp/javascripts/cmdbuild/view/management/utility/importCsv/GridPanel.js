@@ -147,7 +147,7 @@
 			});
 
 			var me = this;
-			this.searchField = new CMDBuild.field.LocaleSearchField({
+			this.searchField = Ext.create('CMDBuild.view.common.field.grid.localSearch.LocalSearch', {
 				grid: me,
 				onTrigger1Click: function() {
 					me.filterStore();
@@ -462,7 +462,9 @@
 			var headers = [];
 			var fields = [];
 
-			if (_CMUtils.isSuperclass(this.currentClassId)) {
+			var c = _CMCache.getEntryTypeById(this.currentClassId);
+
+			if (c && c.get('superclass')) {
 				headers.push(this.buildClassColumn());
 			}
 
@@ -623,15 +625,16 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.iconized.Graph', {
+						Ext.create('CMDBuild.core.buttons.icon.Graph', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.openRelationGraph,
 							scope: this,
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-									parentDelegate: this,
+								this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
+
+								this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 									classId: record.get('IdClass'),
 									cardId: record.get('id')
 								});

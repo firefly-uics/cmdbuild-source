@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require(['CMDBuild.proxy.gis.TreeNavigation']);
+	Ext.require([
+		'CMDBuild.core.Utils',
+		'CMDBuild.proxy.gis.TreeNavigation'
+	]);
 
 	Ext.define("CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
@@ -110,7 +113,7 @@
 	// Take the domains 1:N or N:1 where the selected
 	// entryType is the 1 side.
 	function retrieveDomainsForEntryType(entryType) {
-		var ids =  _CMUtils.getAncestorsId(entryType);
+		var ids = CMDBuild.core.Utils.getAncestorsId(entryType);
 		return _CMCache.getDomainsBy(function(domain) {
 			var cardinality = domain.get("cardinality");
 

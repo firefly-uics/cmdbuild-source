@@ -84,14 +84,17 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.Accordion} node
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters.node
 		 *
 		 * @override
 		 */
-		onDataViewModuleInit: function(node) {
-			if (!Ext.isEmpty(node)) {
-				var selectedDataView = node.getData();
-				selectedDataView[CMDBuild.core.constants.Proxy.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.constants.Proxy.SOURCE_FUNCTION));
+		onDataViewModuleInit: function(parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			if (Ext.isObject(parameters.node) && !Ext.isEmpty(parameters.node)) {
+				var selectedDataView = parameters.node.getData();
+				selectedDataView[CMDBuild.core.constants.Proxy.OUTPUT] = _CMCache.getDataSourceOutput(parameters.node.get(CMDBuild.core.constants.Proxy.SOURCE_FUNCTION));
 
 				this.dataViewSelectedSet({ value: selectedDataView });
 
@@ -120,7 +123,7 @@
 					}
 				});
 
-				this.onModuleInit(node); // Custom callParent() implementation
+				this.onModuleInit(parameters); // Custom callParent() implementation
 			}
 		}
 	});

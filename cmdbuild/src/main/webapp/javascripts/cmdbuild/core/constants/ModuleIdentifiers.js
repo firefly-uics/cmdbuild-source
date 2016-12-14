@@ -7,11 +7,6 @@
 
 		singleton: true,
 
-		/**
-		 * @cfg {Object}
-		 *
-		 * @private
-		 */
 		config: {
 			classes: 'class',
 			configuration: 'configuration',
@@ -31,15 +26,6 @@
 			userAndGroup: 'userandgroup',
 			utility: 'utility',
 			workflow: 'workflow'
-		},
-
-		/**
-		 * @param {Object} config
-		 *
-		 * @returns {Void}
-		 */
-		constructor: function (config) {
-			this.initConfig(config);
 		}
 	});
 

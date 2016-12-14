@@ -1,8 +1,5 @@
-(function() {
+(function () {
 
-	/**
-	 * @deprecated
-	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
@@ -12,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations}
+		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.Window}
 		 */
 		delegate: undefined,
 
@@ -24,16 +21,20 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
-			Ext.apply(this, {
-				store: CMDBuild.proxy.common.field.filter.advanced.window.Window.getStoreGroup()
-			});
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
+			this.store = CMDBuild.proxy.common.field.filter.advanced.window.Window.getStoreGroup();
 
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
+
 						items: [
 							'->',
 							this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -44,7 +45,7 @@
 								checked: false, // Default as false
 								scope: this,
 
-								handler: function(checkbox, checked) {
+								handler: function (checkbox, checked) {
 									this.getStore().reload();
 								}
 							})
@@ -75,13 +76,13 @@
 
 			this.callParent(arguments);
 
-			this.getStore().on('load', function(store, records, successful, eOpts) {
+			this.getStore().on('load', function (store, records, successful, eOpts) {
 				this.delegate.cmfg('onFieldFilterAdvancedWindowPresetGridStoreLoad');
 			}, this);
 		},
 
 		listeners: {
-			select: function(grid, record, index, eOpts) {
+			select: function (panel, record, index, eOpts) {
 				this.delegate.cmfg('onFieldFilterAdvancedWindowPresetGridSelect', record);
 			}
 		}

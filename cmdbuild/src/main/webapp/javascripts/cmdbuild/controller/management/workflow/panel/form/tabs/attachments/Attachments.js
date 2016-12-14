@@ -67,6 +67,9 @@
 			this.mon(this.view, 'activate', this.view.loadCardAttachments, this.view);
 
 			_CMWFState.addDelegate(this);
+
+			// Build sub-controllers
+			this.controllerWindowGraph = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', { parentDelegate: this });
 		},
 
 		getCard: function() {
@@ -242,8 +245,7 @@
 		},
 
 		onShowGraphClick: function() {
-			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
-				parentDelegate: this,
+			this.controllerWindowGraph.cmfg('onPanelGridAndFormGraphWindowConfigureAndShow', {
 				classId: this.card.get("IdClass"),
 				cardId: this.card.get("Id")
 			});

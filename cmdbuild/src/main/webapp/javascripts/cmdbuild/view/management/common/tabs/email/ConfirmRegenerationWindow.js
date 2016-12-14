@@ -14,24 +14,19 @@
 		delegate: undefined,
 
 		/**
-		 * @cfg {Number}
-		 */
-		defaultSizeW: 0.80,
-
-		/**
-		 * @cfg {Number}
-		 */
-		defaultSizeH: 0.50,
-
-		/**
 		 * @property {Ext.grid.Panel}
 		 */
 		grid: undefined,
 
 		closeAction: 'hide',
+		dimensionsMode: 'percentage',
 		title: CMDBuild.Translation.confirmRegeneration,
-
 		layout: 'border',
+
+		dimensions: {
+			height: 0.50,
+			width: 0.80
+		},
 
 		initComponent: function () {
 			Ext.apply(this, {
@@ -123,10 +118,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Resize window, smaller than default size
-			this.height = this.height * this.defaultSizeH;
-			this.width = this.width * this.defaultSizeW;
 		},
 
 		listeners: {

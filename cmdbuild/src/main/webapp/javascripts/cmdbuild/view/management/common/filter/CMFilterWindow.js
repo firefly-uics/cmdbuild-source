@@ -270,6 +270,7 @@
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				value: this.filter.getDescription(),
 				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
+				resizable: true,
 				allowBlank: false // Requires a non-empty value
 			});
 

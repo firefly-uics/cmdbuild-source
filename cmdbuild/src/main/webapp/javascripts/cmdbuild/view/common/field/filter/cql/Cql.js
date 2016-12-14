@@ -21,7 +21,7 @@
 		fieldName: CMDBuild.core.constants.Proxy.FILTER,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Modify}
+		 * @property {CMDBuild.core.buttons.icon.modify.Modify}
 		 */
 		metadataButton: undefined,
 
@@ -49,9 +49,10 @@
 				items: [
 					this.textAreaField = Ext.create('Ext.form.field.TextArea', {
 						name: this.fieldName,
+						resizable: true,
 						vtype: 'comment'
 					}),
-					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+					this.metadataButton = Ext.create('CMDBuild.core.buttons.icon.modify.Modify', {
 						text: this.buttonLabel,
 						maxWidth: this.buttonLabel.length * 10,
 						scope: this,

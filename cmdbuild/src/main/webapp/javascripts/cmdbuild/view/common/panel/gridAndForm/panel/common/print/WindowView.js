@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.print.WindowView', {
-		extend: 'CMDBuild.core.window.AbstractCustomModal',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -35,7 +35,7 @@
 
 						items: [
 							'->',
-							Ext.create('CMDBuild.core.buttons.iconized.Download', {
+							Ext.create('CMDBuild.core.buttons.icon.Download', {
 								scope: this,
 
 								handler: function(button, e) {

@@ -4,12 +4,9 @@
 
 		singleton: true,
 
-		/**
-		 * @cfg {Object}
-		 *
-		 * @private
-		 */
 		config: {
+			classNameGroup: 'Role',
+			classNameUser: 'User',
 			errorMsgCss: 'cmdb-error-msg',
 			mandatoryLabelFlag: '* ',
 			rootNameClasses: 'Class',
@@ -19,15 +16,6 @@
 			tableTypeSimpleTable: 'simpletable',
 			tableTypeStandardTable: 'standard',
 			titleSeparator: ' - '
-		},
-
-		/**
-		 * @param {Object} config
-		 *
-		 * @returns {Void}
-		 */
-		constructor: function (config) {
-			this.initConfig(config);
 		}
 	});
 

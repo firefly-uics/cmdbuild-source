@@ -6,7 +6,9 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.administration.taskManager.Grid',
 			'CMDBuild.model.administration.taskManager.task.email.Account',
+			'CMDBuild.model.administration.taskManager.task.email.Function',
 			'CMDBuild.model.administration.taskManager.task.email.Lookup',
+			'CMDBuild.model.administration.taskManager.task.email.Template',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -37,7 +39,12 @@
 					url: CMDBuild.proxy.index.Json.taskManager.email.readAll,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
@@ -58,7 +65,47 @@
 					url: CMDBuild.proxy.index.Json.email.account.readAll,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		getStoreFilterType: function () {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
+				data: [
+					[CMDBuild.Translation.none, CMDBuild.core.constants.Proxy.NONE],
+					[CMDBuild.Translation.regex, CMDBuild.core.constants.Proxy.REGEX],
+					[CMDBuild.Translation.functionLabel, CMDBuild.core.constants.Proxy.FUNCTION]
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreFunctions: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.email.Function',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.functions.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: { // Avoid to send limit, page and start parameters in server calls
 						limitParam: undefined,
@@ -91,6 +138,32 @@
 				sorters: [
 					{ property: 'Number', direction: 'ASC' },
 					{ property: 'Description', direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreTemplate: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+				autoLoad: true,
+				model: 'CMDBuild.model.administration.taskManager.task.email.Template',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.email.template.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

@@ -12,6 +12,8 @@
 		/**
 		 * @param {Object} decodedResponse
 		 * @param {Object} options
+		 *
+		 * @returns {Void}
 		 */
 		display: function (decodedResponse, options) {
 			if (
@@ -51,6 +53,8 @@
 		/**
 		 * @param {Object} message
 		 * @param {Object} options
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */

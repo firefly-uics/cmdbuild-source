@@ -326,8 +326,6 @@
 		},
 
 		/**
-		 * Setup buttons state, if task is active disable modify and delete
-		 *
 		 * @returns {Void}
 		 */
 		taskManagerFormToolbarTopStateManage: function () {

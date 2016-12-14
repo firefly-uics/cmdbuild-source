@@ -22,6 +22,7 @@
 			'onTaskManagerFormTaskCloneButtonClick',
 			'onTaskManagerFormTaskGenericRowSelected = onTaskManagerFormTaskRowSelected',
 			'onTaskManagerFormTaskGenericSaveButtonClick = onTaskManagerFormTaskSaveButtonClick',
+			'onTaskManagerFormTaskGenericValidateSetup -> controllerStep2, controllerStep4, controllerStep5',
 			'onTaskManagerFormTaskModifyButtonClick',
 			'onTaskManagerFormTaskRemoveButtonClick'
 		],
@@ -32,7 +33,7 @@
 		controllerStep1: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.taskManager.task.common.CronConfiguration}
+		 * @property {CMDBuild.controller.administration.taskManager.task.generic.Step2}
 		 */
 		controllerStep2: undefined,
 
@@ -64,7 +65,7 @@
 
 			// Build sub controllers
 			this.controllerStep1 = Ext.create('CMDBuild.controller.administration.taskManager.task.generic.Step1', { parentDelegate: this });
-			this.controllerStep2 = Ext.create('CMDBuild.controller.administration.taskManager.task.common.CronConfiguration', { parentDelegate: this });
+			this.controllerStep2 = Ext.create('CMDBuild.controller.administration.taskManager.task.generic.Step2', { parentDelegate: this });
 			this.controllerStep3 = Ext.create('CMDBuild.controller.administration.taskManager.task.generic.Step3', { parentDelegate: this });
 			this.controllerStep4 = Ext.create('CMDBuild.controller.administration.taskManager.task.generic.Step4', { parentDelegate: this });
 			this.controllerStep5 = Ext.create('CMDBuild.controller.administration.taskManager.task.generic.Step5', { parentDelegate: this });
@@ -85,6 +86,14 @@
 		 */
 		onTaskManagerFormTaskGenericRowSelected: function () {
 			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
+				this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({
+					forceToolbarBottomState: true,
+					forceToolbarTopState: true,
+					state: false
+				});
+
+				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
+
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
@@ -95,44 +104,21 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.administration.taskManager.task.generic.Generic', decodedResponse);
-							record.set(CMDBuild.core.constants.Proxy.CONTEXT, record.get(CMDBuild.core.constants.Proxy.CONTEXT)['client']); // FIXME: multiple sub-context predisposition
+							// FIXME: multiple sub-context predisposition
+							decodedResponse[CMDBuild.core.constants.Proxy.CONTEXT] = decodedResponse[CMDBuild.core.constants.Proxy.CONTEXT]['client'];
 
-							// FIXME: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
+							this.cmfg('taskManagerFormViewGet').loadRecord(
+								Ext.create('CMDBuild.model.administration.taskManager.task.generic.Generic', decodedResponse)
+							);
 
-							// Setup step 1
-							this.controllerStep1.setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
-							this.controllerStep1.setValueDescription(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
-							this.controllerStep1.setValueId(record.get(CMDBuild.core.constants.Proxy.ID));
-
-							// Setup step 2
-							this.controllerStep2.setValueAdvancedFields(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
-							this.controllerStep2.setValueBase(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
-
-							// Setup step 3
-							this.controllerStep3.setData(record.get(CMDBuild.core.constants.Proxy.CONTEXT));
-
-							// Setup step 4
-							this.controllerStep4.setValueEmailAccount(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT));
-							this.controllerStep4.setValueEmailTemplate(record.get(CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE));
-
-							// Setup step 5
-							this.controllerStep5.setValueReportAttributesGrid(record.get(CMDBuild.core.constants.Proxy.REPORT_PARAMETERS));
-							this.controllerStep5.setValueReportCombo(record.get(CMDBuild.core.constants.Proxy.REPORT_NAME));
-							this.controllerStep5.setValueReportExtension(record.get(CMDBuild.core.constants.Proxy.REPORT_EXTENSION));
-							this.controllerStep5.setValueReportFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.REPORT_ACTIVE));
-
-							this.cmfg('taskManagerFormPanelForwarder', {
-								functionName: 'disableModify',
-								params: true
-							});
+							this.cmfg('taskManagerFormViewGet').panelFunctionModifyStateSet({ state: false });
 
 							this.onTaskManagerFormTaskRowSelected(arguments); // CallParent alias
+						} else {
+							_error('onTaskManagerFormTaskGenericRowSelected(): unmanaged response', this, decodedResponse);
 						}
 					}
 				});
-
-				this.cmfg('onTaskManagerFormNavigationButtonClick', 'first');
 			}
 		},
 
@@ -142,52 +128,25 @@
 		 * @override
 		 */
 		onTaskManagerFormTaskGenericSaveButtonClick: function () {
-			var formData = this.cmfg('taskManagerFormViewDataGet', true);
-			var submitDatas = {};
+			var formData = Ext.create('CMDBuild.model.administration.taskManager.task.generic.Generic', this.cmfg('taskManagerFormViewDataGet'));
 
 			// Validate before save
-			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE])) {
-				submitDatas[CMDBuild.core.constants.Proxy.ACTIVE] = formData[CMDBuild.core.constants.Proxy.ACTIVE];
-				submitDatas[CMDBuild.core.constants.Proxy.CRON_EXPRESSION] = this.controllerStep2.getCronDelegate().getValue();
-				submitDatas[CMDBuild.core.constants.Proxy.DESCRIPTION] = formData[CMDBuild.core.constants.Proxy.DESCRIPTION];
-				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT] = formData[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT];
-				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACTIVE] = true; // Fixed value untill refactor
-				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE] = formData[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE];
-				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
-
-				var contextData = this.controllerStep3.getData();
-				if (!Ext.isEmpty(contextData))
-					submitDatas[CMDBuild.core.constants.Proxy.CONTEXT] = Ext.encode({ client: contextData }); // FIXME: multiple sub-context predisposition
-
-				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
-					var reportFieldsetCheckboxValue = this.controllerStep5.getValueReportFieldsetCheckbox();
-					if (reportFieldsetCheckboxValue) {
-						var attributesGridValues = this.controllerStep5.getValueReportAttributeGrid();
-
-						if (!Ext.Object.isEmpty(attributesGridValues))
-							submitDatas[CMDBuild.core.constants.Proxy.REPORT_PARAMETERS] = Ext.encode(attributesGridValues);
-
-						submitDatas[CMDBuild.core.constants.Proxy.REPORT_ACTIVE] = reportFieldsetCheckboxValue;
-						submitDatas[CMDBuild.core.constants.Proxy.REPORT_EXTENSION] = formData[CMDBuild.core.constants.Proxy.REPORT_EXTENSION];
-						submitDatas[CMDBuild.core.constants.Proxy.REPORT_NAME] = formData[CMDBuild.core.constants.Proxy.REPORT_NAME];
-					}
-
-				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
+			if (this.validate(formData.get(CMDBuild.core.constants.Proxy.ACTIVE)))
+				if (this.cmfg('taskManagerSelectedTaskIsEmpty')) {
 					CMDBuild.proxy.administration.taskManager.task.Generic.create({
-						params: submitDatas,
+						params: formData.getSubmitData('create'),
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.proxy.administration.taskManager.task.Generic.update({
-						params: submitDatas,
+						params: formData.getSubmitData('update'),
 						scope: this,
 						success: this.success
 					});
 				}
-			}
 
-			this.onTaskManagerFormTaskSaveButtonClick(arguments); // CallParent alias
+			this.onTaskManagerFormTaskSaveButtonClick(); // CallParent alias
 		},
 
 		/**
@@ -197,39 +156,35 @@
 		 * @private
 		 */
 		removeItem: function () {
-			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
+			// Error handling
+				if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
+					return _error('removeItem(): empty selected task property', this, this.cmfg('taskManagerSelectedTaskGet'));
+			// END: Error handling
 
-				CMDBuild.proxy.administration.taskManager.task.Generic.remove({
-					params: params,
-					scope: this,
-					success: this.success
-				});
-			} else {
-				_error('removeItem(): cannot remove empty selected grid task', this, this.cmfg('taskManagerSelectedTaskGet'));
-			}
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
+
+			CMDBuild.proxy.administration.taskManager.task.Generic.remove({
+				params: params,
+				scope: this,
+				success: this.success
+			});
 
 			this.callParent(arguments);
 		},
 
 		/**
-		 * Task validation
-		 *
-		 * @param {Boolean} enable
+		 * @param {Boolean} fullValidation
 		 *
 		 * @returns {Boolean}
 		 *
 		 * @override
+		 * @private
 		 */
-		validate: function (enable) {
-			// Cron field validation
-			this.controllerStep2.getCronDelegate().validate(enable);
+		validate: function (fullValidation) {
+			fullValidation = Ext.isBoolean(fullValidation) ? fullValidation : false;
 
-			// Report fieldset validation
-			this.controllerStep5.getReportDelegate().cmfg('onTaskManagerReportFormValidationEnable', (
-				enable && this.controllerStep5.getValueReportFieldsetCheckbox()
-			));
+			this.cmfg('onTaskManagerFormTaskGenericValidateSetup', fullValidation);
 
 			return this.callParent(arguments);
 		}

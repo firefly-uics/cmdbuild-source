@@ -12,17 +12,18 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			// TODO
+			'onTaskManagerFormTaskEventSynchronousStep1EntryTypeSelected',
+			'onTaskManagerFormTaskEventSynchronousStep1Show'
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.administration.taskManager.task.event.synchronous.Step1}
+		 * @cfg {CMDBuild.view.administration.taskManager.task.event.synchronous.Step1View}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.taskManager.task.event.asynchronous.Asynchronous} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.taskManager.task.event.synchronous.Synchronous} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 *
@@ -31,97 +32,22 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.synchronous.Step1', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.taskManager.task.event.synchronous.Step1View', { delegate: this });
 		},
-
-		// GETters functions
-			/**
-			 * @return {String}
-			 */
-			getValueGroups: function () {
-				return this.view.groups.getValue();
-			},
-
-			/**
-			 * @return {String}
-			 */
-			getValueId: function () {
-				return this.view.idField.getValue();
-			},
-
-			/**
-			 * @return {String}
-			 */
-			getValuePhase: function () {
-				return this.view.phaseCombo.getValue();
-			},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Void}
 		 */
-		isEmptyClass: function () {
-			return Ext.isEmpty(this.view.classNameCombo.getValue());
+		onTaskManagerFormTaskEventSynchronousStep1EntryTypeSelected: function () {
+			this.cmfg('taskManagerFormNavigationSetDisableNextButton', false);
 		},
 
-		// SETters functions
-			/**
-			 * @param {Array} itemsToSelect
-			 */
-			selectGroups: function (itemsToSelect) {
-				this.view.groups.setValue(itemsToSelect);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setAllowBlankPhaseCombo: function (state) {
-				this.view.phaseCombo.allowBlank = state;
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setDisabledTypeField: function (state) {
-				this.view.typeField.setDisabled(state);
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			setValueActive: function (state) {
-				this.view.activeField.setValue(state);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueClassName: function (value) {
-				this.view.classNameCombo.setValue(value);
-
-				// Manually select event fire
-				this.cmfg('onTaskManagerFormTaskEventSynchronousClassSelected', value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueDescription: function (value) {
-				this.view.descriptionField.setValue(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValueId: function (value) {
-				this.view.idField.setValue(value);
-			},
-
-			/**
-			 * @param {String} value
-			 */
-			setValuePhase: function (value) {
-				this.view.phaseCombo.setValue(value);
-			}
+		/**
+		 * @returns {Void}
+		 */
+		onTaskManagerFormTaskEventSynchronousStep1Show: function () {
+			this.cmfg('taskManagerFormNavigationSetDisableNextButton', Ext.isEmpty(this.view.fieldEntryType.getValue()));
+		}
 	});
 
 })();

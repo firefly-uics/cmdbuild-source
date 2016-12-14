@@ -1,6 +1,6 @@
 {
 	"description": "العربية",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "لوحة الإدارة",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "حدث خطأ",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "يجب ملء جدول مقابلة السمة بشكل صحيح",
 		"busyVisualControls": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "يجب ملء جدول مقابلة الصنف بشكل صحيح",
 		"copyAttachmentFailure": "فشل في نسخ المرفق ذا الاسم \"{0}\"",
 		"csvUploadOrDecodeFailure": "خطأ في رفع أو فك ملف الإكسل",
 		"detail": "التفاصيل",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "الرسالة لم ترسل. الأسباب المحتملة: 1) الخدمة غير نازلة; 2) الربط أو رقم المنفذ للطرف الآخر غير صحيح",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "تأكد من أن اسم مساحة العمل أو اسم الطريقة أو المعاملات لخدمة الويب صحيحة"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "يجب ملء جدول مقابلة المرجع بشكل صحيح",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "هذا الحقل مطلوب",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "خط العرض المبدئي",
 	"initialLongitude": "خط الطول المبدئي",
 	"initialZoomLevel": "مستوى التكبير المبدئي",
+	"inputParameter": "المعامل المدخل",
 	"instance": "اسم المؤسسة",
 	"instanceName": "اسم الكيان",
 	"inverseDescription": "<em>Inverse description</em>",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "فتح المنظر ثلاثي الأبعاد",
 	"openRelationGraph": "<em>Open relation graph</em>",
 	"operativeInstructions": "التعليمات",
+	"or": "<em>or</em>",
 	"origin": "المبتدى",
 	"otherOptions": "خيارات أخرى",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "ضع",
 	"setAsDefault": "ضع كافتراضي",
 	"setFilter": "ضع فرز",
-	"setLater": "المعامل المدخل",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "إعداد",
 	"showDetails": "عرض التفاصيل",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "سمات الآلية",
 	"workflowEngine": "محرك آليات العمل",
 	"write": "كتابة",
+	"xml": "XML",
 	"xpdlFile": "ملف XPDL",
 	"xpdlFileUploaded": "تم رفع ملف الـ XPDL",
 	"yes": "<em>Yes</em>",

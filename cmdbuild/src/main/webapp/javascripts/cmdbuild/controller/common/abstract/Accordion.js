@@ -313,7 +313,9 @@
 				if (
 					!this.cmfg('mainViewportModuleShow', {
 						identifier: selection.get('cmName'),
-						parameters: selection
+						params: {
+							node: selection
+						}
 					})
 				) {
 					// If the panel was not brought to front (report from the navigation menu), select the previous node or deselect the tree

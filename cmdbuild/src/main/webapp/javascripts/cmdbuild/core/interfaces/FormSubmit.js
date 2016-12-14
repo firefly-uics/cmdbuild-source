@@ -19,6 +19,8 @@
 		 * @param {Object} action - the options config object passed to the request method
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		adapterCallback: function (form, action, originalFunction) {
@@ -40,6 +42,8 @@
 		 * @param {Object} action - the options configuration object passed to the request method
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		adapterSuccess: function (form, action, originalFunction) {
@@ -53,6 +57,8 @@
 		 * @param {Object} action - the options configuration object passed to the request method
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		adapterFailure: function (form, action, originalFunction) {
@@ -61,6 +67,8 @@
 
 		/**
 		 * @param {Object} action - the options configuration object passed to the request method
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -72,6 +80,8 @@
 		 * Builds failure interceptor to create sequence with callback
 		 *
 		 * @param {Object} action - the options configuration object passed to the request method
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -90,6 +100,8 @@
 		 * @param {Object} action - the options configuration object passed to the request method
 		 * @param {Function} originalFunction
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		interceptorSuccess: function (action) {
@@ -106,6 +118,8 @@
 		 * @param {Ext.form.Basic} form
 		 * @param {Object} action - the options configuration object passed to the request method
 		 * @param {Object} eOpts
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -132,6 +146,8 @@
 		 * @param {Function} parameters.callback
 		 * @param {Function} parameters.failure
 		 * @param {Function} parameters.success
+		 *
+		 * @returns {Void}
 		 *
 		 * @public
 		 */

@@ -1,6 +1,6 @@
 {
 	"description": "Nederlands",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Administratie module",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Er is een fout opgetreden",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribuut niveau verbindings tabel moet correct zijn ingevuld",
 		"busyVisualControls": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Klas niveau verbindings tabel moet correct zijn ingevuld",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Details",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Bericht versturen mislukt. Mogelijke oorzaken: 1) De service is niet ingericht; 2) De URL en/of het poortnummer van de bestemming is niet juist",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controleer of de naamgeving, de methode naam en de parameters van de web service juist zijn"
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Referentie niveau verbindings tabel moet correct zijn ingevuld",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Dit veld is verplicht",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Initiele latitude",
 	"initialLongitude": "Initiele longitude",
 	"initialZoomLevel": "Initieel zoom niveau",
+	"inputParameter": "<em>Input parameter</em>",
 	"instance": "Instance",
 	"instanceName": "Database naam",
 	"inverseDescription": "Omgekeerde omschrijving",
@@ -1121,6 +1119,7 @@
 	"open_3d_viewer": "Start 3D viewer",
 	"openRelationGraph": "Open relatie grafiek",
 	"operativeInstructions": "Operatieve instructie",
+	"or": "<em>or</em>",
 	"origin": "Beginpunt",
 	"otherOptions": "Andere opties",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Instellen",
 	"setAsDefault": "Instellen als standaard",
 	"setFilter": "Filter instellen",
-	"setLater": "Input Parameter",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Algemene Opties",
 	"showDetails": "Toon details",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "Procesgang attributen",
 	"workflowEngine": "Werkvolgorde",
 	"write": "Schrijf",
+	"xml": "XML",
 	"xpdlFile": "XPDL bestand",
 	"xpdlFileUploaded": "XPDL bestand ophalen",
 	"yes": "<em>Yes</em>",

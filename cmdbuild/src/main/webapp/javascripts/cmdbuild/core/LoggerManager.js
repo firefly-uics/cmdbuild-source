@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.LoggerManager', {
 
@@ -6,18 +6,17 @@
 
 		/**
 		 * Declares CMDBuild.log object
+		 *
+		 * @returns {Void}
 		 */
-		constructor: function() {
-			if (!Ext.isEmpty(CMDBuild)) {
-				CMDBuild.log = log4javascript.getLogger();
-				CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
-			} else {
-				_error('CMDBuild object is empty', this);
-			}
+		constructor: function () {
+			Ext.ns('CMDBuild.log');
+			CMDBuild.log = log4javascript.getLogger();
+			CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
 
 			// Disable all console messages if IE8 or lower to avoid print window spam
 			if (Ext.isIE9m) {
-				var console = { log: function() {} };
+				var console = { log: function () {} };
 
 				log4javascript.setEnabled(false);
 
@@ -27,15 +26,20 @@
 	});
 
 	// Convenience methods to debug
-		_debug = function() {
+		/**
+		 * @returns {Void}
+		 */
+		_debug = function () {
 			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
 
 		/**
 		 * @param {String} message
 		 * @param {Mixed} classWithError
+		 *
+		 * @returns {Void}
 		 */
-		_deprecated = function(method, classWithError) {
+		_deprecated = function (method, classWithError) {
 			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
 			if (!Ext.isEmpty(method))
@@ -48,8 +52,10 @@
 		/**
 		 * @param {String} message
 		 * @param {Mixed} classWithError
+		 *
+		 * @returns {Void}
 		 */
-		_error = function(message, classWithError) {
+		_error = function (message, classWithError) {
 			classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
 
 			if (!Ext.isEmpty(message))
@@ -59,11 +65,17 @@
 				);
 		};
 
-		_msg = function() {
+		/**
+		 * @returns {Void}
+		 */
+		_msg = function () {
 			CMDBuild.log.info.apply(CMDBuild.log, arguments);
 		};
 
-		_trace = function() {
+		/**
+		 * @returns {Void}
+		 */
+		_trace = function () {
 			CMDBuild.log.trace(arguments);
 
 			if (console && Ext.isFunction(console.trace))
@@ -73,8 +85,10 @@
 		/**
 		 * @param {String} message
 		 * @param {Mixed} classWithError
+		 *
+		 * @returns {Void}
 		 */
-		_warning = function(message, classWithError) {
+		_warning = function (message, classWithError) {
 			classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
 
 			if (!Ext.isEmpty(message))

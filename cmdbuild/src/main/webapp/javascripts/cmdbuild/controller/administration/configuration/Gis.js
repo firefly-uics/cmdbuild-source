@@ -47,7 +47,7 @@
 			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.Gis', this.view.panelFunctionDataGet());
 
 			CMDBuild.proxy.administration.configuration.Gis.update({
-				params: configurationModel.getParamsObject(),
+				params: configurationModel.getSubmitData(),
 				scope: this,
 				callback: function (options, success, response) {
 					this.cmfg('onConfigurationGisTabShow');

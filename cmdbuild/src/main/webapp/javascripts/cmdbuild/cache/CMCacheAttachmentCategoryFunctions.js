@@ -13,7 +13,7 @@
 
 	Ext.require(['CMDBuild.proxy.Cache']);
 
-	Ext.define("CMDBUild.cache.CMCacheAttachmentCategoryFunctions", {
+	Ext.define("CMDBuild.cache.CMCacheAttachmentCategoryFunctions", {
 
 		statics: {
 			errors: {
@@ -42,7 +42,7 @@
 
 		addAttachmentCategory: function(c) {
 			if (Ext.getClassName(c) != "CMDBuild.model.CMAttachmentCategoryModel") {
-				throw CMDBUild.cache.CMCacheAttachmentCategoryFunctions.errors.wrongTypeOnAdd;
+				throw CMDBuild.cache.CMCacheAttachmentCategoryFunctions.errors.wrongTypeOnAdd;
 			}
 
 			categories[c.getName()] = c;

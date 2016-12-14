@@ -1,6 +1,6 @@
 {
 	"description": "Русский",
-	"release": "2.4-dev",
+	"release": "2.5-dev",
 	"administration": {
 		"description": "Администрирование",
 		"modClass": {
@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Неизвестная ошибка",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Таблица соответствия атрибутов должна быть заполнена корректно",
 		"busyVisualControls": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Таблица соответствия классов должна быть заполнена корректно",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Подробно",
@@ -506,7 +504,6 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Отправка сообщения не выполнена. Возможные причины: 1) Сервис не настроен; 2) URL и/или номер порта указан неверно",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Проверьте, что пространство имен, имя метода и параметры в вызове веб-процедуры указаны верно."
 		},
-		"referenceLevelMappingTableMustBeCorrectlyFilled": "Таблица соответствия связей должна быть заполнена корректно",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Это поле является обязательным",
@@ -1001,6 +998,7 @@
 	"initialLatitude": "Начальная широта",
 	"initialLongitude": "Начальная долгота",
 	"initialZoomLevel": "Начальный масштаб",
+	"inputParameter": "Переменный параметр",
 	"instance": "Инстанс",
 	"instanceName": "Имя инстанса",
 	"inverseDescription": "Обратное отношение",
@@ -1120,6 +1118,7 @@
 	"open_3d_viewer": "Открыть 3D просмотр",
 	"openRelationGraph": "Показать диаграмму связей",
 	"operativeInstructions": "Оперативные инструкции",
+	"or": "<em>or</em>",
 	"origin": "Исходная таблица",
 	"otherOptions": "Другие настройки",
 	"others": "<em>Others</em>",
@@ -1242,7 +1241,6 @@
 	"set": "Установлен",
 	"setAsDefault": "Сделать основным",
 	"setFilter": "Установить фильтр",
-	"setLater": "Переменный параметр",
 	"settleTimeMs": "<em>\"Settle time\" (ms)</em>",
 	"setup": "Настройки CMDBuild",
 	"showDetails": "Подробно",
@@ -1363,6 +1361,7 @@
 	"workflowAttributes": "Атрибуты процесса",
 	"workflowEngine": "Рабочие процессы",
 	"write": "Запись",
+	"xml": "XML",
 	"xpdlFile": "XPDL файл",
 	"xpdlFileUploaded": "XPDL файл загружен",
 	"yes": "<em>Yes</em>",

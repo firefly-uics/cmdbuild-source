@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link GISLayerModel
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.geoAttributes.Grid', {
 		extend: 'Ext.data.Model',
 
