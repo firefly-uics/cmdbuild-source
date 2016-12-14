@@ -239,9 +239,6 @@
 								CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
 							}
 						}, this);
-
-						if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
-							_CMUIState.onlyGrid();
 					}
 				});
 			}

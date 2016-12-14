@@ -1,12 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
-		extend: 'CMDBuild.view.common.panel.gridAndForm.tools.Menu',
-
-		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
-		 */
-		delegate: undefined,
+	/**
+	 * @deprecated CMDBuild.view.common.panel.gridAndForm.tools.Properties
+	 */
+	Ext.define('CMDBuild.view.management.classes.tools.Properties', {
+		extend: 'CMDBuild.view.management.classes.tools.Menu',
 
 		tooltip: CMDBuild.Translation.properties,
 		type: 'properties',

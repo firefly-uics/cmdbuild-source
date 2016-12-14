@@ -323,7 +323,7 @@
 				if (!Ext.isString(format) || Ext.isEmpty(format))
 					return _error('onWorkflowTreePrintButtonClick(): unmanaged format parameter', this, format);
 			// END: Error handling
-			
+
 			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
 			var params = Ext.clone(this.storeExtraParamsGet());
@@ -1287,7 +1287,6 @@
 			this.cmfg('workflowSelectedActivityReset');
 
 			_CMWFState.setProcessInstanceSynchronous(Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedInstanceGet', 'rawData')));
-			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		/**

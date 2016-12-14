@@ -19,10 +19,10 @@
 		layout: 'fit',
 
 		tools: [
-			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
-			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
-			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
-			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+			Ext.create('CMDBuild.view.management.dataView.tools.Properties'),
+			Ext.create('CMDBuild.view.management.dataView.tools.Minimize'),
+			Ext.create('CMDBuild.view.management.dataView.tools.Maximize'),
+			Ext.create('CMDBuild.view.management.dataView.tools.Restore')
 		]
 	});
 

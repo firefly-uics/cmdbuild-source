@@ -1,12 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.tools.Minimize', {
+	/**
+	 * @deprecated CMDBuild.view.common.panel.gridAndForm.tools.Minimize
+	 */
+	Ext.define('CMDBuild.view.management.classes.tools.Minimize', {
 		extend: 'Ext.panel.Tool',
-
-		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
-		 */
-		delegate: undefined,
 
 		tooltip: CMDBuild.Translation.minimizeGrid,
 		type: 'minimize',
@@ -18,9 +16,11 @@
 		 * @param {Ext.panel.Tool} tool
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		handler: function (event, target, owner, tool) {
-			this.delegate.cmfg('panelGridAndFromFullScreenUiSetup', 'bottom');
+			_CMUIState.onlyForm();
 		}
 	});
 

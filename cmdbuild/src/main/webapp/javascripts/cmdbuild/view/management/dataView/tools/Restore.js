@@ -1,12 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.tools.Restore', {
+	/**
+	 * @deprecated CMDBuild.view.common.panel.gridAndForm.tools.Restore
+	 */
+	Ext.define('CMDBuild.view.management.dataView.tools.Restore', {
 		extend: 'Ext.panel.Tool',
-
-		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
-		 */
-		delegate: undefined,
 
 		tooltip: CMDBuild.Translation.restore,
 		type: 'restore',
@@ -18,9 +16,11 @@
 		 * @param {Ext.panel.Tool} tool
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		handler: function (event, target, owner, tool) {
-			this.delegate.cmfg('panelGridAndFromFullScreenUiSetup', 'both');
+			_CMUIState.fullScreenOff();
 		}
 	});
 

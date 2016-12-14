@@ -395,8 +395,6 @@
 			}
 
 			this.fireEvent(this.CMEVENTS.abortedModify);
-
-			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
@@ -594,11 +592,8 @@
 						this.view.displayMode();
 
 						// To enable the editing for the right processInstance
-						if (me.isAdvance) {
+						if (me.isAdvance)
 							me.idToAdvance = savedCardId;
-						} else {
-							_CMUIState.onlyGridIfFullScreen();
-						}
 
 						// Metadata manage
 						decodedResponse.response[CMDBuild.core.constants.Proxy.METADATA] = this.superController.cmfg(

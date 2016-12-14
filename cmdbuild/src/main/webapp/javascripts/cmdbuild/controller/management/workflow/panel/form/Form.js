@@ -186,9 +186,6 @@
 
 			this.workflowFormPanelTabSelectionManage();
 
-			if (!activityInstance.nullObject && activityInstance.isNew())
-				_CMUIState.onlyFormIfFullScreen();
-
 			// Forward to sub-controllers
 			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
 				this.controllerTabNote.cmfg('onWorkflowFormTabNoteActivitySelect');
@@ -252,8 +249,6 @@
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.cmfg('onModifyCardClick');
-
-			_CMUIState.onlyFormIfFullScreen();
 		},
 
 		/**
