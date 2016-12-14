@@ -436,7 +436,6 @@
 					|| responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS) == CMDBuild.core.constants.WorkflowStates.getSuspendedCapitalized()
 				)
 			) {
-//				_CMUIState.onlyGridIfFullScreen();
 				this.cmfg('workflowFullScreenUiSetup', 'top');
 
 				_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
