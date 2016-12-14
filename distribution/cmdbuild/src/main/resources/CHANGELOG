@@ -76,6 +76,8 @@ FIXES
 
  * Fullscreen mode doesn't work in processes's UI
 
+ * Dashboards cannot be seen using "SuperUser" role when no permissions has been set
+
 
 
 
