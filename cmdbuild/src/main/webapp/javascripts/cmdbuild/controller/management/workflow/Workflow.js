@@ -24,16 +24,18 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onWorkflowAbortButtonClick',
+			'onWorkflowActivityItemDoubleClick',
 			'onWorkflowActivityRemoveCallback',
 			'onWorkflowActivitySelect',
 			'onWorkflowActivityUpdateCallback',
 			'onWorkflowAddButtonClick',
-			'onWorkflowFormActivityItemDoubleClick -> controllerForm',
 			'onWorkflowInstanceSelect',
+			'onWorkflowModifyButtonClick',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
 			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
+			'panelGridAndFromFullScreenUiSetup = workflowFullScreenUiSetup',
 			'workflowFormReset -> controllerForm',
 			'workflowIsStartActivityGet',
 			'workflowLocalCacheWorkflowGetAll',
@@ -320,6 +322,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowAbortButtonClick: function () {
+			this.cmfg('workflowFullScreenUiSetup', 'top');
 			this.cmfg('workflowSelectedInstanceReset');
 			this.cmfg('workflowSelectedActivityReset');
 			this.workflowIsStartActivityReset();
@@ -327,6 +330,16 @@
 			// Forward to sub controllers
 			this.controllerForm.cmfg('onWorkflowFormAbortButtonClick');
 			this.controllerTree.cmfg('onWorkflowTreeAbortButtonClick');
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowActivityItemDoubleClick: function () {
+			this.cmfg('workflowFullScreenUiSetup', 'bottom');
+
+			// Forward to sub controllers
+			this.controllerForm.cmfg('onWorkflowFormActivityItemDoubleClick');
 		},
 
 		/**
@@ -423,8 +436,10 @@
 					|| responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS) == CMDBuild.core.constants.WorkflowStates.getSuspendedCapitalized()
 				)
 			) {
+//				_CMUIState.onlyGridIfFullScreen();
+				this.cmfg('workflowFullScreenUiSetup', 'top');
+
 				_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
-				_CMUIState.onlyGridIfFullScreen();
 
 				// Form setup
 				this.controllerForm.cmfg('workflowFormReset');
@@ -433,6 +448,8 @@
 				this.controllerTree.cmfg('workflowTreeReset');
 				this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 			} else {
+				this.cmfg('workflowFullScreenUiSetup', 'bottom');
+
 				// Form setup
 				// FIXME: future implementation on tab controllers refactor
 
@@ -453,6 +470,7 @@
 		onWorkflowAddButtonClick: function (id) {
 			id = Ext.isNumber(id) && !Ext.isEmpty(id) ? id : this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
+			this.cmfg('workflowFullScreenUiSetup', 'bottom');
 			this.cmfg('workflowSelectedActivityReset');
 
 			var params = {};
@@ -543,6 +561,16 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 */
+		onWorkflowModifyButtonClick: function () {
+			this.cmfg('workflowFullScreenUiSetup', 'bottom');
+
+			// Forward to sub controllers
+			this.controllerForm.cmfg('onWorkflowFormModifyButtonClick');
+		},
+
+		/**
 		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.common.Accordion} node
@@ -560,6 +588,7 @@
 
 					this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
+					this.cmfg('workflowFullScreenUiSetup', 'top');
 					this.cmfg('onWorkflowWokflowSelect', node); // FIXME: node rawData property is for legacy mode with workflowState module
 
 					this.onModuleInit(node); // Custom callParent() implementation
@@ -568,13 +597,14 @@
 		},
 
 		/**
-		 * Forward to sub-controllers
-		 *
 		 * @returns {Void}
 		 *
 		 * FIXME: to fix on activity tab refactor
 		 */
 		onWorkflowSaveFailure: function () {
+			this.cmfg('workflowFullScreenUiSetup', 'bottom');
+
+			// Forward to sub controllers
 			this.controllerTree.cmfg('onWorkflowTreeSaveFailure');
 		},
 

@@ -105,7 +105,7 @@
 					scope: this,
 
 					handler: function (button, e) {
-						this.delegate.superController.cmfg('onWorkflowFormModifyButtonClick');
+						this.delegate.superController.cmfg('onWorkflowModifyButtonClick');
 					}
 				}),
 				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {

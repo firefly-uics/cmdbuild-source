@@ -1,6 +1,9 @@
 (function () {
 
 	/**
+	 * Required managed functions:
+	 * 	- panelGridAndFromFullScreenUiSetup
+	 *
 	 * NOTE: "form" and "grid" (or "tree") pointers are required to work with UI state module
 	 *
 	 * @abstract
@@ -28,198 +31,174 @@
 		 */
 		view: undefined,
 
-		/**
-		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
-		 *
-		 * @returns {Void}
-		 *
-		 * @override
-		 */
-		constructor: function (configurationObject) {
-			this.callParent(arguments);
-
-			if (!Ext.isEmpty(_CMUIState))
-				_CMUIState.addDelegate(this);
-		},
-
-		// _CMUIState methods
+		// FullScreen UI manage methods
 			/**
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
-			onFullScreenChangeToFormOnly: function () {
-				if (
-					!Ext.isEmpty(this.form)
-					&& (!Ext.isEmpty(this.grid) || !Ext.isEmpty(this.tree))
-				) {
-					var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
+			panelGridAndFromFullScreenDisplayBoth: function () {
+				var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
 
-					Ext.suspendLayouts();
+				// Error handling
+					if (!Ext.isObject(this.form) || Ext.Object.isEmpty(this.form) || !this.form instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenDisplayBoth(): unmanaged form property', this, this.form);
 
-					this.panelHide(topPanel);
-					this.panelShowToCenter(this.form);
+					if (!Ext.isObject(topPanel) || Ext.Object.isEmpty(topPanel) || !topPanel instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenDisplayBoth(): unmanaged topPanel property', this, topPanel);
+				// END: Error handling
 
-					// CSS style setup
-					this.removeStyleClsFromPanel(this.form);
+				Ext.suspendLayouts();
 
-					Ext.resumeLayouts(true);
-				} else {
-					_warning('onFullScreenChangeToFormOnly(): form or grid property missing', this);
-				}
+				// Show top panel to center
+				topPanel.show();
+				topPanel.region = 'center';
+
+				// Show bottom panel to south
+				this.form.show();
+				this.form.region = 'south';
+
+				this.panelGridAndFromFullScreenStyleClsAdd(); // Add style classes to panels
+
+				Ext.resumeLayouts(true);
 			},
 
 			/**
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
-			onFullScreenChangeToGridOnly: function () {
-				if (
-					!Ext.isEmpty(this.form)
-					&& (!Ext.isEmpty(this.grid) || !Ext.isEmpty(this.tree))
-				) {
-					var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
+			panelGridAndFromFullScreenMaximizeBottom: function () {
+				var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
 
-					Ext.suspendLayouts();
+				// Error handling
+					if (!Ext.isObject(this.form) || Ext.Object.isEmpty(this.form) || !this.form instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenMaximizeBottom(): unmanaged form property', this, this.form);
 
-					this.panelHide(this.form);
-					this.panelShowToCenter(topPanel);
+					if (!Ext.isObject(topPanel) || Ext.Object.isEmpty(topPanel) || !topPanel instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenMaximizeBottom(): unmanaged topPanel property', this, topPanel);
+				// END: Error handling
 
-					// CSS style setup
-					this.removeStyleClsFromPanel(topPanel);
+				Ext.suspendLayouts();
 
-					Ext.resumeLayouts(true);
-				} else {
-					_warning('onFullScreenChangeToGridOnly(): form or grid property missing', this);
-				}
+				// Hide top panel
+				topPanel.hide();
+				topPanel.region = '';
+
+				// Show and maximize bottom panel
+				this.form.show();
+				this.form.region = 'center';
+
+				this.panelGridAndFromFullScreenStyleClsRemove(); // Remove style classes from panels
+
+				Ext.resumeLayouts(true);
 			},
 
 			/**
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
-			onFullScreenChangeToOff: function () {
-				if (
-					!Ext.isEmpty(this.form)
-					&& (!Ext.isEmpty(this.grid) || !Ext.isEmpty(this.tree))
-				) {
-					var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
+			panelGridAndFromFullScreenMaximizeTop: function () {
+				var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
 
-					Ext.suspendLayouts();
+				// Error handling
+					if (!Ext.isObject(this.form) || Ext.Object.isEmpty(this.form) || !this.form instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenMaximizeTop(): unmanaged form property', this, this.form);
 
-					this.panelShowToCenter(topPanel);
-					this.panelShowToSouth(this.form);
+					if (!Ext.isObject(topPanel) || Ext.Object.isEmpty(topPanel) || !topPanel instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenMaximizeTop(): unmanaged topPanel property', this, topPanel);
+				// END: Error handling
 
-					// CSS style setup
-					this.addStyleClsToPanel(topPanel, 'bottom');
-					this.addStyleClsToPanel(this.form, 'top');
+				Ext.suspendLayouts();
 
-					Ext.resumeLayouts(true);
-				} else {
-					_warning('onFullScreenChangeToOff(): form or grid property missing', this);
-				}
+				// Show and maximize top panel
+				topPanel.show();
+				topPanel.region = 'center';
+
+				// Hide bottom panel
+				this.form.hide();
+				this.form.region = '';
+
+				this.panelGridAndFromFullScreenStyleClsRemove(); // Remove style classes from panels
+
+				Ext.resumeLayouts(true);
 			},
 
-			// Service methods
-				/**
-				 * @param {Ext.panel.Panel} panel
-				 * @param {String} mode - ['top' || 'bottom']
-				 *
-				 * @returns {Void}
-				 *
-				 * @private
-				 */
-				addStyleClsToPanel: function (panel, mode) {
-					if (
-						Ext.isObject(panel) && !Ext.Object.isEmpty(panel)
-						&& Ext.isFunction(panel.addCls)
-					) {
-						switch (mode) {
-							case 'bottom': {
-								if (Ext.isFunction(panel.hasCls) && !panel.hasCls('cmdb-border-bottom'))
-									panel.addCls('cmdb-border-bottom');
-							} break;
+			/**
+			 * @param {Ext.panel.Panel} panel
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			panelGridAndFromFullScreenStyleClsAdd: function () {
+				var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
 
-							case 'top': {
-								if (Ext.isFunction(panel.hasCls) && !panel.hasCls('cmdb-border-top'))
-									panel.addCls('cmdb-border-top');
-							} break;
+				// Error handling
+					if (!Ext.isObject(this.form) || Ext.Object.isEmpty(this.form) || !this.form instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenRemoveStyleCls(): unmanaged form property', this, this.form);
 
-							default: {
-								_error('addStyleClsToPanel(): unmanaged type parameter', this, type);
-							}
-						}
-					} else {
-						_error('addStyleClsToPanel(): unmanaged panel parameter', this, panel);
+					if (!Ext.isObject(topPanel) || Ext.Object.isEmpty(topPanel) || !topPanel instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenRemoveStyleCls(): unmanaged topPanel property', this, topPanel);
+				// END: Error handling
+
+				if (!topPanel.hasCls('cmdb-border-bottom'))
+					topPanel.addCls('cmdb-border-bottom');
+
+				if (!this.form.hasCls('cmdb-border-top'))
+					this.form.addCls('cmdb-border-top');
+			},
+
+			/**
+			 * @param {Ext.panel.Panel} panel
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			panelGridAndFromFullScreenStyleClsRemove: function () {
+				var topPanel = Ext.isEmpty(this.grid) ? this.tree : this.grid;
+
+				// Error handling
+					if (!Ext.isObject(this.form) || Ext.Object.isEmpty(this.form) || !this.form instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenRemoveStyleCls(): unmanaged form property', this, this.form);
+
+					if (!Ext.isObject(topPanel) || Ext.Object.isEmpty(topPanel) || !topPanel instanceof Ext.panel.Panel)
+						return _error('panelGridAndFromFullScreenRemoveStyleCls(): unmanaged topPanel property', this, topPanel);
+				// END: Error handling
+
+				if (topPanel.hasCls('cmdb-border-bottom'))
+					topPanel.removeCls('cmdb-border-bottom');
+
+				if (this.form.hasCls('cmdb-border-top'))
+					this.form.removeCls('cmdb-border-top');
+			},
+
+			/**
+			 * @param {String} sectionToMaximize
+			 *
+			 * @returns {Void}
+			 */
+			panelGridAndFromFullScreenUiSetup: function (sectionToMaximize) {
+				// Error handling
+					if (!Ext.isString(sectionToMaximize) || Ext.isEmpty(sectionToMaximize))
+						return _error('panelGridAndFromFullScreenUiSetup(): unmanaged sectionToMaximize parameter', this, sectionToMaximize);
+				// END: Error handling
+
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
+					switch (sectionToMaximize) {
+						case 'bottom':
+							return this.panelGridAndFromFullScreenMaximizeBottom();
+
+						case 'top':
+							return this.panelGridAndFromFullScreenMaximizeTop();
+
+						case 'both':
+						default:
+							return this.panelGridAndFromFullScreenDisplayBoth();
 					}
-				},
-
-				/**
-				 * @param {Ext.panel.Panel} panel
-				 *
-				 * @returns {Void}
-				 *
-				 * @private
-				 */
-				panelHide: function (panel) {
-					if (Ext.isObject(panel) && !Ext.Object.isEmpty(panel)) {
-						panel.hide();
-						panel.region = '';
-					} else {
-						_error('panelHide(): unmanaged panel parameter', this, panel);
-					}
-				},
-
-				/**
-				 * @param {Ext.panel.Panel} panel
-				 *
-				 * @returns {Void}
-				 *
-				 * @private
-				 */
-				panelShowToCenter: function (panel) {
-					if (Ext.isObject(panel) && !Ext.Object.isEmpty(panel)) {
-						panel.show();
-						panel.region = 'center';
-					} else {
-						_error('panelHide(): unmanaged panel parameter', this, panel);
-					}
-				},
-
-				/**
-				 * @param {Ext.panel.Panel} panel
-				 *
-				 * @returns {Void}
-				 *
-				 * @private
-				 */
-				panelShowToSouth: function (panel) {
-					if (Ext.isObject(panel) && !Ext.Object.isEmpty(panel)) {
-						panel.show();
-						panel.region = 'south';
-					} else {
-						_error('panelHide(): unmanaged panel parameter', this, panel);
-					}
-				},
-
-				/**
-				 * @param {Ext.panel.Panel} panel
-				 *
-				 * @returns {Void}
-				 *
-				 * @private
-				 */
-				removeStyleClsFromPanel: function (panel) {
-					if (
-						Ext.isObject(panel) && !Ext.Object.isEmpty(panel)
-						&& Ext.isFunction(panel.removeCls)
-					) {
-						if (Ext.isFunction(panel.hasCls) && panel.hasCls('cmdb-border-bottom'))
-							panel.removeCls('cmdb-border-bottom');
-
-						if (Ext.isFunction(panel.hasCls) && panel.hasCls('cmdb-border-top'))
-							panel.removeCls('cmdb-border-top');
-					} else {
-						_error('removeStyleClsFromPanel(): unmanaged panel parameter', this, panel);
-					}
-				}
+			}
 	});
 
 })();

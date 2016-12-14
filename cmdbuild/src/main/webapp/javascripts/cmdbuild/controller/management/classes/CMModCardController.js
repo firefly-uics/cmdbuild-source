@@ -34,6 +34,9 @@
 
 				this.selectedAccordionNode = entryType; // FIXME: hack to temporary fix DataView bug
 
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
+					_CMUIState.onlyGrid();
+
 				// If we haven't a filter try to get default one from server
 				if (Ext.isEmpty(filter)) {
 					var params = {};

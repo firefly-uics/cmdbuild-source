@@ -1,12 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.tools.Menu', {
+	/**
+	 * @deprecated CMDBuild.view.common.panel.gridAndForm.tools.Menu
+	 */
+	Ext.define('CMDBuild.view.management.classes.tools.Menu', {
 		extend: 'Ext.panel.Tool',
-
-		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
-		 */
-		delegate: undefined,
 
 		listeners: {
 			beforeshow: function (tool, eOpts) {

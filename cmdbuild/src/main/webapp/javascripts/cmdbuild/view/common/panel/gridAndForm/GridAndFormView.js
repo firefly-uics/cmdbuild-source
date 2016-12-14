@@ -24,10 +24,10 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				tools: [
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', { delegate: this.delegate }),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize', { delegate: this.delegate }),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize', { delegate: this.delegate }),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore', { delegate: this.delegate })
 				]
 			});
 

@@ -1,4 +1,9 @@
-(function() {
+(function () {
+
+	/**
+	 * @deprecated CMDBuild.controller.common.panel.gridAndForm.GridAndForm
+	 */
+
 	Ext.define("CMDBuild.state.UIStateDelegate", {
 		onFullScreenChangeToGridOnly: Ext.emptyFn,
 		onFullScreenChangeToFormOnly: Ext.emptyFn,
@@ -76,4 +81,5 @@
 	});
 
 	_CMUIState = new CMDBuild.state.UIState();
+
 })();

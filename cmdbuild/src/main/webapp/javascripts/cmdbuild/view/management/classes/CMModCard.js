@@ -63,10 +63,10 @@
 			Ext.apply(this, {
 				items: [this.centralPanel, this.cardTabPanel],
 				tools: [
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+					Ext.create('CMDBuild.view.management.classes.tools.Properties'),
+					Ext.create('CMDBuild.view.management.classes.tools.Minimize'),
+					Ext.create('CMDBuild.view.management.classes.tools.Maximize'),
+					Ext.create('CMDBuild.view.management.classes.tools.Restore')
 				]
 			});
 
