@@ -19,7 +19,7 @@
 		layout: 'fit',
 
 		tools: [
-			Ext.create('CMDBuild.view.management.dataView.tools.Properties'),
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.tools.properties.Properties', { parentDelegate: this }).getView(),
 			Ext.create('CMDBuild.view.management.dataView.tools.Minimize'),
 			Ext.create('CMDBuild.view.management.dataView.tools.Maximize'),
 			Ext.create('CMDBuild.view.management.dataView.tools.Restore')

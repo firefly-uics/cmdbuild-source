@@ -208,9 +208,9 @@
 		panelGridAndFormToolsArrayBuild: function () {
 			return [
 				Ext.create('CMDBuild.controller.common.panel.gridAndForm.tools.properties.Properties', { parentDelegate: this }).getView(),
-				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
-				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
-				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize', { delegate: this }),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize', { delegate: this }),
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore', { delegate: this })
 			];
 		}
 	});
