@@ -178,7 +178,7 @@
 
 				this.filtersBufferBuild();
 
-				CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters.readAllClasses({
+				CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

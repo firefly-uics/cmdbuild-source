@@ -20,10 +20,10 @@
 				model: 'CMDBuild.model.administration.taskManager.task.common.workflowForm.Workflow',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.workflow.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -32,11 +32,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters classes and all non superProcesses
-						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeProcessClass()
-							&& !record.get('superclass')
-						);
+					function (record) { // Filters super-processes
+						return !record.get('superclass');
 					}
 				],
 				sorters: [

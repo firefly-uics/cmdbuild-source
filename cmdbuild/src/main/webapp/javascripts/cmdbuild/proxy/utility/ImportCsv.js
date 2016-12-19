@@ -22,10 +22,10 @@
 				model: 'CMDBuild.model.utility.importCsv.Class',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -34,11 +34,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters root of all classes and processes
-						return (
-							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
-							&& record.get(CMDBuild.core.constants.Proxy.TYPE) != CMDBuild.core.constants.Global.getTableTypeProcessClass()
-						);
+					function (record) { // Filters root class
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [

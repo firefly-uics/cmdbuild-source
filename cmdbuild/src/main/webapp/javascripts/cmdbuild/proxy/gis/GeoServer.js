@@ -62,12 +62,12 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreCardBind: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ENTRY_TYPE, {
 				autoLoad: true,
 				model: 'CMDBuild.model.gis.geoServer.BindClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.entryType.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -79,7 +79,7 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters root of all classes
+					function (record) { // Filters root class
 						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
