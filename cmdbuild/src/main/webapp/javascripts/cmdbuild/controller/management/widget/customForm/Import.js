@@ -6,9 +6,9 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.widget.customForm.Csv',
+			'CMDBuild.proxy.management.widget.customForm.Csv',
 			'CMDBuild.proxy.lookup.Lookup',
-			'CMDBuild.proxy.widget.customForm.CustomForm'
+			'CMDBuild.proxy.management.widget.customForm.CustomForm'
 		],
 
 		/**
@@ -102,7 +102,7 @@
 
 		/**
 		 * @param {Array} csvData
-		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {CMDBuild.model.management.widget.customForm.Attribute} attribute
 		 * @param {String} requestBarrier
 		 *
 		 * @returns {Void}
@@ -147,7 +147,7 @@
 
 		/**
 		 * @param {Array} csvData
-		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {CMDBuild.model.management.widget.customForm.Attribute} attribute
 		 * @param {String} requestBarrier
 		 *
 		 * @returns {Void}
@@ -183,7 +183,7 @@
 						}
 					});
 
-					CMDBuild.proxy.widget.customForm.CustomForm.readAllCards({
+					CMDBuild.proxy.management.widget.customForm.CustomForm.readAllCards({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -403,7 +403,7 @@
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.proxy.widget.customForm.Csv.decode({
+				CMDBuild.proxy.management.widget.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {

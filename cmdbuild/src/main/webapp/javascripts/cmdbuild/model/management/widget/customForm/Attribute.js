@@ -6,7 +6,7 @@
 	 * Adapter model class to old FieldManager implementation
 	 * TODO: delete on full FieldManager implementation
 	 */
-	Ext.define('CMDBuild.model.widget.customForm.Attribute', {
+	Ext.define('CMDBuild.model.management.widget.customForm.Attribute', {
 		extend: 'Ext.data.Model',
 
 		fields: [

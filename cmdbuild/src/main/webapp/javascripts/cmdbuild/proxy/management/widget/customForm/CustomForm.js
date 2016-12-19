@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.customForm.CustomForm', {
+	Ext.define('CMDBuild.proxy.management.widget.customForm.CustomForm', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

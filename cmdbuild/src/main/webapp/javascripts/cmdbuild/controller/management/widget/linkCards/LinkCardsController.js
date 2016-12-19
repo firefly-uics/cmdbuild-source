@@ -58,7 +58,7 @@
 		mapController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.linkCards.Selection}
+		 * @property {CMDBuild.model.management.widget.linkCards.Selection}
 		 */
 		model: undefined,
 
@@ -159,7 +159,7 @@
 			this.grid.delegate = this;
 			this.view.widgetConf = this.widgetConf;
 
-			this.model = Ext.create('CMDBuild.model.widget.linkCards.Selection', { singleSelect: this.singleSelect });
+			this.model = Ext.create('CMDBuild.model.management.widget.linkCards.Selection', { singleSelect: this.singleSelect });
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,

@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.Ping', {
+	Ext.define('CMDBuild.proxy.management.widget.Ping', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
