@@ -98,15 +98,9 @@
 					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.CreateModifyCard': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMCreateModifyCard(widget);
+						var w = Ext.create('CMDBuild.view.management.widget.createModifyCard.CMCreateModifyCard');
 
 						me.widgetsContainer.addWidgt(w);
-
-						var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(w);
-
-						w.getWidgetManager = function() {
-							return widgetManager;
-						};
 
 						return w;
 					},

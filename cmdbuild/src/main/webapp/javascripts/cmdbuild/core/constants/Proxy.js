@@ -145,6 +145,7 @@
 		CONTEXT: 'context',
 		COUNT: 'count',
 		CQL: 'cql',
+		CQL_FILTER: 'cqlFilter',
 		CREATE: 'create',
 		CREATE_SHARK_SCHEMA: 'createSharkSchema',
 		CRON_EXPRESSION: 'cronExpression',
