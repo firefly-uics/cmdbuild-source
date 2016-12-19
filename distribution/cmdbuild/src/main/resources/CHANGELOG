@@ -78,6 +78,8 @@ FIXES
 
  * Dashboards cannot be seen using "SuperUser" role when no permissions has been set
 
+ * Attachments within emails sent from Apple Mail are not stored
+
 
 
 
