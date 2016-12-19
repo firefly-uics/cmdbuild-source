@@ -38,6 +38,11 @@ public class NullOperatorAndValueVisitor implements OperatorAndValueVisitor {
 	}
 
 	@Override
+	public void visit(final EqualsIgnoreCaseOperatorAndValue operatorAndValue) {
+		// nothing to do
+	}
+
+	@Override
 	public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
 		// nothing to do
 	}

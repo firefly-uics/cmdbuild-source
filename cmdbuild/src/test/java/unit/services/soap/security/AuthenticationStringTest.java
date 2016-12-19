@@ -1,15 +1,29 @@
 package unit.services.soap.security;
 
-import static org.cmdbuild.auth.Login.login;
 import static org.cmdbuild.auth.Login.LoginType.EMAIL;
 import static org.cmdbuild.services.soap.security.LoginAndGroup.loginAndGroup;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
+import org.cmdbuild.auth.Login;
+import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
 import org.junit.Test;
 
 public class AuthenticationStringTest {
+
+	private static Login login(final String value) {
+		return Login.newInstance() //
+				.withValue(value) //
+				.build();
+	}
+
+	private Login login(final String value, final LoginType type) {
+		return Login.newInstance() //
+				.withValue(value) //
+				.withType(type) //
+				.build();
+	}
 
 	@Test
 	public void usernameWithNoImpersonate() {

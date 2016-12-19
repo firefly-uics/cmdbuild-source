@@ -1,9 +1,12 @@
 package org.cmdbuild.auth;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
-import org.apache.commons.lang3.Validate;
+import java.util.function.Supplier;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -13,47 +16,55 @@ public class Login {
 
 		USERNAME, EMAIL;
 
-		private static LoginType fromLoginString(final String loginString) {
-			return (loginString.contains("@")) ? LoginType.EMAIL : LoginType.USERNAME;
+	}
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<Login> {
+
+		private String value;
+		private LoginType type;
+
+		/**
+		 * Use factory method.
+		 */
+		private Builder() {
 		}
 
+		@Override
+		public Login build() {
+			value = requireNonNull(value, "invalid value");
+			type = ofNullable(type).orElseGet(new Supplier<LoginType>() {
+
+				@Override
+				public LoginType get() {
+					return (value.contains("@")) ? LoginType.EMAIL : LoginType.USERNAME;
+				}
+
+			});
+			return new Login(this);
+		}
+
+		public Builder withValue(final String value) {
+			this.value = value;
+			return this;
+		}
+
+		public Builder withType(final LoginType value) {
+			this.type = value;
+			return this;
+		}
+
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
 	}
 
 	private final String value;
 	private final LoginType type;
 
-	/**
-	 * @deprecated Use {@code login(String)} instead.
-	 */
-	@Deprecated
-	public static Login newInstance(final String loginString) {
-		return login(loginString);
-	}
-
-	public static Login login(final String loginString) {
-		return login(loginString, LoginType.fromLoginString(loginString));
-	}
-
-	/**
-	 * @deprecated Use {@code login(String)} instead.
-	 */
-	@Deprecated
-	public static Login newInstance(final String loginString, final LoginType type) {
-		return login(loginString, type);
-	}
-
-	/**
-	 * Basically used by the tests.
-	 */
-	public static Login login(final String loginString, final LoginType type) {
-		Validate.notNull(loginString, "Null login string");
-		Validate.notNull(type, "Null type");
-		return new Login(loginString, type);
-	}
-
-	private Login(final String value, final LoginType type) {
-		this.value = value;
-		this.type = type;
+	private Login(final Builder builder) {
+		this.value = builder.value;
+		this.type = builder.type;
 	}
 
 	public String getValue() {

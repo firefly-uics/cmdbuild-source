@@ -44,7 +44,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.proxy.dataView.Filter.getStoreSourceClass(),
+				store: CMDBuild.proxy.dataView.Filter.getStoreSources(),
 				queryMode: 'local'
 			});
 

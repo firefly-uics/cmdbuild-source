@@ -1,5 +1,6 @@
 package org.cmdbuild.auth;
 
+import static java.util.Objects.requireNonNull;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -24,11 +25,17 @@ import org.cmdbuild.services.cache.CachingService.Cacheable;
 
 public class NotSystemUserFetcher extends DBUserFetcher implements Cacheable {
 
+	public static interface Configuration extends DBUserFetcher.Configuration {
+
+	}
+
 	private static final String ORG_CMDBUILD_PORTLET_GROUP_DOMAIN = "org.cmdbuild.portlet.group.domain";
 	private static final String ORG_CMDBUILD_PORTLET_USER_EMAIL = "org.cmdbuild.portlet.user.email";
 	private static final String ORG_CMDBUILD_PORTLET_USER_USERNAME = "org.cmdbuild.portlet.user.username";
 	private static final String ORG_CMDBUILD_PORTLET_USER_TABLE = "org.cmdbuild.portlet.user.table";
 
+	private final Configuration configuration;
+	private final CMDataView view;
 	private final AuthenticationStore userTypeStore;
 
 	private boolean initialized = false;
@@ -37,9 +44,21 @@ public class NotSystemUserFetcher extends DBUserFetcher implements Cacheable {
 	private String email;
 	private String domain;
 
-	public NotSystemUserFetcher(final CMDataView view, final AuthenticationStore userTypeStore) {
-		super(view);
-		this.userTypeStore = userTypeStore;
+	public NotSystemUserFetcher(final Configuration configuration, final CMDataView view,
+			final AuthenticationStore userTypeStore) {
+		this.configuration = requireNonNull(configuration);
+		this.view = requireNonNull(view);
+		this.userTypeStore = requireNonNull(userTypeStore);
+	}
+
+	@Override
+	protected Configuration configuration() {
+		return configuration;
+	}
+
+	@Override
+	protected CMDataView view() {
+		return view;
 	}
 
 	@Override

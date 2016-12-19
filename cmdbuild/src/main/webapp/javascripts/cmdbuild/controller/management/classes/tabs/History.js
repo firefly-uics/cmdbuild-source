@@ -281,60 +281,53 @@
 		 * @public
 		 *
 		 * FIXME: should be removed on complete refactor (will be replaced from tab show event)
+		 * FIXME: use manual loadMask management
 		 */
 		onCardSelected: function (card) {
 			if (Ext.isObject(card) && !Ext.Object.isEmpty(card)) {
 				var requiredClassId = card.get('IdClass');
 
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ID] = requiredClassId;
 
-				CMDBuild.proxy.management.classes.tabs.History.readClass({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.classes.tabs.History.readClassById({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return requiredClassId == classObject[CMDBuild.core.constants.Proxy.ID];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							this.classesTabHistorySelectedClassSet({ value: decodedResponse });
 
-							if (Ext.isObject(selectedClass) && !Ext.Object.isEmpty(selectedClass)) {
-								this.classesTabHistorySelectedClassSet({ value: selectedClass });
+							var params = {};
+							params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get('Id');
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-								var params = {};
-								params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get('Id');
-								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
+							CMDBuild.proxy.management.classes.tabs.History.readCard({
+								params: params,
+								loadMask: false,
+								scope: this,
+								success: function (response, options, decodedResponse) {
+									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 
-								CMDBuild.proxy.management.classes.tabs.History.readCard({
-									params: params,
-									loadMask: false,
-									scope: this,
-									success: function (response, options, decodedResponse) {
-										decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
+									if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+										this.classesTabHistorySelectedCardSet({ value: decodedResponse });
 
-										if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-											this.classesTabHistorySelectedCardSet({ value: decodedResponse });
-
-											if (
-												!this.classesTabHistorySelectedClassIsEmpty()
-												&& this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable() // SimpleTables hasn't history
-											) {
-												this.view.setDisabled(this.cmfg('classesTabHistorySelectedCardIsEmpty'));
-											}
-
-											this.cmfg('onClassesTabHistoryPanelShow');
-										} else {
-											_error('onCardSelected(): unmanaged response', this, decodedResponse);
+										if (
+											!this.classesTabHistorySelectedClassIsEmpty()
+											&& this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable() // SimpleTables hasn't history
+										) {
+											this.view.setDisabled(this.cmfg('classesTabHistorySelectedCardIsEmpty'));
 										}
+
+										this.cmfg('onClassesTabHistoryPanelShow');
+									} else {
+										_error('onCardSelected(): unmanaged response', this, decodedResponse);
 									}
-								});
-							} else {
-								_error('onCardSelected(): class not found', this, requiredClassId);
-							}
+								}
+							});
 						} else {
-							_error('onCardSelected(): unmanaged response', this, decodedResponse);
+							_error('onCardSelected(): class not found', this, requiredClassId);
 						}
 					}
 				});

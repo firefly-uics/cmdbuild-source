@@ -266,7 +266,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.administration.domain.tabs.EnabledClasses.readAllClasses({
+			CMDBuild.proxy.administration.domain.tabs.EnabledClasses.readEntryTypes({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -274,8 +274,12 @@
 
 					this.view.setDisabledModify(true, true);
 
-					this.fillTreeStore(decodedResponse, CMDBuild.core.constants.Proxy.DESTINATION);
-					this.fillTreeStore(decodedResponse, CMDBuild.core.constants.Proxy.ORIGIN);
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						this.fillTreeStore(decodedResponse, CMDBuild.core.constants.Proxy.DESTINATION);
+						this.fillTreeStore(decodedResponse, CMDBuild.core.constants.Proxy.ORIGIN);
+					} else {
+						_error('onDomainTabEnabledClassesDomainSelected(): unmanaged response', this, decodedResponse);
+					}
 				}
 			});
 		},
