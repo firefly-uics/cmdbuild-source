@@ -6,8 +6,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
@@ -25,7 +23,10 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	public static final String OBJ_REF = "Reference";
 	public static final String CLASS_NAME = "ClassName";
 	public static final String OBJ_ID = "ObjId";
+	public static final String MODEL = "Model";
 	public static final String READONLY = "ReadOnly";
+
+	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, OBJ_ID, OBJ_REF, CLASS_NAME, READONLY, MODEL };
 
 	private final CMDataView dataView;
 
@@ -49,15 +50,15 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 			configureWidgetFromClassName(widget, definition);
 		}
 
-		widget.setAttributeMappingForCreation(extractUnmanagedParameters(definition, BUTTON_LABEL, OBJ_ID, OBJ_REF,
-				CLASS_NAME, READONLY));
+		widget.setAttributeMappingForCreation(extractUnmanagedParameters(definition, KNOWN_PARAMETERS));
+		widget.setModel(readString(definition.get(MODEL)));
 		widget.setReadonly(definition.containsKey(READONLY));
 		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
 
 		return widget;
 	}
 
-	private void configureWidgetFromClassName(final CreateModifyCard widget, final Map<String, Object> valueMap) {
+	private void configureWidgetFromClassName(final CreateModifyCard widget, final WidgetDefinition valueMap) {
 		final String className = readString(valueMap.get(CLASS_NAME));
 		final String cardIdOrCql = readString(valueMap.get(OBJ_ID));
 		Validate.notEmpty(className, CLASS_NAME + " is required");
@@ -66,24 +67,25 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		widget.setIdcardcqlselector(cardIdOrCql);
 	}
 
-	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
+	private void configureWidgetFromReference(final CreateModifyCard widget, final WidgetDefinition valueMap) {
 		final Long id = Long.class.cast(valueMap.get(OBJ_REF));
 
 		if (id == null) {
 			widget.setTargetClass(Validate.notEmpty(readString(valueMap.get(CLASS_NAME)), CLASS_NAME + " is required"));
 		} else {
-		final CMClass queryClass = dataView.findClass(Constants.BASE_CLASS_NAME);
-		final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
-				.from(queryClass) //
-				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
-				.limit(1) //
-				.skipDefaultOrdering() //
-				.run() //
-				.getOnlyRow() //
-				.getCard(queryClass);
+			final CMClass queryClass = dataView.findClass(Constants.BASE_CLASS_NAME);
+			final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
+					.from(queryClass) //
+					.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
+					.run() //
+					.getOnlyRow() //
+					.getCard(queryClass);
 
-		widget.setTargetClass(card.getType().getName());
-		widget.setIdcardcqlselector(card.getId().toString());
+			widget.setTargetClass(card.getType().getName());
+			widget.setIdcardcqlselector(card.getId().toString());
 		}
 	}
+
 }
