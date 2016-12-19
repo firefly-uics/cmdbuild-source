@@ -146,26 +146,7 @@ class SelectMailImpl implements SelectMail {
 			}
 			String parsedMessage = EMPTY;
 			if (messageContent instanceof Multipart) {
-				final Multipart mp = (Multipart) messageContent;
-				for (int i = 0, n = mp.getCount(); i < n; ++i) {
-					final Part part = mp.getBodyPart(i);
-					final String ctype = part.getContentType();
-					final String disposition = part.getDisposition();
-					if (disposition == null) {
-						final Object content = part.getContent();
-						if (ctype.toLowerCase().contains(TEXT_PLAIN)) {
-							if (plainAlternative.isEmpty()) {
-								plainAlternative = String.class.cast(content);
-							}
-						} else {
-							if (content instanceof String) {
-								parsedMessage += content;
-							} else if (content instanceof Multipart) {
-								parsedMessage += parseContent(content);
-							}
-						}
-					}
-				}
+				handleMultipart(Multipart.class.cast(messageContent));
 			} else if (messageContent instanceof String) {
 				parsedMessage = messageContent.toString();
 			}
