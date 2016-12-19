@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.widget.CreateModifyCard'
+			'CMDBuild.proxy.management.widget.CreateModifyCard'
 		],
 
 		mixins: {
@@ -176,7 +176,7 @@
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get('Id');
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
 
-				CMDBuild.proxy.widget.CreateModifyCard.update({
+				CMDBuild.proxy.management.widget.CreateModifyCard.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -212,7 +212,7 @@
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(id);
 
-			CMDBuild.proxy.widget.CreateModifyCard.readAttributes({
+			CMDBuild.proxy.management.widget.CreateModifyCard.readAttributes({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -286,7 +286,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.proxy.widget.CreateModifyCard.read({
+				CMDBuild.proxy.management.widget.CreateModifyCard.read({
 					params: params,
 					loadMask: this.view,
 					success: function (result, options, decodedResult) {
@@ -341,7 +341,7 @@
 					this.card
 					&& this.card.get('Id') >= 0 // Avoid lock on card create
 				) {
-					CMDBuild.proxy.widget.CreateModifyCard.lock({
+					CMDBuild.proxy.management.widget.CreateModifyCard.lock({
 						params: {
 							id: this.card.get('Id')
 						},
@@ -361,7 +361,7 @@
 					&& this.view.isInEditing()
 					&& this.card.get('Id') >= 0 // Avoid unlock on card create
 				) {
-					CMDBuild.proxy.widget.CreateModifyCard.unlock({
+					CMDBuild.proxy.management.widget.CreateModifyCard.unlock({
 						params: {
 							id: this.card.get('Id')
 						},

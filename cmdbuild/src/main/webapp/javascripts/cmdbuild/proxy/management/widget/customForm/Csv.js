@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.customForm.Csv', {
+	Ext.define('CMDBuild.proxy.management.widget.customForm.Csv', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

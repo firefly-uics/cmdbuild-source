@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.widget.Ping'
+			'CMDBuild.proxy.management.widget.Ping'
 		],
 
 		/**
@@ -45,7 +45,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		widgetConfigurationModelClassName: 'CMDBuild.model.widget.ping.Configuration',
+		widgetConfigurationModelClassName: 'CMDBuild.model.management.widget.ping.Configuration',
 
 		/**
 		 * @returns {Void}
@@ -60,7 +60,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = this.card.get('IdClass');
 
-			CMDBuild.proxy.widget.Ping.readClassById({
+			CMDBuild.proxy.management.widget.Ping.readClassById({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -102,7 +102,7 @@
 						params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode({ address: out['_address'] });
 						params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.cmfg('widgetPingIdGet');
 
-						CMDBuild.proxy.widget.Ping.ping({
+						CMDBuild.proxy.management.widget.Ping.ping({
 							params: params,
 							loadMask: this.view, // Apply load mask to view
 							scope: this,

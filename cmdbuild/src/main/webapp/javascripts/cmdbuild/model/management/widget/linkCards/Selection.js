@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.widget.linkCards.Selection', {
+	Ext.define('CMDBuild.model.management.widget.linkCards.Selection', {
 		extend: 'Ext.util.Observable',
 
 		/**

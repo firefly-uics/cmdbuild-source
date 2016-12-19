@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.OpenNote', {
+	Ext.define('CMDBuild.proxy.management.widget.OpenNote', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

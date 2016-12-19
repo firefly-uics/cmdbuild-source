@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.CreateModifyCard', {
+	Ext.define('CMDBuild.proxy.management.widget.CreateModifyCard', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
