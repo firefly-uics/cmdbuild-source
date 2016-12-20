@@ -66,7 +66,7 @@
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-					CMDBuild.proxy.dataView.DataView.readAllClasses({
+					CMDBuild.proxy.dataView.DataView.readAllEntryTypes({
 						params: params,
 						loadMask: false,
 						scope: this,

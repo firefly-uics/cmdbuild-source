@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.OpenNote', {
+	Ext.define('CMDBuild.proxy.management.widget.OpenNote', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -21,7 +21,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVITY, parameters, true);
 		}
 	});
 

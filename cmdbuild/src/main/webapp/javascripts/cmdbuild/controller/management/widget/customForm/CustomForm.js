@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils',
-			'CMDBuild.proxy.widget.customForm.CustomForm'
+			'CMDBuild.proxy.management.widget.customForm.CustomForm'
 		],
 
 		/**
@@ -71,7 +71,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		widgetConfigurationModelClassName: 'CMDBuild.model.widget.customForm.Configuration',
+		widgetConfigurationModelClassName: 'CMDBuild.model.management.widget.customForm.Configuration',
 
 		// AlreadyDisplayed property methods
 			/**
@@ -265,7 +265,7 @@
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
 
-				CMDBuild.proxy.widget.customForm.CustomForm.readFromFunctions({
+				CMDBuild.proxy.management.widget.customForm.CustomForm.readFromFunctions({
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
 					callback: Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn,

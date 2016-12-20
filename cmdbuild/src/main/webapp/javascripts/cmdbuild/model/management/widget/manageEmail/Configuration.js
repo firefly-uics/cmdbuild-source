@@ -2,7 +2,7 @@
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
-	Ext.define('CMDBuild.model.widget.manageEmail.Configuration', {
+	Ext.define('CMDBuild.model.management.widget.manageEmail.Configuration', {
 		extend: 'Ext.data.Model',
 
 		fields: [

@@ -257,10 +257,10 @@
 			direction = Ext.isString(direction) ? direction : 'ASC'; // ASC or DESC
 			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
 
-			if (Ext.isArray(array)) {
+			if (Ext.isArray(array) && !Ext.isEmpty(array))
 				return Ext.Array.sort(array, function (item1, item2) {
-					var attribute1 = undefined;
-					var attribute2 = undefined;
+					var attribute1 = undefined,
+						attribute2 = undefined;
 
 					if (Ext.isFunction(item1.get) && Ext.isFunction(item2.get)) {
 						attribute1 = (!caseSensitive && Ext.isFunction(item1.get(attributeToSort).toLowerCase)) ? item1.get(attributeToSort).toLowerCase() : item1.get(attributeToSort);
@@ -293,7 +293,6 @@
 						}
 					}
 				});
-			}
 
 			return array;
 		},

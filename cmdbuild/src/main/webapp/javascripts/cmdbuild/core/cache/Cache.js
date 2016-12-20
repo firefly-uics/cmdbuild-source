@@ -1,7 +1,9 @@
-(function() {
+(function () {
 
 	/**
-	 * CMDBuild cache v3
+	 * CMDBuild cache
+	 *
+	 * @version 3
 	 */
 	Ext.define('CMDBuild.core.cache.Cache', {
 
@@ -54,9 +56,12 @@
 		 */
 		managedGroupsArray: [
 			CMDBuild.core.constants.Proxy.GENERIC, // Default
+			CMDBuild.core.constants.Proxy.ATTRIBUTE,
 			CMDBuild.core.constants.Proxy.CLASS,
+			CMDBuild.core.constants.Proxy.ENTRY_TYPE,
 			CMDBuild.core.constants.Proxy.GROUP,
-			CMDBuild.core.constants.Proxy.USER
+			CMDBuild.core.constants.Proxy.USER,
+			CMDBuild.core.constants.Proxy.WORKFLOW
 		],
 
 		/**

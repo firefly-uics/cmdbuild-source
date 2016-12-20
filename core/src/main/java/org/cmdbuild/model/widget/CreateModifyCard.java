@@ -23,6 +23,7 @@ public class CreateModifyCard extends Widget {
 
 	private String idcardcqlselector;
 	private String targetClass;
+	private String model;
 	private boolean readonly;
 	private Map<String, Object> attributeMappingForCreation;
 
@@ -51,6 +52,14 @@ public class CreateModifyCard extends Widget {
 
 	public void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(final String model) {
+		this.model = model;
 	}
 
 	public boolean isReadonly() {

@@ -5,6 +5,7 @@
 		singleton: true,
 
 		config: {
+			createModifyCard: '.CreateModifyCard',
 			openNote: '.OpenNote'
 		},
 

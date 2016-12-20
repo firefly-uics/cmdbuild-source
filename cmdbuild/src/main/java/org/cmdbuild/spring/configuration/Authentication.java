@@ -88,13 +88,27 @@ public class Authentication {
 	@Bean
 	@Qualifier(DEFAULT)
 	protected LegacyDBAuthenticator dbAuthenticator() {
-		return new LegacyDBAuthenticator(data.systemDataView());
+		return new LegacyDBAuthenticator(new LegacyDBAuthenticator.Configuration() {
+
+			@Override
+			public boolean isCaseInsensitive() {
+				return properties.authConf().isCaseInsensitive();
+			}
+
+		}, data.systemDataView());
 	}
 
 	@Bean
 	@Qualifier(SOAP)
 	protected NotSystemUserFetcher notSystemUserFetcher() {
-		return new NotSystemUserFetcher(data.systemDataView(), authenticationStore);
+		return new NotSystemUserFetcher(new NotSystemUserFetcher.Configuration() {
+
+			@Override
+			public boolean isCaseInsensitive() {
+				return properties.authConf().isCaseInsensitive();
+			}
+
+		}, data.systemDataView(), authenticationStore);
 	}
 
 	@Bean
