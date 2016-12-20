@@ -80,6 +80,8 @@ FIXES
 
  * Attachments within emails sent from Apple Mail are not stored
 
+ * Card not found error on abort button click before add
+
 
 
 
