@@ -209,21 +209,17 @@
 			if (!this.view.isDisabled()) {
 				// Get class data from server
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 
-				CMDBuild.proxy.common.field.comboBox.Searchable.readClass({
+				CMDBuild.proxy.common.field.comboBox.Searchable.readClassByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
-							return item[CMDBuild.core.constants.Proxy.NAME] == this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
-						}, this);
-
-						if (!Ext.isEmpty(targetClassObject)) {
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
 							var configurationObject = {};
-							configurationObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.cache.CMEntryTypeModel', targetClassObject);
+							configurationObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.cache.CMEntryTypeModel', decodedResponse);
 							configurationObject[CMDBuild.core.constants.Proxy.GRID_CONFIGURATION] = { presets: { quickSearch: value } };
 							configurationObject[CMDBuild.core.constants.Proxy.READ_ONLY] = this.configurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_SEARCH_WINDOW);
 

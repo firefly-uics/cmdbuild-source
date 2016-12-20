@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.widget.ManageRelation'
+			'CMDBuild.proxy.management.widget.ManageRelation'
 		],
 
 		mixins: {
@@ -214,7 +214,7 @@
 
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
-				CMDBuild.proxy.widget.ManageRelation.removeRelation({
+				CMDBuild.proxy.management.widget.ManageRelation.removeRelation({
 					params: params,
 					scope: this,
 					success: this.onDeleteRelationSuccess,
@@ -405,7 +405,7 @@
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = domain.getId();
 			parameters[CMDBuild.core.constants.Proxy.SRC] = getSrc(this);
 
-			CMDBuild.proxy.widget.ManageRelation.readAllRelations({
+			CMDBuild.proxy.management.widget.ManageRelation.readAllRelations({
 				params: parameters,
 				scope: this,
 				success: function (a,b, response) {
@@ -483,7 +483,7 @@
 
 	function removeCard() {
 		if (this.cardToDelete) {
-			CMDBuild.proxy.widget.ManageRelation.removeCard({
+			CMDBuild.proxy.management.widget.ManageRelation.removeCard({
 				params: {
 					'IdClass': this.cardToDelete.get('dst_cid'),
 					'Id': this.cardToDelete.get('dst_id')
@@ -604,7 +604,7 @@
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = node.get('dom_id');
 			parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
 
-			CMDBuild.proxy.widget.ManageRelation.readAllRelations({
+			CMDBuild.proxy.management.widget.ManageRelation.readAllRelations({
 				params: parameters,
 				scope: this,
 				success: function (a,b, response) {

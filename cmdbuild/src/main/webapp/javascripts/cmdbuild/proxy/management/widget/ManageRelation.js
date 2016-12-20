@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.ManageRelation', {
+	Ext.define('CMDBuild.proxy.management.widget.ManageRelation', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

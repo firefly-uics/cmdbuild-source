@@ -56,7 +56,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		widgetConfigurationModelClassName: 'CMDBuild.model.widget.manageEmail.Configuration',
+		widgetConfigurationModelClassName: 'CMDBuild.model.management.widget.manageEmail.Configuration',
 
 		/**
 		 * @param {CMDBuild.view.management.workflow.panel.form.tabs.email.Email} configurationObject.view

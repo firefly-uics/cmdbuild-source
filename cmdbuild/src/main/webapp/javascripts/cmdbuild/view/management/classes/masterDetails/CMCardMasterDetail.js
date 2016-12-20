@@ -30,7 +30,7 @@
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 						decodedResponse = Ext.Array.filter(decodedResponse, function (item, index, allItems) {

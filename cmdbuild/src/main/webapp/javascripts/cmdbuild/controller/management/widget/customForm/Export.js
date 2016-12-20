@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.widget.customForm.Csv'
+			'CMDBuild.proxy.management.widget.customForm.Csv'
 		],
 
 		/**
@@ -90,7 +90,7 @@
 				params[CMDBuild.core.constants.Proxy.DATA] = Ext.encode(gridData);
 				params[CMDBuild.core.constants.Proxy.HEADERS] = Ext.encode(params[CMDBuild.core.constants.Proxy.HEADERS].split(','));
 
-				CMDBuild.proxy.widget.customForm.Csv.exports({ params: params });
+				CMDBuild.proxy.management.widget.customForm.Csv.exports({ params: params });
 
 				this.cmfg('onWidgetCustomFormExportAbortButtonClick');
 			}

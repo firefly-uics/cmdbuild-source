@@ -17,11 +17,12 @@ import java.util.List;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
+import org.cmdbuild.auth.LegacyDBAuthenticator.Configuration;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
-import org.cmdbuild.auth.context.SystemPrivilegeContext;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -38,6 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -45,6 +47,52 @@ import utils.IntegrationTestBase;
 import utils.UserRolePrivilegeFixture;
 
 public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
+
+	private static abstract class ForwardingConfiguration extends ForwardingObject implements Configuration {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingConfiguration() {
+		}
+
+		@Override
+		protected abstract Configuration delegate();
+
+		@Override
+		public boolean isCaseInsensitive() {
+			return delegate().isCaseInsensitive();
+		}
+
+	}
+
+	private static class DelegatingConfiguration extends ForwardingConfiguration {
+
+		private Configuration delegate;
+
+		public DelegatingConfiguration(final Configuration delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected LegacyDBAuthenticator.Configuration delegate() {
+			return delegate;
+		}
+
+		public void setDelegate(final Configuration delegate) {
+			this.delegate = delegate;
+		}
+
+	}
+
+	private static final Configuration DEFAULT_CONFIGURATION = new Configuration() {
+
+		@Override
+		public boolean isCaseInsensitive() {
+			return false;
+		}
+
+	};
 
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_EMAIL = ADMIN_USERNAME + "@example.com";
@@ -56,11 +104,12 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 	private static final String PASSWORD_DEFAULT_GROUP = "userdef_password";
 
 	private static OperationUser anonymous() {
-		return new OperationUser(new AnonymousUser(), new SystemPrivilegeContext(), new NullGroup());
+		return new OperationUser(new AnonymousUser(), new NullPrivilegeContext(), new NullGroup());
 	}
 
 	private UserRolePrivilegeFixture fixture;
 
+	private DelegatingConfiguration configuration;
 	private AuthenticationLogic authLogic;
 	private DBCard admin;
 	private DBCard simpleUser;
@@ -74,12 +123,13 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
+		configuration = new DelegatingConfiguration(DEFAULT_CONFIGURATION);
+		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(configuration, dbDataView());
 		final AuthenticationService service = new DefaultAuthenticationService(dbDataView(), ofInstance(anonymous()));
-		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
-		IN_MEMORY_STORE = inMemory(operationUser());
+		IN_MEMORY_STORE = inMemory(anonymous());
 		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView(),
 				IN_MEMORY_STORE);
 
@@ -121,6 +171,31 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_USERNAME) //
+				.withPassword(ADMIN_PASSWORD) //
+				.withGroupName((String) groupA.getCode()) //
+				.build();
+
+		// when
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+
+		// then
+		assertUserIsSuccessfullyAuthenticated(response);
+		assertOperationUserIsStoredInUserStore();
+	}
+
+	@Test
+	public void shouldAuthenticateUserWithValidUsernameWithDifferentCaseAndPasswordAndGroupSelected() {
+		// given
+		configuration.setDelegate(new Configuration() {
+
+			@Override
+			public boolean isCaseInsensitive() {
+				return true;
+			}
+
+		});
+		final LoginDTO loginDTO = LoginDTO.newInstance() //
+				.withLoginString(ADMIN_USERNAME.toUpperCase()) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
 				.build();

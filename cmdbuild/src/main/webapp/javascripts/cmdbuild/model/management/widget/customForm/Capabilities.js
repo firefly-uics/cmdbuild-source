@@ -2,7 +2,7 @@
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
-	Ext.define('CMDBuild.model.widget.customForm.Capabilities', {
+	Ext.define('CMDBuild.model.management.widget.customForm.Capabilities', {
 		extend: 'Ext.data.Model',
 
 		fields: [

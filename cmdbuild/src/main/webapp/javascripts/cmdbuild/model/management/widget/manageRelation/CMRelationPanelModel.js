@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define("CMDBuild.model.widget.manageRelation.CMRelationPanelModel", {
+	Ext.define("CMDBuild.model.management.widget.manageRelation.CMRelationPanelModel", {
 		extend: "Ext.data.Model",
 
 		fields: [

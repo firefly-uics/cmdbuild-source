@@ -5,7 +5,7 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.widget.ping.Configuration', {
+	Ext.define('CMDBuild.model.management.widget.ping.Configuration', {
 		extend: 'Ext.data.Model',
 
 		fields: [

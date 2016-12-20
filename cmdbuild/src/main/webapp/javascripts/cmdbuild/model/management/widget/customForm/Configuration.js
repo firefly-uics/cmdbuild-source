@@ -2,7 +2,7 @@
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
-	Ext.define('CMDBuild.model.widget.customForm.Configuration', {
+	Ext.define('CMDBuild.model.management.widget.customForm.Configuration', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -14,7 +14,7 @@
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode [grid|form]
-			{ name: CMDBuild.core.constants.Proxy.MODEL, type: 'auto' }, // Encoded array of CMDBuild.model.widget.customForm.Attribute models strings
+			{ name: CMDBuild.core.constants.Proxy.MODEL, type: 'auto' }, // Encoded array of CMDBuild.model.management.widget.customForm.Attribute models strings
 			{ name: CMDBuild.core.constants.Proxy.REQUIRED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' } // Unmanaged variables
@@ -52,7 +52,7 @@
 			if (!Ext.isEmpty(newValue)) {
 				switch (fieldName) {
 					case CMDBuild.core.constants.Proxy.CAPABILITIES: {
-						newValue = Ext.create('CMDBuild.model.widget.customForm.Capabilities', newValue);
+						newValue = Ext.create('CMDBuild.model.management.widget.customForm.Capabilities', newValue);
 					} break;
 
 					case CMDBuild.core.constants.Proxy.DATA: {
@@ -85,7 +85,7 @@
 						var attributesArray = [];
 
 						Ext.Array.each(newValue, function (attributeObject, i, allAttributeObjects) {
-							attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
+							attributesArray.push(Ext.create('CMDBuild.model.management.widget.customForm.Attribute', attributeObject));
 						}, this);
 
 						newValue = attributesArray;

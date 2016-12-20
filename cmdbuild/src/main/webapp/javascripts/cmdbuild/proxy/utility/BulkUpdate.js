@@ -62,18 +62,17 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var nodes = [];
 					var standardNodesMap = {};
 
-					// Removes all processes and root class from response
+					// Filters simple, root and system classes
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
-							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeSimpleTable() // Discard simple classes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
-							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
+							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses()
+							&& !item[CMDBuild.core.constants.Proxy.SYSTEM]
 						);
 					}, this);
 
@@ -130,7 +129,7 @@
 		readAllClasses: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.getAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		},
@@ -153,10 +152,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		readClass: function (parameters) {
+		readClassById: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.read });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readById });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		}

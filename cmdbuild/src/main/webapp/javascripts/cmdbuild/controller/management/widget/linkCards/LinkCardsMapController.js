@@ -45,7 +45,7 @@
 		miniCardGridWindowController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.linkCards.Selection}
+		 * @property {CMDBuild.model.management.widget.linkCards.Selection}
 		 */
 		model: undefined,
 
@@ -75,7 +75,7 @@
 		 * @param {Object} configuration
 		 *	{
 		 *		{CMDBuild.view.management.widget.linkCards.map.CMMapPanel} view
-		 *		{CMDBuild.model.widget.linkCards.Selection} model
+		 *		{CMDBuild.model.management.widget.linkCards.Selection} model
 		 *		{CMDBuild.controller.management.widget.linkCards.LinkCardsController} parentDelegate,
 		 *		{Object} widgetConf
 		 *	}
