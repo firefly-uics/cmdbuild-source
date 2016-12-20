@@ -20,7 +20,10 @@
 		 * @returns {Void}
 		 */
 		handler: function (event, target, owner, tool) {
-			this.delegate.cmfg('panelGridAndFromFullScreenUiSetup', 'both');
+			this.delegate.cmfg('panelGridAndFromFullScreenUiSetup', {
+				force: true,
+				maximize: 'both'
+			});
 		}
 	});
 

@@ -176,18 +176,23 @@
 			},
 
 			/**
-			 * @param {String} sectionToMaximize
+			 * @param {Object} parameters
+			 * @param {String} parameters.force
+			 * @param {String} parameters.maximize
 			 *
 			 * @returns {Void}
 			 */
-			panelGridAndFromFullScreenUiSetup: function (sectionToMaximize) {
+			panelGridAndFromFullScreenUiSetup: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+				parameters.force = Ext.isBoolean(parameters.force) ? parameters.force : false;
+
 				// Error handling
-					if (!Ext.isString(sectionToMaximize) || Ext.isEmpty(sectionToMaximize))
-						return _error('panelGridAndFromFullScreenUiSetup(): unmanaged sectionToMaximize parameter', this, sectionToMaximize);
+					if (!Ext.isString(parameters.maximize) || Ext.isEmpty(parameters.maximize))
+						return _error('panelGridAndFromFullScreenUiSetup(): unmanaged maximize parameter', this, parameters.maximize);
 				// END: Error handling
 
-				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
-					switch (sectionToMaximize) {
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE) || parameters.force)
+					switch (parameters.maximize) {
 						case 'bottom':
 							return this.panelGridAndFromFullScreenMaximizeBottom();
 
