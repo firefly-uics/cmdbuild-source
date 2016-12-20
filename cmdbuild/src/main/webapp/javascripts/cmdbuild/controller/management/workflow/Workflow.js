@@ -582,6 +582,11 @@
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manual loadMask manage (show)
 
+				this.workflowSelectedWorkflowReset();
+				this.workflowSelectedPreviousActivityReset();
+				this.cmfg('workflowSelectedActivityReset');
+				this.cmfg('workflowSelectedInstanceReset');
+
 				this.buildLocalCache(node, function () {
 					CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manual loadMask manage (hide)
 
@@ -820,6 +825,15 @@
 			},
 
 			/**
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			workflowSelectedPreviousActivityReset: function () {
+				return this.propertyManageReset('selectedPreviousActivity');
+			},
+
+			/**
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
@@ -860,6 +874,15 @@
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
 				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			workflowSelectedWorkflowReset: function () {
+				return this.propertyManageReset('selectedWorkflow');
 			},
 
 			/**
