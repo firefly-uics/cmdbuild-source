@@ -158,7 +158,7 @@
 					"active": "Aktief",
 					"autoload": "Laad automatisch",
 					"background": "Achtergrond kleur",
-					"categoryFieldset": "Kategorie as",
+					"categoryFieldset": "Categorie as",
 					"chartType": "Grafiek type",
 					"dataSource": "Gegevens bron",
 					"defaultValue": "Default waarde",
@@ -537,10 +537,10 @@
 		"modcard": {
 			"add_attachment": "Bijlage toevoegen",
 			"add_attachment_window": {
-				"category": "Kategorie",
+				"category": "Categorie",
 				"description": "Omschrijving",
 				"load_attachment": "Bijlage laden",
-				"select_category": "Selecteer een kategorie ...",
+				"select_category": "Selecteer een categorie ...",
 				"window_title": "Bijlage toevoegen"
 			},
 			"add_card": "Kaart toevoegen",
@@ -554,7 +554,7 @@
 			},
 			"attachment_columns": {
 				"author": "Schrijver",
-				"category": "Kategorie",
+				"category": "Categorie",
 				"creation_date": "Begin datum",
 				"description": "Omschrijving",
 				"filename": "Bestandsnaam",
@@ -599,7 +599,7 @@
 			"other_fields": "Andere",
 			"relation_columns": {
 				"begin_date": "Begin datum",
-				"code": "Kode",
+				"code": "Code",
 				"description": "Omschrijving",
 				"destclass": "Klas",
 				"domain": "Domein",
@@ -772,11 +772,11 @@
 	"cloneTask": "Taak klonen",
 	"close": "Sluiten",
 	"cmdBuildAttribute": "CMDBuild attribuut",
-	"cmdbuildCategory": "CMDBuild kategorie",
+	"cmdbuildCategory": "CMDBuild categorie",
 	"cmdBuildClass": "CMDBuild klas",
 	"cmdbuildDatabase": "CMDBuild database",
 	"cmis": "CMIS",
-	"code": "Kode",
+	"code": "Code",
 	"collapse": "<em>Collapse</em>",
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
